@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS "usuarios";
+DROP TABLE IF EXISTS usuarios;
 
 DROP INDEX IF EXISTS usuarios_usuario_idx;
 

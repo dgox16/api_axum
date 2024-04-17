@@ -1,9 +1,3 @@
-CREATE TABLE links (
-    id SERIAL PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    url VARCHAR(255) NOT NULL
-);
-
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(50) NOT NULL
