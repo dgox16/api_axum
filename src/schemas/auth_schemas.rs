@@ -9,6 +9,6 @@ pub struct RegisterUserSchema {
 
 #[derive(Debug, Deserialize)]
 pub struct LoginUserSchema {
-    pub email: String,
+    pub usuario: String,
     pub contraseña: String,
 }

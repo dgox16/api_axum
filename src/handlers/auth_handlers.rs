@@ -1,13 +1,22 @@
 use std::sync::Arc;
 
-use argon2::{password_hash::SaltString, Argon2, PasswordHasher};
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use argon2::{password_hash::SaltString, Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
+use axum::{
+    extract::State,
+    http::{header, Response, StatusCode},
+    response::IntoResponse,
+    Json,
+};
+use axum_extra::extract::cookie::{Cookie, SameSite};
+use jsonwebtoken::{encode, EncodingKey, Header};
 use rand_core::OsRng;
 use serde_json::json;
 
 use crate::{
-    models::user_models::UserModel, responses::user_responses::FilteredUser,
-    schemas::auth_schemas::RegisterUserSchema, AppState,
+    models::{token_models::TokenClaims, user_models::UserModel},
+    responses::user_responses::FilteredUser,
+    schemas::auth_schemas::{LoginUserSchema, RegisterUserSchema},
+    AppState,
 };
 
 // Funcion para no mostrar la contraseña en ningun momento
@@ -129,9 +138,9 @@ pub async fn login_user_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Buscamos un usuario con email del body
     let user = sqlx::query_as!(
-        User,
-        "SELECT * FROM users WHERE email = $1",
-        body.email.to_ascii_lowercase()
+        UserModel,
+        "SELECT * FROM usuarios WHERE usuario = $1",
+        body.usuario.to_ascii_lowercase()
     )
     .fetch_optional(&data.db)
     .await
@@ -153,9 +162,9 @@ pub async fn login_user_handler(
     })?;
 
     // Validamos que la contraseña mandada sea igual a la de la base de datos
-    let is_valid = match PasswordHash::new(&user.password) {
+    let is_valid = match PasswordHash::new(&user.contraseña) {
         Ok(parsed_hash) => Argon2::default()
-            .verify_password(body.password.as_bytes(), &parsed_hash)
+            .verify_password(body.contraseña.as_bytes(), &parsed_hash)
             .map_or(false, |_| true),
         Err(_) => false,
     };
