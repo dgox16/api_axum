@@ -214,22 +214,22 @@ pub async fn login_user_handler(
     Ok(response)
 }
 
-// // Crearemos una funcion para el logout que no tiene parametros y devolvera un resultado con el codigo y json
-// pub async fn logout_handler() -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-//     // Para cerrar sesion mandamos un cookie para que sobreescriba al token pero vacio y con duracion negativa
-//     let cookie = Cookie::build(("token", ""))
-//         .path("/")
-//         .max_age(time::Duration::hours(-1))
-//         .same_site(SameSite::Lax)
-//         .http_only(true);
+// Crearemos una funcion para el logout que no tiene parametros y devolvera un resultado con el codigo y json
+pub async fn logout_handler() -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    // Para cerrar sesion mandamos un cookie para que sobreescriba al token pero vacio y con duracion negativa
+    let cookie = Cookie::build(("token", ""))
+        .path("/")
+        .max_age(time::Duration::hours(-1))
+        .same_site(SameSite::None)
+        .http_only(true);
 
-//     // Devolvemos e insertamos al cliente la cookie vacia
-//     let mut response = Response::new(json!({"status": "success"}).to_string());
-//     response
-//         .headers_mut()
-//         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-//     Ok(response)
-// }
+    // Devolvemos e insertamos al cliente la cookie vacia
+    let mut response = Response::new(json!({"status": "success"}).to_string());
+    response
+        .headers_mut()
+        .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
+    Ok(response)
+}
 
 // // Esta funcion es para mostrar una vista de perfil protegida
 // pub async fn get_me_handler(
