@@ -1,0 +1,12 @@
+### Prueba de que funciona la API
+GET http://localhost:8000/api HTTP/1.1
+
+### Se registra un usuario en la base de datos
+POST http://localhost:8000/api/auth/register HTTP/1.1
+content-type: application/json
+
+{
+  "usuario": "dgox14",
+  "email": "dgox14@gmail.com",
+  "contraseña": "123"
+}
