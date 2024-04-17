@@ -5,7 +5,7 @@ use axum::{
     extract::State,
     http::{header, Response, StatusCode},
     response::IntoResponse,
-    Json,
+    Extension, Json,
 };
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use jsonwebtoken::{encode, EncodingKey, Header};
@@ -231,17 +231,31 @@ pub async fn logout_handler() -> Result<impl IntoResponse, (StatusCode, Json<ser
     Ok(response)
 }
 
-// // Esta funcion es para mostrar una vista de perfil protegida
-// pub async fn get_me_handler(
-//     Extension(user): Extension<User>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
-// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-//     // Simplemente devolvemos al usuario con los datos filtrados
-//     let json_response = serde_json::json!({
-//         "status":  "success",
-//         "data": serde_json::json!({
-//             "user": filter_user_record(&user)
-//         })
-//     });
+// Esta funcion es para mostrar una vista de perfil protegida
+pub async fn get_me_handler(
+    State(data): State<Arc<AppState>>, // Necesitamos el estado global
+    Extension(user): Extension<UserModel>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    // Simplemente devolvemos al usuario con los datos filtrados
 
-//     Ok(Json(json_response))
-// }
+    let filtered_user_result = filter_user_record(&user, axum::extract::State(data)).await;
+    match filtered_user_result {
+        Ok(filtered_user) => {
+            let user_response = json!({
+                "status": "success",
+                "user":filtered_user
+            });
+
+            // Devolvemos la respuesta HTTP con el JSON
+            Ok(Json(user_response))
+        }
+        Err(e) => {
+            // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
+            let error_response = serde_json::json!({
+                "status": "fail",
+                "message": format!("Database error: {}", e),
+            });
+            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(error_response)))
+        }
+    }
+}
