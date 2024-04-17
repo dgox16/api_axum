@@ -10,3 +10,12 @@ content-type: application/json
   "email": "dgox14@gmail.com",
   "contraseña": "123"
 }
+
+### Se inicia sesion en la base de datos
+POST http://localhost:8000/api/auth/login HTTP/1.1
+content-type: application/json
+
+{
+  "usuario": "dgox14",
+  "contraseña": "123"
+}
