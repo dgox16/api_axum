@@ -122,88 +122,88 @@ pub async fn register_user_handler(
     }
 }
 
-// // Funcion para el login de usuarios
-// pub async fn login_user_handler(
-//     State(data): State<Arc<AppState>>, // Necesitamos el estado global
-//     Json(body): Json<LoginUserSchema>, // El body formareado de la request
-// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-//     // Buscamos un usuario con email del body
-//     let user = sqlx::query_as!(
-//         User,
-//         "SELECT * FROM users WHERE email = $1",
-//         body.email.to_ascii_lowercase()
-//     )
-//     .fetch_optional(&data.db)
-//     .await
-//     // Manejamos el posible error en la base de datos
-//     .map_err(|e| {
-//         let error_response = serde_json::json!({
-//             "status": "error",
-//             "message": format!("Database error: {}",e),
-//         });
-//         (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
-//     })?
-//     // Manejamos el posible fallo al no encontrar un usuario con ese email
-//     .ok_or_else(|| {
-//         let error_response = serde_json::json!({
-//             "status": "error",
-//             "message": "Invalid email or password",
-//         });
-//         (StatusCode::BAD_REQUEST, Json(error_response))
-//     })?;
+// Funcion para el login de usuarios
+pub async fn login_user_handler(
+    State(data): State<Arc<AppState>>, // Necesitamos el estado global
+    Json(body): Json<LoginUserSchema>, // El body formareado de la request
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    // Buscamos un usuario con email del body
+    let user = sqlx::query_as!(
+        User,
+        "SELECT * FROM users WHERE email = $1",
+        body.email.to_ascii_lowercase()
+    )
+    .fetch_optional(&data.db)
+    .await
+    // Manejamos el posible error en la base de datos
+    .map_err(|e| {
+        let error_response = serde_json::json!({
+            "status": "error",
+            "message": format!("Database error: {}",e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+    })?
+    // Manejamos el posible fallo al no encontrar un usuario con ese email
+    .ok_or_else(|| {
+        let error_response = serde_json::json!({
+            "status": "error",
+            "message": "Invalid email or password",
+        });
+        (StatusCode::BAD_REQUEST, Json(error_response))
+    })?;
 
-//     // Validamos que la contraseña mandada sea igual a la de la base de datos
-//     let is_valid = match PasswordHash::new(&user.password) {
-//         Ok(parsed_hash) => Argon2::default()
-//             .verify_password(body.password.as_bytes(), &parsed_hash)
-//             .map_or(false, |_| true),
-//         Err(_) => false,
-//     };
+    // Validamos que la contraseña mandada sea igual a la de la base de datos
+    let is_valid = match PasswordHash::new(&user.password) {
+        Ok(parsed_hash) => Argon2::default()
+            .verify_password(body.password.as_bytes(), &parsed_hash)
+            .map_or(false, |_| true),
+        Err(_) => false,
+    };
 
-//     // Si la validadacion no es correcta; devolvemos el fallo de que la contraseña es invalida
-//     if !is_valid {
-//         let error_response = serde_json::json!({
-//             "status": "fail",
-//             "message": "Invalid email or password"
-//         });
-//         return Err((StatusCode::BAD_REQUEST, Json(error_response)));
-//     }
+    // Si la validadacion no es correcta; devolvemos el fallo de que la contraseña es invalida
+    if !is_valid {
+        let error_response = serde_json::json!({
+            "status": "fail",
+            "message": "Invalid email or password"
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(error_response)));
+    }
 
-//     // Usamos la fecha actual para el token
-//     let now = chrono::Utc::now();
-//     let iat = now.timestamp() as usize;
-//     // El token sera valido por 60 min
-//     let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
-//     let claims: TokenClaims = TokenClaims {
-//         sub: user.id.to_string(), // Guardamos el usuario tambien en el token
-//         exp,
-//         iat,
-//     };
+    // Usamos la fecha actual para el token
+    let now = chrono::Utc::now();
+    let iat = now.timestamp() as usize;
+    // El token sera valido por 60 min
+    let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
+    let claims: TokenClaims = TokenClaims {
+        sub: user.id.to_string(), // Guardamos el usuario tambien en el token
+        exp,
+        iat,
+    };
 
-//     // Creamos el token con los datos anteriores y la secret
-//     let token = encode(
-//         &Header::default(),
-//         &claims,
-//         &EncodingKey::from_secret(data.env.jwt_secret.as_ref()),
-//     )
-//     .unwrap();
+    // Creamos el token con los datos anteriores y la secret
+    let token = encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret(data.env.jwt_secret.as_ref()),
+    )
+    .unwrap();
 
-//     // Crearemos una cookie con el token que durara una hora
-//     let cookie = Cookie::build(("token", token.to_owned()))
-//         .path("/")
-//         .max_age(time::Duration::hours(1))
-//         .same_site(SameSite::None)
-//         .secure(true)
-//         .http_only(true);
+    // Crearemos una cookie con el token que durara una hora
+    let cookie = Cookie::build(("token", token.to_owned()))
+        .path("/")
+        .max_age(time::Duration::hours(1))
+        .same_site(SameSite::None)
+        .secure(true)
+        .http_only(true);
 
-//     // Devolvemos exito si no fallo y devolvemos el token
-//     let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
-//     response
-//         .headers_mut()
-//         // Insertamos la cookie en el cliente
-//         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-//     Ok(response)
-// }
+    // Devolvemos exito si no fallo y devolvemos el token
+    let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
+    response
+        .headers_mut()
+        // Insertamos la cookie en el cliente
+        .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
+    Ok(response)
+}
 
 // // Crearemos una funcion para el logout que no tiene parametros y devolvera un resultado con el codigo y json
 // pub async fn logout_handler() -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
