@@ -1,6 +1,6 @@
 mod config;
 mod handlers;
-mod jwt_auth;
+mod middlewares;
 mod models;
 mod responses;
 mod router;
