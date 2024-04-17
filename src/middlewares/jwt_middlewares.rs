@@ -21,7 +21,7 @@ pub struct ErrorResponse {
     pub message: String,
 }
 
-pub async fn auth(
+pub async fn auth_required(
     cookie_jar: CookieJar,
     State(data): State<Arc<AppState>>,
     mut req: Request<Body>,
