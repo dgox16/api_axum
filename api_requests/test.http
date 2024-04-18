@@ -36,3 +36,6 @@ content-type: application/json
   "nombre": "De la Malinche",
   "tipo": "P1"
 }
+
+### Crear calle
+GET http://localhost:8000/api/calle/buscar/?palabras=roble HTTP/1.1

@@ -1,6 +1,12 @@
 use std::sync::Arc;
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum::{
+    extract::{Query, State},
+    http::StatusCode,
+    response::IntoResponse,
+    Json,
+};
+use serde::Deserialize;
 use serde_json::json;
 
 use crate::{
@@ -10,7 +16,7 @@ use crate::{
     AppState,
 };
 
-pub async fn new_calle_response(calle: &CalleModel) -> Result<NewCalleResponse, sqlx::Error> {
+pub fn new_calle_response(calle: &CalleModel) -> Result<NewCalleResponse, sqlx::Error> {
     let tipo_calle = match calle.tipo {
         TipoCalle::CA => "CA",
         TipoCalle::AV => "AV",
@@ -25,6 +31,86 @@ pub async fn new_calle_response(calle: &CalleModel) -> Result<NewCalleResponse, 
         nombre: calle.nombre.clone(),
         tipo: tipo_calle.to_string(),
     })
+}
+// `Deserialize` need be implemented to use with `Query` extractor.
+#[derive(Deserialize)]
+pub struct PalabraClaveQuery {
+    palabra: Option<String>,
+}
+
+pub async fn search_calle(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<PalabraClaveQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    match query.palabra {
+        Some(palabra) => {
+            let calles = sqlx::query_as!(
+        CalleModel,
+        r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles WHERE nombre ILIKE '%' || $1 || '%' LIMIT 20"#,
+        palabra
+    )
+    .fetch_all(&data.db)
+    .await
+.map_err(|e| {
+            let error_response = serde_json::json!({
+            "status": "fail",
+            "message": format!("Database error: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+    })?;
+
+            let new_calles: Vec<NewCalleResponse> = calles
+                .into_iter()
+                .map(|calle| new_calle_response(&calle))
+                .collect::<Result<_, _>>()
+                .map_err(|e| {
+                    let error_response = serde_json::json!({
+                        "status": "fail",
+                        "message": format!("Database error: {}", e),
+                    });
+                    (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+                })?;
+
+            let response = json!({
+                "status": "success",
+                "data": new_calles
+            });
+            Ok(Json(response))
+        }
+        _ => {
+            let calles = sqlx::query_as!(
+                CalleModel,
+                r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles LIMIT 20"#,
+            )
+            .fetch_all(&data.db)
+            .await
+            .map_err(|e| {
+                let error_response = serde_json::json!({
+                    "status": "fail",
+                    "message": format!("Database error: {}", e),
+                });
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+            })?;
+
+            let new_calles: Vec<NewCalleResponse> = calles
+                .into_iter()
+                .map(|calle| new_calle_response(&calle))
+                .collect::<Result<_, _>>()
+                .map_err(|e| {
+                    let error_response = serde_json::json!({
+                        "status": "fail",
+                        "message": format!("Database error: {}", e),
+                    });
+                    (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+                })?;
+
+            let response = json!({
+                "status": "success",
+                "data": new_calles
+            });
+            Ok(Json(response))
+        }
+    }
 }
 
 pub async fn create_new_calle(
@@ -57,7 +143,7 @@ pub async fn create_new_calle(
         (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
     })?;
 
-    let response_calle = new_calle_response(&new_calle).await;
+    let response_calle = new_calle_response(&new_calle);
     match response_calle {
         Ok(calle) => {
             let response = json!({
