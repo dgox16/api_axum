@@ -13,7 +13,7 @@ pub enum TipoCalle {
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 #[allow(non_snake_case)]
-pub struct CalleModel {
+pub struct CalleModelo {
     pub id_calle: i64,
     pub nombre: String,
     pub tipo: TipoCalle,
