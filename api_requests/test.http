@@ -27,3 +27,12 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0I
 ### Se devuelve un usuario
 GET http://localhost:8000/api/users/me HTTP/1.1
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzEzMzY3NzM2LCJleHAiOjE3MTMzNzEzMzZ9.xHmLIgWF-XgI2W8vHwWtCQe9mHzxj3eHktrwP2a3tGs
+
+### Crear calle
+POST http://localhost:8000/api/calle/nueva HTTP/1.1
+content-type: application/json
+
+{
+  "nombre": "De la Malinche",
+  "tipo": "P1"
+}
