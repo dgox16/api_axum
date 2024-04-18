@@ -110,7 +110,7 @@ pub async fn buscar_calle_handler(
     }
 }
 
-pub async fn create_new_calle(
+pub async fn crear_nueva_calle_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearNuevaCalleSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
