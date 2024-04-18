@@ -37,5 +37,18 @@ content-type: application/json
   "tipo": "P1"
 }
 
-### Crear calle
+### Buscar calle
 GET http://localhost:8000/api/calle/buscar/?palabra=roble&limite=3 HTTP/1.1
+
+### Crear domicilio
+POST http://localhost:8000/api/domicilio/nuevo HTTP/1.1
+content-type: application/json
+
+{
+  "cp": "38940",
+  "colonia": "Centro",
+
+"calle_id": 10000001474,
+"entre_calle_id": 10000001846,
+"y_calle_id": 10000002369,
+}
