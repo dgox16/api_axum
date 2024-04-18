@@ -12,14 +12,13 @@ pub enum TipoCalle {
 }
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-#[allow(non_snake_case)]
 pub struct CalleModelo {
     pub id_calle: i64,
     pub nombre: String,
     pub tipo: TipoCalle,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct DomicilioModel {
     pub id_domicilio: i32,
     pub cp: String,
@@ -28,6 +27,6 @@ pub struct DomicilioModel {
     pub entre_calle_id: i64,
     pub y_calle_id: i64,
     pub numero_exterior: String,
-    pub numero_interior: String,
-    pub geolocalizacion: String,
+    pub numero_interior: Option<String>,
+    pub geolocalizacion: Option<String>,
 }

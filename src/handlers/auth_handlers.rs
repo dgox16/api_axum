@@ -67,7 +67,7 @@ pub async fn registrar_usuario_handler(
         if existe {
             let respuesta_error = serde_json::json!({
                 "estado": "error",
-                "mensaje": "Ya existe el email o el usuario",
+                "mensaje": "Ya existe el email y/o el usuario",
             });
             return Err((StatusCode::CONFLICT, Json(respuesta_error)));
         }

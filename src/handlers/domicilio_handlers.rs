@@ -9,9 +9,11 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    models::domicilio_models::{CalleModelo, TipoCalle},
+    models::domicilio_models::{CalleModelo, DomicilioModel, TipoCalle},
     responses::domicilio_responses::CalleRespuesta,
-    schemas::domicilio_schemas::{BuscarCalleQuery, CrearNuevaCalleSchema},
+    schemas::domicilio_schemas::{
+        BuscarCalleQuery, CrearNuevaCalleSchema, CrearNuevoDomicilioSchema,
+    },
     AppState,
 };
 
@@ -157,4 +159,39 @@ pub async fn crear_nueva_calle_handler(
             Err((StatusCode::CONFLICT, Json(respuesta_error)))
         }
     }
+}
+
+pub async fn crear_nuevo_domicilio_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearNuevoDomicilioSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nuevo_domicilio = sqlx::query_as!(
+        DomicilioModel,
+        "INSERT INTO domicilios
+        (cp,colonia,calle_id,entre_calle_id,y_calle_id,numero_exterior,numero_interior,geolocalizacion)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
+        body.cp.to_string(),
+        body.colonia.to_string(),
+        body.calle_id,
+        body.entre_calle_id,
+        body.y_calle_id,
+        body.numero_exterior.to_string(),
+        body.numero_interior,
+        body.geolocalizacion
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = json!({
+        "estado": "exitoso",
+        "data": nuevo_domicilio
+    });
+    Ok(Json(respuesta))
 }
