@@ -36,28 +36,31 @@ pub fn new_calle_response(calle: &CalleModel) -> Result<NewCalleResponse, sqlx::
 #[derive(Deserialize)]
 pub struct PalabraClaveQuery {
     palabra: Option<String>,
+    limite: Option<i64>,
 }
 
 pub async fn search_calle(
     State(data): State<Arc<AppState>>,
     Query(query): Query<PalabraClaveQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let limite = query.limite.unwrap_or(20);
     match query.palabra {
         Some(palabra) => {
             let calles = sqlx::query_as!(
-        CalleModel,
-        r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles WHERE nombre ILIKE '%' || $1 || '%' LIMIT 20"#,
-        palabra
-    )
-    .fetch_all(&data.db)
-    .await
-.map_err(|e| {
-            let error_response = serde_json::json!({
-            "status": "fail",
-            "message": format!("Database error: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
-    })?;
+                CalleModel,
+                r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2"#,
+                palabra,
+                limite
+            )
+            .fetch_all(&data.db)
+            .await
+            .map_err(|e| {
+                let error_response = serde_json::json!({
+                    "status": "fail",
+                    "message": format!("Database error: {}", e),
+                });
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+            })?;
 
             let new_calles: Vec<NewCalleResponse> = calles
                 .into_iter()
@@ -80,7 +83,8 @@ pub async fn search_calle(
         _ => {
             let calles = sqlx::query_as!(
                 CalleModel,
-                r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles LIMIT 20"#,
+                r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles LIMIT $1"#,
+                limite
             )
             .fetch_all(&data.db)
             .await
