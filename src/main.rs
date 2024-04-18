@@ -35,11 +35,11 @@ async fn main() {
         .await
     {
         Ok(pool) => {
-            println!("✅Connection to the database is successful!");
+            println!("✅ Conexion exitosa con la base de datos!");
             pool
         }
         Err(err) => {
-            println!("🔥 Failed to connect to the database: {:?}", err);
+            println!("🔥 Fallo con la conexión con la base de datos: {:?}", err);
             std::process::exit(1);
         }
     };
@@ -56,7 +56,7 @@ async fn main() {
     }))
     .layer(cors);
 
-    println!("🚀 Server started successfully");
+    println!("🚀 El servidor inicio de forma correcta!");
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
 }

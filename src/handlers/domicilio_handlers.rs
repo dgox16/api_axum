@@ -10,12 +10,12 @@ use serde_json::json;
 
 use crate::{
     models::domicilio_models::{CalleModelo, TipoCalle},
-    responses::domicilio_responses::NuevaCalleRespuesta,
+    responses::domicilio_responses::CalleRespuesta,
     schemas::domicilio_schemas::{BuscarCalleQuery, CrearNuevaCalleSchema},
     AppState,
 };
 
-pub fn formatear_calle(calle: &CalleModelo) -> Result<NuevaCalleRespuesta, sqlx::Error> {
+pub fn formatear_calle(calle: &CalleModelo) -> Result<CalleRespuesta, sqlx::Error> {
     let tipo_calle = match calle.tipo {
         TipoCalle::CA => "CA",
         TipoCalle::AV => "AV",
@@ -25,7 +25,7 @@ pub fn formatear_calle(calle: &CalleModelo) -> Result<NuevaCalleRespuesta, sqlx:
         TipoCalle::CZ => "CZ",
     };
 
-    Ok(NuevaCalleRespuesta {
+    Ok(CalleRespuesta {
         id_calle: calle.id_calle.to_string(),
         nombre: calle.nombre.clone(),
         tipo: tipo_calle.to_string(),
@@ -55,7 +55,7 @@ pub async fn buscar_calle_handler(
                 (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
             })?;
 
-            let calles_formateadas: Vec<NuevaCalleRespuesta> = calles_encontradas
+            let calles_formateadas: Vec<CalleRespuesta> = calles_encontradas
                 .into_iter()
                 .map(|calle| formatear_calle(&calle))
                 .collect::<Result<_, _>>()
@@ -64,7 +64,7 @@ pub async fn buscar_calle_handler(
                         "estado": "error",
                         "mensaje": format!("Fallo con las calles encontradas: {}", e),
                     });
-                    (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+                    (StatusCode::CONFLICT, Json(respuesta_error))
                 })?;
 
             let respuesta = json!({
@@ -89,7 +89,7 @@ pub async fn buscar_calle_handler(
                 (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
             })?;
 
-            let calles_formateadas: Vec<NuevaCalleRespuesta> = calles_encontradas
+            let calles_formateadas: Vec<CalleRespuesta> = calles_encontradas
                 .into_iter()
                 .map(|calle| formatear_calle(&calle))
                 .collect::<Result<_, _>>()
@@ -98,7 +98,7 @@ pub async fn buscar_calle_handler(
                         "estado": "error",
                         "mensaje": format!("Fallo con las calles encontradas: {}", e),
                     });
-                    (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+                    (StatusCode::CONFLICT, Json(respuesta_error))
                 })?;
 
             let response = json!({
@@ -154,7 +154,7 @@ pub async fn crear_nueva_calle_handler(
                 "estado": "error",
                 "mensaje": format!("Fallo con la nueva calle: {}", e),
             });
-            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error)))
+            Err((StatusCode::CONFLICT, Json(respuesta_error)))
         }
     }
 }

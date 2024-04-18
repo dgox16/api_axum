@@ -13,132 +13,130 @@ use rand_core::OsRng;
 use serde_json::json;
 
 use crate::{
-    models::{token_models::TokenClaims, user_models::UserModel},
-    responses::user_responses::FilteredUser,
-    schemas::auth_schemas::{LoginUserSchema, RegisterUserSchema},
+    models::{token_models::TokenClaims, user_models::UsuarioModelo},
+    responses::user_responses::UsuarioFormateado,
+    schemas::auth_schemas::{InicioSesionUsuarioSchema, RegistroUsuarioSchema},
     AppState,
 };
 
 // Funcion para no mostrar la contraseña en ningun momento
-pub async fn filter_user_record(
-    user: &UserModel,
+pub async fn formatear_usuario(
+    user: &UsuarioModelo,
     State(data): State<Arc<AppState>>,
-) -> Result<FilteredUser, sqlx::Error> {
+) -> Result<UsuarioFormateado, sqlx::Error> {
     // Consulta SQL para obtener el nombre del rol
-    let row = sqlx::query!(
-        "SELECT nombre
-    FROM roles
-        WHERE id = $1",
-        user.id_rol
-    )
-    .fetch_one(&data.db)
-    .await?;
+    let rol = sqlx::query!("SELECT nombre FROM roles WHERE id = $1", user.id_rol)
+        .fetch_one(&data.db)
+        .await?;
 
-    Ok(FilteredUser {
+    Ok(UsuarioFormateado {
         id: user.id.to_string(),
         email: user.email.clone(),
         usuario: user.usuario.clone(),
-        rol: row.nombre,
+        rol: rol.nombre,
         createdAt: user.created_at.unwrap(),
         updatedAt: user.updated_at.unwrap(),
     })
 }
 
 // Funcion para el registro de usuarios
-pub async fn register_user_handler(
+pub async fn registrar_usuario_handler(
     State(data): State<Arc<AppState>>, // Necesitamos el estado global
-    Json(body): Json<RegisterUserSchema>, // El body formareado de la request
+    Json(body): Json<RegistroUsuarioSchema>, // El body formareado de la request
                                        // Devolvemos un resultado con el codigo de estado y un json
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Vemos si el usuario existe buscandolo en la base de datos
-    let user_exists: Option<bool> =
-        sqlx::query_scalar("SELECT EXISTS(SELECT 1 FROM usuarios WHERE email = $1)")
-            .bind(body.email.to_owned().to_ascii_lowercase())
-            .fetch_one(&data.db)
-            .await
-            .map_err(|e| {
-                // En caso de fallar la conexion devolvemos un json de fallo
-                let response_error = serde_json::json!({
-                    "status": "fail",
-                    "message": format!("Database error: {}", e),
-                });
-                (StatusCode::INTERNAL_SERVER_ERROR, Json(response_error))
-            })?;
+    let usuario_existe: Option<bool> = sqlx::query_scalar(
+        "SELECT EXISTS(SELECT 1 FROM usuarios WHERE email = $1 OR usuario = $2)",
+    )
+    .bind(body.email.to_owned().to_ascii_lowercase())
+    .bind(body.usuario.to_owned())
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        // En caso de fallar la conexion devolvemos un json de fallo
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
 
     // En caso de no exisir devolvemos un json de fallo
-    if let Some(exists) = user_exists {
-        if exists {
-            let error_response = serde_json::json!({
-                "status": "fail",
-                "message": "User with that email already exists",
+    if let Some(existe) = usuario_existe {
+        if existe {
+            let respuesta_error = serde_json::json!({
+                "estado": "error",
+                "mensaje": "Ya existe el email o el usuario",
             });
-            return Err((StatusCode::CONFLICT, Json(error_response)));
+            return Err((StatusCode::CONFLICT, Json(respuesta_error)));
         }
     }
     // Creamos una semilla para el hash
     let salt = SaltString::generate(&mut OsRng);
     // Encriptamos la contraseña
-    let hashed_password = Argon2::default()
+    let contraseña_encriptada = Argon2::default()
         .hash_password(body.contraseña.as_bytes(), &salt)
         .map_err(|e| {
             // Manejamos el posible error al hashear
-            let error_response = serde_json::json!({
-                "status": "fail",
-                "message": format!("Error while hashing password: {}", e),
+            let respuesta_error = serde_json::json!({
+                "estado": "error",
+                "message": format!("Fallo al encriptar la contraseña: {}", e),
             });
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+            (StatusCode::CONFLICT, Json(respuesta_error))
         })
         .map(|hash| hash.to_string())?;
 
     // Creamos el usuario en la base de datos
-    let user = sqlx::query_as!(
-        UserModel,
+    let nuevo_usuario = sqlx::query_as!(
+        UsuarioModelo,
         "INSERT INTO usuarios (usuario,email,contraseña) VALUES ($1, $2, $3) RETURNING *",
         body.usuario.to_string(),
         body.email.to_string().to_ascii_lowercase(),
-        hashed_password
+        contraseña_encriptada
     )
     .fetch_one(&data.db)
     .await
     .map_err(|e| {
         // Manejamos el posible fallo con la base de datos
-        let error_response = serde_json::json!({
-            "status": "fail",
-            "message": format!("Database error: {}", e),
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": format!("Error en la base de datos: {}", e),
         });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
-    let filtered_user_result = filter_user_record(&user, axum::extract::State(data)).await;
-    match filtered_user_result {
-        Ok(filtered_user) => {
-            let user_response = json!({
-                "status": "success",
-                "data":filtered_user
+    let usuario_formateado = formatear_usuario(&nuevo_usuario, axum::extract::State(data)).await;
+    match usuario_formateado {
+        Ok(usuario) => {
+            let respuesta = json!({
+                "estado": "exitoso",
+                "data": usuario
             });
 
             // Devolvemos la respuesta HTTP con el JSON
-            Ok(Json(user_response))
+            Ok(Json(respuesta))
         }
         Err(e) => {
             // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
-            let error_response = serde_json::json!({
-                "status": "fail",
-                "message": format!("Database error: {}", e),
+            let respuesta_error = serde_json::json!({
+                "estado": "error",
+                "mensaje": format!("Fallo con el nuevo usuario: {}", e),
             });
-            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(error_response)))
+
+            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error)))
         }
     }
 }
 
 // Funcion para el login de usuarios
-pub async fn login_user_handler(
+pub async fn inicio_sesion_handler(
     State(data): State<Arc<AppState>>, // Necesitamos el estado global
-    Json(body): Json<LoginUserSchema>, // El body formareado de la request
+    Json(body): Json<InicioSesionUsuarioSchema>, // El body formareado de la request
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    // Buscamos un usuario con email del body
-    let user = sqlx::query_as!(
-        UserModel,
+    // Buscamos un usuario con el username del body
+    let usuario_encontrado = sqlx::query_as!(
+        UsuarioModelo,
         "SELECT * FROM usuarios WHERE usuario = $1",
         body.usuario.to_ascii_lowercase()
     )
@@ -146,45 +144,45 @@ pub async fn login_user_handler(
     .await
     // Manejamos el posible error en la base de datos
     .map_err(|e| {
-        let error_response = serde_json::json!({
-            "status": "error",
-            "message": format!("Database error: {}",e),
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": format!("Error en la base de datos: {}", e),
         });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(error_response))
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?
     // Manejamos el posible fallo al no encontrar un usuario con ese email
     .ok_or_else(|| {
-        let error_response = serde_json::json!({
-            "status": "error",
-            "message": "Invalid email or password",
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "Invalido usuario o contraseña",
         });
-        (StatusCode::BAD_REQUEST, Json(error_response))
+        (StatusCode::BAD_REQUEST, Json(respuesta_error))
     })?;
 
     // Validamos que la contraseña mandada sea igual a la de la base de datos
-    let is_valid = match PasswordHash::new(&user.contraseña) {
-        Ok(parsed_hash) => Argon2::default()
-            .verify_password(body.contraseña.as_bytes(), &parsed_hash)
+    let es_contraseña_valida = match PasswordHash::new(&usuario_encontrado.contraseña) {
+        Ok(contraseña_parseada) => Argon2::default()
+            .verify_password(body.contraseña.as_bytes(), &contraseña_parseada)
             .map_or(false, |_| true),
         Err(_) => false,
     };
 
     // Si la validadacion no es correcta; devolvemos el fallo de que la contraseña es invalida
-    if !is_valid {
-        let error_response = serde_json::json!({
-            "status": "fail",
-            "message": "Invalid email or password"
+    if !es_contraseña_valida {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "Invalido usuario o contraseña",
         });
-        return Err((StatusCode::BAD_REQUEST, Json(error_response)));
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
 
     // Usamos la fecha actual para el token
-    let now = chrono::Utc::now();
-    let iat = now.timestamp() as usize;
+    let fecha_actual = chrono::Utc::now();
+    let iat = fecha_actual.timestamp() as usize;
     // El token sera valido por 60 min
-    let exp = (now + chrono::Duration::minutes(60)).timestamp() as usize;
+    let exp = (fecha_actual + chrono::Duration::minutes(60)).timestamp() as usize;
     let claims: TokenClaims = TokenClaims {
-        sub: user.id.to_string(), // Guardamos el usuario tambien en el token
+        sub: usuario_encontrado.id.to_string(), // Guardamos el usuario tambien en el token
         exp,
         iat,
     };
@@ -206,16 +204,17 @@ pub async fn login_user_handler(
         .http_only(true);
 
     // Devolvemos exito si no fallo y devolvemos el token
-    let mut response = Response::new(json!({"status": "success", "token": token}).to_string());
-    response
+    let mut respuesta = Response::new(json!({"estado": "exitoso", "data": token}).to_string());
+    respuesta
         .headers_mut()
         // Insertamos la cookie en el cliente
         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-    Ok(response)
+    Ok(respuesta)
 }
 
 // Crearemos una funcion para el logout que no tiene parametros y devolvera un resultado con el codigo y json
-pub async fn logout_handler() -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+pub async fn cerrar_sesion_handler(
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Para cerrar sesion mandamos un cookie para que sobreescriba al token pero vacio y con duracion negativa
     let cookie = Cookie::build(("token", ""))
         .path("/")
@@ -224,38 +223,38 @@ pub async fn logout_handler() -> Result<impl IntoResponse, (StatusCode, Json<ser
         .http_only(true);
 
     // Devolvemos e insertamos al cliente la cookie vacia
-    let mut response = Response::new(json!({"status": "success"}).to_string());
-    response
+    let mut respuesta = Response::new(json!({"estado": "exitoso"}).to_string());
+    respuesta
         .headers_mut()
         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-    Ok(response)
+    Ok(respuesta)
 }
 
 // Esta funcion es para mostrar una vista de perfil protegida
-pub async fn get_me_handler(
+pub async fn obtener_usuario_actual_handler(
     State(data): State<Arc<AppState>>, // Necesitamos el estado global
-    Extension(user): Extension<UserModel>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
+    Extension(user): Extension<UsuarioModelo>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Simplemente devolvemos al usuario con los datos filtrados
-
-    let filtered_user_result = filter_user_record(&user, axum::extract::State(data)).await;
-    match filtered_user_result {
-        Ok(filtered_user) => {
-            let user_response = json!({
-                "status": "success",
-                "user":filtered_user
+    let usuario_formateado = formatear_usuario(&user, axum::extract::State(data)).await;
+    match usuario_formateado {
+        Ok(usuario) => {
+            let respuesta = json!({
+                "estado": "exitoso",
+                "data": usuario
             });
 
             // Devolvemos la respuesta HTTP con el JSON
-            Ok(Json(user_response))
+            Ok(Json(respuesta))
         }
         Err(e) => {
             // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
-            let error_response = serde_json::json!({
-                "status": "fail",
-                "message": format!("Database error: {}", e),
+            let respuesta_error = serde_json::json!({
+                "estado": "error",
+                "mensaje": format!("Fallo con el usuario: {}", e),
             });
-            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(error_response)))
+
+            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error)))
         }
     }
 }

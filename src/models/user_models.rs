@@ -3,13 +3,13 @@ use serde::{Deserialize, Serialize};
 
 #[allow(non_snake_case)]
 #[derive(Debug, Deserialize, Serialize, sqlx::FromRow, Clone)]
-pub struct RoleModel {
+pub struct RolModelo {
     pub id: i32,
     pub nombre: String,
 }
 
 #[derive(Debug, Deserialize, Serialize, sqlx::FromRow, Clone)]
-pub struct UserModel {
+pub struct UsuarioModelo {
     pub id: i32,
     pub usuario: String,
     pub email: String,

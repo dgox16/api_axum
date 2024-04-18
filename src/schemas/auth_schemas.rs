@@ -1,14 +1,14 @@
 use serde::Deserialize;
 
 #[derive(Debug, Deserialize)]
-pub struct RegisterUserSchema {
+pub struct RegistroUsuarioSchema {
     pub usuario: String,
     pub email: String,
     pub contraseña: String,
 }
 
 #[derive(Debug, Deserialize)]
-pub struct LoginUserSchema {
+pub struct InicioSesionUsuarioSchema {
     pub usuario: String,
     pub contraseña: String,
 }

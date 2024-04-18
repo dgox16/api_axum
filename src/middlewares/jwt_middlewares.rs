@@ -1,5 +1,5 @@
 use crate::{
-    models::{token_models::TokenClaims, user_models::UserModel},
+    models::{token_models::TokenClaims, user_models::UsuarioModelo},
     AppState,
 };
 use axum::{
@@ -80,17 +80,21 @@ pub async fn auth_required(
     })?;
 
     // Buscamos el usuario en la base de datos
-    let user = sqlx::query_as!(UserModel, "SELECT * FROM usuarios WHERE id = $1", user_id)
-        .fetch_optional(&data.db)
-        .await
-        .map_err(|e| {
-            // Si falla lo mostramos
-            let json_error = ErrorResponse {
-                status: "fail",
-                message: format!("Error fetching user from database: {}", e),
-            };
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(json_error))
-        })?;
+    let user = sqlx::query_as!(
+        UsuarioModelo,
+        "SELECT * FROM usuarios WHERE id = $1",
+        user_id
+    )
+    .fetch_optional(&data.db)
+    .await
+    .map_err(|e| {
+        // Si falla lo mostramos
+        let json_error = ErrorResponse {
+            status: "fail",
+            message: format!("Error fetching user from database: {}", e),
+        };
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(json_error))
+    })?;
 
     // Ultima comprobacion de que el usuario exista o no
     let user = user.ok_or_else(|| {
