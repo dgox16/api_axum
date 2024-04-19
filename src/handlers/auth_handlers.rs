@@ -233,10 +233,10 @@ pub async fn cerrar_sesion_handler(
 // Esta funcion es para mostrar una vista de perfil protegida
 pub async fn obtener_usuario_actual_handler(
     State(data): State<Arc<AppState>>, // Necesitamos el estado global
-    Extension(user): Extension<UsuarioModelo>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
+    Extension(usuario): Extension<UsuarioModelo>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Simplemente devolvemos al usuario con los datos filtrados
-    let usuario_formateado = formatear_usuario(&user, axum::extract::State(data)).await;
+    let usuario_formateado = formatear_usuario(&usuario, axum::extract::State(data)).await;
     match usuario_formateado {
         Ok(usuario) => {
             let respuesta = json!({

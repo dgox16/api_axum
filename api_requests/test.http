@@ -47,8 +47,9 @@ content-type: application/json
 {
   "cp": "38940",
   "colonia": "Centro",
-
-"calle_id": 10000001474,
-"entre_calle_id": 10000001846,
-"y_calle_id": 10000002369,
+  "calle_id": 10000001474,
+  "entre_calle_id": 10000001846,
+  "y_calle_id": 10000002369,
+  "numero_exterior": "18",
+  "numero_interior": "1"
 }

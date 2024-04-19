@@ -16,9 +16,9 @@ use serde::Serialize;
 use std::sync::Arc;
 
 #[derive(Debug, Serialize)]
-pub struct ErrorResponse {
-    pub status: &'static str,
-    pub message: String,
+pub struct ErrorRespuesta {
+    pub estado: &'static str,
+    pub mensaje: String,
 }
 
 pub async fn auth_required(
@@ -26,7 +26,7 @@ pub async fn auth_required(
     State(data): State<Arc<AppState>>,
     mut req: Request<Body>,
     next: Next,
-) -> Result<impl IntoResponse, (StatusCode, Json<ErrorResponse>)> {
+) -> Result<impl IntoResponse, (StatusCode, Json<ErrorRespuesta>)> {
     // Busca el token en las cookies con el nombre de cookies, en caso de encontrarlo lo convierte en String
     let token = cookie_jar
         .get("token")
@@ -47,9 +47,9 @@ pub async fn auth_required(
 
     // Si no hay token, mandamos el error
     let token = token.ok_or_else(|| {
-        let json_error = ErrorResponse {
-            status: "fail",
-            message: "You are not logged in, please provide token".to_string(),
+        let json_error = ErrorRespuesta {
+            estado: "error",
+            mensaje: "Tú no estas logueado, por favor otorga un token".to_string(),
         };
         (StatusCode::UNAUTHORIZED, Json(json_error))
     })?;
@@ -62,51 +62,51 @@ pub async fn auth_required(
     )
     .map_err(|_| {
         // Si falla mandamos un fallo
-        let json_error = ErrorResponse {
-            status: "fail",
-            message: "Invalid token".to_string(),
+        let json_error = ErrorRespuesta {
+            estado: "error",
+            mensaje: "Token invalido".to_string(),
         };
         (StatusCode::UNAUTHORIZED, Json(json_error))
     })?
     .claims;
 
     // Checaremos que este bien formateado el id del usuario
-    let user_id: i32 = claims.sub.parse().map_err(|_| {
-        let json_error = ErrorResponse {
-            status: "fail",
-            message: "Invalid token".to_string(),
+    let usuario_id: i32 = claims.sub.parse().map_err(|_| {
+        let json_error = ErrorRespuesta {
+            estado: "error",
+            mensaje: "Token invalido".to_string(),
         };
         (StatusCode::UNAUTHORIZED, Json(json_error))
     })?;
 
     // Buscamos el usuario en la base de datos
-    let user = sqlx::query_as!(
+    let usuario = sqlx::query_as!(
         UsuarioModelo,
         "SELECT * FROM usuarios WHERE id = $1",
-        user_id
+        usuario_id
     )
     .fetch_optional(&data.db)
     .await
     .map_err(|e| {
         // Si falla lo mostramos
-        let json_error = ErrorResponse {
-            status: "fail",
-            message: format!("Error fetching user from database: {}", e),
+        let json_error = ErrorRespuesta {
+            estado: "error",
+            mensaje: format!("Error con la base de datos: {}", e),
         };
         (StatusCode::INTERNAL_SERVER_ERROR, Json(json_error))
     })?;
 
     // Ultima comprobacion de que el usuario exista o no
-    let user = user.ok_or_else(|| {
-        let json_error = ErrorResponse {
-            status: "fail",
-            message: "The user belonging to this token no longer exists".to_string(),
+    let usuario = usuario.ok_or_else(|| {
+        let json_error = ErrorRespuesta {
+            estado: "error",
+            mensaje: "Este usuario ya no existe".to_string(),
         };
         (StatusCode::UNAUTHORIZED, Json(json_error))
     })?;
 
     // Si todo funciona; guardamos el usuario en la request para que el siguiente handler pueda utilizarlo
-    req.extensions_mut().insert(user);
+    req.extensions_mut().insert(usuario);
     // Se sigue a la siguiente funcion
     Ok(next.run(req).await)
 }
