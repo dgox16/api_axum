@@ -53,3 +53,13 @@ content-type: application/json
   "numero_exterior": "18",
   "numero_interior": "1"
 }
+
+### Crear sucursal
+POST http://localhost:8000/api/sucursal/nueva HTTP/1.1
+content-type: application/json
+
+{
+  "nombre": "Sucursal 2",
+  "encargado": 2,
+  "domicilio": 1  
+}
