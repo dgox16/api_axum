@@ -34,7 +34,7 @@ content-type: application/json
 
 {
   "nombre": "De la Malinche",
-  "tipo": "P1"
+  "tipo": "calle"
 }
 
 ### Buscar calle

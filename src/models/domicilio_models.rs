@@ -1,14 +1,14 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "tipo_calle", rename_all = "UPPERCASE")]
+#[sqlx(type_name = "tipo_calle", rename_all = "lowercase")]
 pub enum TipoCalle {
-    CA,
-    AV,
-    PR,
-    CE,
-    PV,
-    CZ,
+    Calle,
+    Avenida,
+    Prolongacion,
+    Cerrada,
+    Privada,
+    Calzada,
 }
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]

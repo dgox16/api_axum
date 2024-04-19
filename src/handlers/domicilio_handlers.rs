@@ -19,12 +19,12 @@ use crate::{
 
 pub fn formatear_calle(calle: &CalleModelo) -> Result<CalleRespuesta, sqlx::Error> {
     let tipo_calle = match calle.tipo {
-        TipoCalle::CA => "CA",
-        TipoCalle::AV => "AV",
-        TipoCalle::PR => "PR",
-        TipoCalle::CE => "CE",
-        TipoCalle::PV => "PV",
-        TipoCalle::CZ => "CZ",
+        TipoCalle::Calle => "calle",
+        TipoCalle::Avenida => "avenida",
+        TipoCalle::Prolongacion => "prolongacion",
+        TipoCalle::Cerrada => "cerrada",
+        TipoCalle::Privada => "privada",
+        TipoCalle::Calzada => "calzada",
     };
 
     Ok(CalleRespuesta {
@@ -117,13 +117,13 @@ pub async fn crear_nueva_calle_handler(
     Json(body): Json<CrearNuevaCalleSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let tipo_calle = match body.tipo.as_str() {
-        "CA" => TipoCalle::CA,
-        "AV" => TipoCalle::AV,
-        "PR" => TipoCalle::PR,
-        "CE" => TipoCalle::CE,
-        "PV" => TipoCalle::PV,
-        "CZ" => TipoCalle::CZ,
-        _ => TipoCalle::CA,
+        "calle" => TipoCalle::Calle,
+        "avenida" => TipoCalle::Avenida,
+        "prolongacion" => TipoCalle::Prolongacion,
+        "cerrada" => TipoCalle::Cerrada,
+        "privada" => TipoCalle::Privada,
+        "calzada" => TipoCalle::Calzada,
+        _ => TipoCalle::Calle,
     };
 
     let nueva_calle = sqlx::query_as!(
