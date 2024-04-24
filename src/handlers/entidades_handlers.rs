@@ -4,9 +4,9 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
 
 use crate::{
-    models::sucursal_models::{BancoModel, SucursalModel},
-    schemas::sucursal_schemas::{CrearBancoSchema, CrearSucursalSchema},
-    validators::sucursal_validators::validar_nuevo_banco,
+    models::entidades_models::{BancoModel, SucursalModel},
+    schemas::entidades_schemas::{CrearBancoSchema, CrearSucursalSchema},
+    validators::entidades_validators::validar_nuevo_banco,
     AppState,
 };
 

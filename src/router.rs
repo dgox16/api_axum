@@ -4,8 +4,8 @@ use axum::Router;
 
 use crate::{
     routes::{
-        auth_routes::auth_router, domicilio_routes::domicilio_router, poliza_routes::poliza_router,
-        sucursal_routes::sucursal_router, test_routes::test_router,
+        auth_routes::auth_router, entidades_routes::entidades_router, poliza_routes::poliza_router,
+        test_routes::test_router, ubicacion_routes::ubicacion_router,
     },
     AppState,
 };
@@ -14,8 +14,8 @@ use crate::{
 pub fn create_router(app_state: Arc<AppState>) -> Router {
     Router::new()
         .merge(auth_router(app_state.clone()))
-        .merge(domicilio_router(app_state.clone()))
-        .merge(sucursal_router(app_state.clone()))
+        .merge(ubicacion_router(app_state.clone()))
+        .merge(entidades_router(app_state.clone()))
         .merge(poliza_router(app_state.clone()))
         .merge(test_router())
 }

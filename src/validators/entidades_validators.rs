@@ -1,6 +1,6 @@
 use axum::{http::StatusCode, Json};
 
-use crate::schemas::sucursal_schemas::CrearBancoSchema;
+use crate::schemas::entidades_schemas::CrearBancoSchema;
 
 pub fn validar_nuevo_banco(
     body: &CrearBancoSchema,

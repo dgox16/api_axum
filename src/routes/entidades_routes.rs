@@ -3,11 +3,11 @@ use std::sync::Arc;
 use axum::{routing::post, Router};
 
 use crate::{
-    handlers::sucursal_handlers::{crear_nueva_sucursal_handler, crear_nuevo_banco_handler},
+    handlers::entidades_handlers::{crear_nueva_sucursal_handler, crear_nuevo_banco_handler},
     AppState,
 };
 
-pub fn sucursal_router(app_state: Arc<AppState>) -> Router {
+pub fn entidades_router(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route("/api/sucursal/nueva", post(crear_nueva_sucursal_handler))
         .route("/api/banco/nuevo", post(crear_nuevo_banco_handler))

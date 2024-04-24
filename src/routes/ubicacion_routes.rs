@@ -6,13 +6,13 @@ use axum::{
 };
 
 use crate::{
-    handlers::domicilio_handlers::{
+    handlers::ubicacion_handlers::{
         buscar_calle_handler, crear_nueva_calle_handler, crear_nuevo_domicilio_handler,
     },
     AppState,
 };
 
-pub fn domicilio_router(app_state: Arc<AppState>) -> Router {
+pub fn ubicacion_router(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route("/api/calle/nueva", post(crear_nueva_calle_handler))
         .route("/api/calle/buscar/", get(buscar_calle_handler))

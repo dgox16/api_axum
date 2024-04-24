@@ -9,9 +9,9 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    models::domicilio_models::{CalleModelo, DomicilioModel, TipoCalle},
-    responses::domicilio_responses::CalleRespuesta,
-    schemas::domicilio_schemas::{BuscarCalleQuery, CrearCalleSchema, CrearDomicilioSchema},
+    models::ubicacion_models::{CalleModelo, DomicilioModel, TipoCalle},
+    responses::ubicacion_responses::CalleRespuesta,
+    schemas::ubicacion_schemas::{BuscarCalleQuery, CrearCalleSchema, CrearDomicilioSchema},
     AppState,
 };
 
