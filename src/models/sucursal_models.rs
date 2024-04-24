@@ -10,6 +10,6 @@ pub struct SucursalModel {
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct BancoModel {
-    pub id_sucursal: i32,
+    pub id_banco: i32,
     pub nombre: String,
 }

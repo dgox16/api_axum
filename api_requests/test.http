@@ -75,3 +75,11 @@ Content-Type: application/json
   "concepto": "Concepto 4",
   "usuario_elabora": 1
 }
+
+### Crear banco
+POST http://localhost:8000/api/banco/nuevo HTTP/1.1
+content-type: application/json
+
+{
+  "nombre": "Citibanamex"
+}
