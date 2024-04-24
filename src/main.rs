@@ -6,6 +6,7 @@ mod responses;
 mod router;
 mod routes;
 mod schemas;
+mod validators;
 
 use axum::http::{
     header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},

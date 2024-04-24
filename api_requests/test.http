@@ -96,5 +96,5 @@ POST http://localhost:8000/api/banco/nuevo HTTP/1.1
 content-type: application/json
 
 {
-  "nombre": 
+  "nombre": "NU"
 }
