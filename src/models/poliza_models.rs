@@ -45,5 +45,5 @@ pub struct PolizaModelo {
     pub usuario_elabora: i32,
     pub aplicacion: Option<AplicacionPoliza>,
     pub fuente: Option<FuentePoliza>,
-    pub automatico: bool,
+    pub automatico: Option<bool>,
 }

@@ -16,7 +16,7 @@ POST http://localhost:8000/api/auth/inicio_sesion HTTP/1.1
 content-type: application/json
 
 {
-  "usuario": "dgox14",
+  "usuario": "dgox24",
   "contraseña": "123"
 }
 
@@ -62,4 +62,16 @@ content-type: application/json
   "nombre": "Sucursal 2",
   "encargado": 2,
   "domicilio": 1  
+}
+
+### Crear poliza  (Necesario tener una cuenta iniciada)
+POST http://localhost:8000/api/poliza/nueva HTTP/1.1
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzEzNTY0MzQ5LCJleHAiOjE3MTM1Njc5NDl9.heyPAsDDQkr78hThcPCrlwTEevM2vOqHFw6BXGbmS6w
+Content-Type: application/json
+
+{
+  "tipo": "Egreso",
+  "sucursal": 1,
+  "concepto": "Concepto 4",
+  "usuario_elabora": 1
 }
