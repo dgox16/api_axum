@@ -15,9 +15,10 @@ pub async fn crear_nueva_poliza_handler(
     Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearPolizaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let tipo_poliza = body.tipo.clone();
     let nueva_poliza = sqlx::query_as!(
         PolizaModelo, r#"INSERT INTO polizas (tipo, sucursal, concepto, usuario_elabora) VALUES ($1, $2, $3, $4) RETURNING id_poliza,tipo AS "tipo: TipoPoliza",numero,sucursal,fecha_poliza,fecha_registro_poliza,concepto,usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",fuente AS "fuente: FuentePoliza",automatico"#,
-        body.tipo as TipoPoliza,
+        tipo_poliza as TipoPoliza,
         body.sucursal,
         body.concepto.to_string(),
         usuario.id
@@ -31,6 +32,10 @@ pub async fn crear_nueva_poliza_handler(
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
+
+    if body.tipo == TipoPoliza::Egreso {
+        println!("Es de egreso")
+    }
 
     let respuesta = json!({
         "estado": "exitoso",

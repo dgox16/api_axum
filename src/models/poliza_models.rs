@@ -47,3 +47,11 @@ pub struct PolizaModelo {
     pub fuente: Option<FuentePoliza>,
     pub automatico: Option<bool>,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct PolizaEgresoModelo {
+    pub id_poliza_egreso: i32,
+    pub beneficiario: String,
+    pub banco: i32,
+    pub cheque: String,
+}

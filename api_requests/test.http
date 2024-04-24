@@ -66,14 +66,13 @@ content-type: application/json
 
 ### Crear poliza  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva HTTP/1.1
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzEzNTY0MzQ5LCJleHAiOjE3MTM1Njc5NDl9.heyPAsDDQkr78hThcPCrlwTEevM2vOqHFw6BXGbmS6w
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzEzOTc0MDY2LCJleHAiOjE3MTM5Nzc2NjZ9.KnXAqAyr-q7MKVBoEPJCns01gyEEMFt46VmbE2E1Mi4
 Content-Type: application/json
 
 {
   "tipo": "Egreso",
   "sucursal": 1,
-  "concepto": "Concepto 4",
-  "usuario_elabora": 1
+  "concepto": "Concepto 8"
 }
 
 ### Crear banco
