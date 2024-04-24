@@ -11,9 +11,7 @@ use serde_json::json;
 use crate::{
     models::domicilio_models::{CalleModelo, DomicilioModel, TipoCalle},
     responses::domicilio_responses::CalleRespuesta,
-    schemas::domicilio_schemas::{
-        BuscarCalleQuery, CrearNuevaCalleSchema, CrearNuevoDomicilioSchema,
-    },
+    schemas::domicilio_schemas::{BuscarCalleQuery, CrearCalleSchema, CrearDomicilioSchema},
     AppState,
 };
 
@@ -114,7 +112,7 @@ pub async fn buscar_calle_handler(
 
 pub async fn crear_nueva_calle_handler(
     State(data): State<Arc<AppState>>,
-    Json(body): Json<CrearNuevaCalleSchema>,
+    Json(body): Json<CrearCalleSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let tipo_calle = match body.tipo.as_str() {
         "calle" => TipoCalle::Calle,
@@ -163,7 +161,7 @@ pub async fn crear_nueva_calle_handler(
 
 pub async fn crear_nuevo_domicilio_handler(
     State(data): State<Arc<AppState>>,
-    Json(body): Json<CrearNuevoDomicilioSchema>,
+    Json(body): Json<CrearDomicilioSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let nuevo_domicilio = sqlx::query_as!(
         DomicilioModel,

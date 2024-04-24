@@ -1,9 +1,9 @@
 use axum::{http::StatusCode, Json};
 
-use crate::schemas::sucursal_schemas::NuevoBancoSchema;
+use crate::schemas::sucursal_schemas::CrearBancoSchema;
 
-pub fn validar_nuevo_banco_schema(
-    body: &NuevoBancoSchema,
+pub fn validar_nuevo_banco(
+    body: &CrearBancoSchema,
 ) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
     if body.nombre.trim().is_empty() {
         let respuesta_error = serde_json::json!({

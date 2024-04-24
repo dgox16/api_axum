@@ -3,7 +3,7 @@ use serde::Deserialize;
 use crate::models::poliza_models::TipoPoliza;
 
 #[derive(Deserialize)]
-pub struct PolizaEgresoSchema {
+pub struct CrearPolizaEgresoSchema {
     pub beneficiario: String,
     pub banco: i32,
     pub cheque: String,
@@ -14,5 +14,5 @@ pub struct CrearPolizaSchema {
     pub tipo: TipoPoliza,
     pub sucursal: i32,
     pub concepto: String,
-    pub poliza_egreso: Option<PolizaEgresoSchema>,
+    pub poliza_egreso: Option<CrearPolizaEgresoSchema>,
 }

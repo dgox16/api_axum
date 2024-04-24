@@ -1,7 +1,7 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
-pub struct CrearNuevaCalleSchema {
+pub struct CrearCalleSchema {
     pub nombre: String,
     pub tipo: String,
 }
@@ -13,7 +13,7 @@ pub struct BuscarCalleQuery {
 }
 
 #[derive(Deserialize)]
-pub struct CrearNuevoDomicilioSchema {
+pub struct CrearDomicilioSchema {
     pub cp: String,
     pub colonia: String,
     pub calle_id: i64,
