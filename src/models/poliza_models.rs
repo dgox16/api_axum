@@ -51,6 +51,7 @@ pub struct PolizaModelo {
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct PolizaEgresoModelo {
     pub id_poliza_egreso: i32,
+    pub poliza: i32,
     pub beneficiario: String,
     pub banco: i32,
     pub cheque: String,

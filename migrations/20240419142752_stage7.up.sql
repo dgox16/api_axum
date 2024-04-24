@@ -31,5 +31,8 @@ CREATE TABLE polizas (
     usuario_elabora INTEGER NOT NULL,
     aplicacion aplicacion_poliza DEFAULT 'normal',
     fuente fuente_poliza DEFAULT 'operacion',
-    automatico BOOLEAN DEFAULT FALSE
+    automatico BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (sucursal) REFERENCES sucursales(id_sucursal) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario_elabora) REFERENCES usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario_autoriza) REFERENCES usuarios(id) ON DELETE RESTRICT
 )
