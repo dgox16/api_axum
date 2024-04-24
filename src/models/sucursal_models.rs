@@ -7,3 +7,9 @@ pub struct SucursalModel {
     pub encargado: i32,
     pub domicilio: i32,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct BancoModel {
+    pub id_sucursal: i32,
+    pub nombre: String,
+}
