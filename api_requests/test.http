@@ -59,7 +59,7 @@ POST http://localhost:8000/api/sucursal/nueva HTTP/1.1
 content-type: application/json
 
 {
-  "nombre": "Sucursal 2",
+  "nombre": "Sucursal 3",
   "encargado": 2,
   "domicilio": 1  
 }
@@ -70,7 +70,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0I
 Content-Type: application/json
 
 {
-  "tipo": "Diario",
+  "tipo": "Diarixo",
   "sucursal": 1,
   "concepto": "Concepto 11"
 }

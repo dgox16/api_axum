@@ -6,7 +6,7 @@ use serde_json::json;
 use crate::{
     models::entidades_models::{BancoModel, SucursalModel},
     schemas::entidades_schemas::{CrearBancoSchema, CrearSucursalSchema},
-    validators::entidades_validators::validar_nuevo_banco,
+    validators::entidades_validators::{validar_nueva_sucursal, validar_nuevo_banco},
     AppState,
 };
 
@@ -14,6 +14,7 @@ pub async fn crear_nueva_sucursal_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearSucursalSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_sucursal(&body)?;
     let nueva_sucursal = sqlx::query_as!(
         SucursalModel,
         "INSERT INTO sucursales (nombre, encargado, domicilio) VALUES ($1,$2,$3) RETURNING *",
