@@ -180,7 +180,8 @@ pub async fn inicio_sesion_handler(
     let fecha_actual = chrono::Utc::now();
     let iat = fecha_actual.timestamp() as usize;
     // El token sera valido por 60 min
-    let exp = (fecha_actual + chrono::Duration::minutes(60)).timestamp() as usize;
+    let exp =
+        (fecha_actual + chrono::Duration::minutes(data.env.jwt_expira_en)).timestamp() as usize;
     let claims: TokenClaims = TokenClaims {
         sub: usuario_encontrado.id.to_string(), // Guardamos el usuario tambien en el token
         exp,
@@ -191,14 +192,14 @@ pub async fn inicio_sesion_handler(
     let token = encode(
         &Header::default(),
         &claims,
-        &EncodingKey::from_secret(data.env.jwt_secret.as_ref()),
+        &EncodingKey::from_secret(data.env.jwt_secreto.as_ref()),
     )
     .unwrap();
 
     // Crearemos una cookie con el token que durara una hora
     let cookie = Cookie::build(("token", token.to_owned()))
         .path("/")
-        .max_age(time::Duration::hours(1))
+        .max_age(time::Duration::minutes(data.env.jwt_expira_en))
         .same_site(SameSite::None)
         .secure(true)
         .http_only(true);

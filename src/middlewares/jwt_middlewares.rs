@@ -57,7 +57,7 @@ pub async fn auth_required(
     // Decodificamos el token
     let claims = decode::<TokenClaims>(
         &token,
-        &DecodingKey::from_secret(data.env.jwt_secret.as_ref()),
+        &DecodingKey::from_secret(data.env.jwt_secreto.as_ref()),
         &Validation::default(),
     )
     .map_err(|_| {
