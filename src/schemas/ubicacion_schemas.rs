@@ -1,9 +1,11 @@
 use serde::Deserialize;
 
+use crate::models::ubicacion_models::TipoCalle;
+
 #[derive(Deserialize)]
 pub struct CrearCalleSchema {
     pub nombre: String,
-    pub tipo: String,
+    pub tipo: TipoCalle,
 }
 
 #[derive(Deserialize)]

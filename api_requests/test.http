@@ -33,12 +33,12 @@ POST http://localhost:8000/api/calle/nueva HTTP/1.1
 content-type: application/json
 
 {
-  "nombre": "De la Malinche",
-  "tipo": "calle"
+  "nombre": "Contadero",
+  "tipo": "Privada"
 }
 
 ### Buscar calle
-GET http://localhost:8000/api/calle/buscar/?palabra=roble&limite=3 HTTP/1.1
+GET http://localhost:8000/api/calle/buscar/?palabra=privada&limite=50 HTTP/1.1
 
 ### Crear domicilio
 POST http://localhost:8000/api/domicilio/nuevo HTTP/1.1

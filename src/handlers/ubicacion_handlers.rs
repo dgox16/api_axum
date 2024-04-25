@@ -10,27 +10,9 @@ use serde_json::json;
 
 use crate::{
     models::ubicacion_models::{CalleModelo, DomicilioModel, TipoCalle},
-    responses::ubicacion_responses::CalleRespuesta,
     schemas::ubicacion_schemas::{BuscarCalleQuery, CrearCalleSchema, CrearDomicilioSchema},
     AppState,
 };
-
-pub fn formatear_calle(calle: &CalleModelo) -> Result<CalleRespuesta, sqlx::Error> {
-    let tipo_calle = match calle.tipo {
-        TipoCalle::Calle => "calle",
-        TipoCalle::Avenida => "avenida",
-        TipoCalle::Prolongacion => "prolongacion",
-        TipoCalle::Cerrada => "cerrada",
-        TipoCalle::Privada => "privada",
-        TipoCalle::Calzada => "calzada",
-    };
-
-    Ok(CalleRespuesta {
-        id_calle: calle.id_calle.to_string(),
-        nombre: calle.nombre.clone(),
-        tipo: tipo_calle.to_string(),
-    })
-}
 
 pub async fn buscar_calle_handler(
     State(data): State<Arc<AppState>>,
@@ -55,21 +37,9 @@ pub async fn buscar_calle_handler(
                 (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
             })?;
 
-            let calles_formateadas: Vec<CalleRespuesta> = calles_encontradas
-                .into_iter()
-                .map(|calle| formatear_calle(&calle))
-                .collect::<Result<_, _>>()
-                .map_err(|e| {
-                    let respuesta_error = serde_json::json!({
-                        "estado": "error",
-                        "mensaje": format!("Fallo con las calles encontradas: {}", e),
-                    });
-                    (StatusCode::CONFLICT, Json(respuesta_error))
-                })?;
-
             let respuesta = json!({
                 "status": "exitoso",
-                "data": calles_formateadas
+                "data": calles_encontradas
             });
             Ok(Json(respuesta))
         }
@@ -89,23 +59,11 @@ pub async fn buscar_calle_handler(
                 (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
             })?;
 
-            let calles_formateadas: Vec<CalleRespuesta> = calles_encontradas
-                .into_iter()
-                .map(|calle| formatear_calle(&calle))
-                .collect::<Result<_, _>>()
-                .map_err(|e| {
-                    let respuesta_error = serde_json::json!({
-                        "estado": "error",
-                        "mensaje": format!("Fallo con las calles encontradas: {}", e),
-                    });
-                    (StatusCode::CONFLICT, Json(respuesta_error))
-                })?;
-
-            let response = json!({
+            let respuesta = json!({
                 "status": "success",
-                "data": calles_formateadas
+                "data": calles_encontradas
             });
-            Ok(Json(response))
+            Ok(Json(respuesta))
         }
     }
 }
@@ -114,21 +72,11 @@ pub async fn crear_nueva_calle_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearCalleSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let tipo_calle = match body.tipo.as_str() {
-        "calle" => TipoCalle::Calle,
-        "avenida" => TipoCalle::Avenida,
-        "prolongacion" => TipoCalle::Prolongacion,
-        "cerrada" => TipoCalle::Cerrada,
-        "privada" => TipoCalle::Privada,
-        "calzada" => TipoCalle::Calzada,
-        _ => TipoCalle::Calle,
-    };
-
     let nueva_calle = sqlx::query_as!(
         CalleModelo,
         r#"INSERT INTO calles (nombre, tipo) VALUES ($1, $2) RETURNING id_calle,nombre,tipo AS "tipo: TipoCalle""#,
         body.nombre.to_string(),
-        tipo_calle as TipoCalle
+        body.tipo as TipoCalle
     )
     .fetch_one(&data.db)
     .await
@@ -140,23 +88,11 @@ pub async fn crear_nueva_calle_handler(
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
-    let calle_formateada = formatear_calle(&nueva_calle);
-    match calle_formateada {
-        Ok(calle) => {
-            let respuesta = json!({
-                "estado": "exitoso",
-                "data":calle
-            });
-            Ok(Json(respuesta))
-        }
-        Err(e) => {
-            let respuesta_error = serde_json::json!({
-                "estado": "error",
-                "mensaje": format!("Fallo con la nueva calle: {}", e),
-            });
-            Err((StatusCode::CONFLICT, Json(respuesta_error)))
-        }
-    }
+    let respuesta = json!({
+        "estado": "exitoso",
+        "data":nueva_calle
+    });
+    Ok(Json(respuesta))
 }
 
 pub async fn crear_nuevo_domicilio_handler(
