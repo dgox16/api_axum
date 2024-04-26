@@ -4,7 +4,7 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
 
 use crate::{
-    models::entidades_models::{BancoModel, SucursalModel},
+    models::entidades_models::{BancoModelo, SucursalModelo},
     schemas::entidades_schemas::{CrearBancoSchema, CrearSucursalSchema},
     validators::entidades_validators::{validar_nueva_sucursal, validar_nuevo_banco},
     AppState,
@@ -16,7 +16,7 @@ pub async fn crear_nueva_sucursal_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     validar_nueva_sucursal(&body)?;
     let nueva_sucursal = sqlx::query_as!(
-        SucursalModel,
+        SucursalModelo,
         "INSERT INTO sucursales (nombre, encargado, domicilio) VALUES ($1,$2,$3) RETURNING *",
         body.nombre,
         body.encargado,
@@ -44,7 +44,7 @@ pub async fn crear_nuevo_banco_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     validar_nuevo_banco(&body)?;
     let nuevo_banco = sqlx::query_as!(
-        BancoModel,
+        BancoModelo,
         "INSERT INTO bancos (nombre) VALUES ($1) RETURNING *",
         body.nombre.to_string()
     )
