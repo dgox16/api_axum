@@ -16,7 +16,7 @@ pub struct BancoModelo {
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
 #[sqlx(type_name = "clasificacion_cuenta", rename_all = "lowercase")]
-pub enum ClasificacionCuentq {
+pub enum ClasificacionCuenta {
     Capitulo,
     Subcapitulo,
     Mayor,
@@ -56,7 +56,7 @@ pub struct CuentaModelo {
     pub cuenta: String,
     pub cuenta_siti: String,
     pub nombre: String,
-    pub clasificacion: Option<ClasificacionCuentq>,
+    pub clasificacion: Option<ClasificacionCuenta>,
     pub grupo: Option<GrupoCuenta>,
     pub finalidad: Option<FinalidadCuenta>,
     pub naturaleza: Option<NaturalezaCuenta>,
