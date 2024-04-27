@@ -1,0 +1,18 @@
+
+### Crear banco
+POST http://localhost:8000/api/banco/nuevo HTTP/1.1
+content-type: application/json
+
+{
+  "nombre": "NU"
+}
+
+### Crear sucursal
+POST http://localhost:8000/api/sucursal/nueva HTTP/1.1
+content-type: application/json
+
+{
+  "nombre": "Sucursal 3",
+  "encargado": 2,
+  "domicilio": 1  
+}
