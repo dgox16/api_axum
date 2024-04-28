@@ -36,15 +36,15 @@ pub enum FuentePoliza {
 pub struct PolizaModelo {
     pub id_poliza: i32,
     pub tipo: TipoPoliza,
-    pub numero: Option<i32>,
+    pub numero: i32,
     pub sucursal: i32,
     pub fecha_poliza: Option<DateTime<Utc>>,
     pub fecha_registro_poliza: Option<DateTime<Utc>>,
     pub concepto: String,
-    pub usuario_autoriza: Option<i32>,
+    pub usuario_autoriza: i32,
     pub usuario_elabora: i32,
-    pub aplicacion: Option<AplicacionPoliza>,
-    pub fuente: Option<FuentePoliza>,
+    pub aplicacion: AplicacionPoliza,
+    pub fuente: FuentePoliza,
     pub automatico: Option<bool>,
 }
 

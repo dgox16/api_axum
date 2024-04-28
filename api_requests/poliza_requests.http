@@ -1,26 +1,28 @@
 ### Crear poliza  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva HTTP/1.1
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzEzOTk4NDQwLCJleHAiOjE3MTQwMDIwNDB9.Ihs5AqCcXmaUa181-3xZl3Z8bSRLEuZ9EgE_oJl8iYE
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0MjU3NjU2LCJleHAiOjE3MTQyNzU2NTZ9.iDpZmmSrbcCgdXd1azuOlnoI1nz2Ym0KjPNVODOwy4o
 Content-Type: application/json
 
 {
-  "tipo": "Diarixo",
+  "tipo": "Diario",
   "sucursal": 1,
-  "concepto": "Concepto 11"
+  "concepto": "Concepto 11",
+  "numero":20
 }
 
 ### Crear poliza de tipo egreso  (Necesario tener una cuenta iniciada y enviar los datos de una poliza de egreso)
 POST http://localhost:8000/api/poliza/nueva HTTP/1.1
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzEzOTk4NDQwLCJleHAiOjE3MTQwMDIwNDB9.Ihs5AqCcXmaUa181-3xZl3Z8bSRLEuZ9EgE_oJl8iYE
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0MjU3NjU2LCJleHAiOjE3MTQyNzU2NTZ9.iDpZmmSrbcCgdXd1azuOlnoI1nz2Ym0KjPNVODOwy4o
 Content-Type: application/json
 
 {
   "tipo": "Egreso",
   "sucursal": 1,
   "concepto": "Concepto 11",
+  "fuente": "Pasiva",
   "poliza_egreso": {
     "beneficiario": "Beneficiario 4",
-    "banco": 8,
+    "banco": 1,
     "cheque": "Cheque 1"
   }
 }

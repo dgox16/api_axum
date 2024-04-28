@@ -107,12 +107,20 @@ async fn crear_poliza(
     body: &CrearPolizaSchema,
 ) -> Result<PolizaModelo, (StatusCode, Json<serde_json::Value>)> {
     let tipo = body.tipo.clone();
+    let numero = body.numero.unwrap_or(1);
+    let aplicacion = <std::option::Option<AplicacionPoliza> as Clone>::clone(&body.aplicacion)
+        .unwrap_or(AplicacionPoliza::Normal);
+    let fuente = <std::option::Option<FuentePoliza> as Clone>::clone(&body.fuente).unwrap_or(FuentePoliza::Operacion);
     let poliza_result = sqlx::query_as!(
-        PolizaModelo, r#"INSERT INTO polizas (tipo, sucursal, concepto, usuario_elabora) VALUES ($1, $2, $3, $4) RETURNING id_poliza,tipo AS "tipo: TipoPoliza",numero,sucursal,fecha_poliza,fecha_registro_poliza,concepto,usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",fuente AS "fuente: FuentePoliza",automatico"#,
+        PolizaModelo, r#"INSERT INTO polizas (tipo, numero, sucursal, concepto, usuario_autoriza, usuario_elabora, aplicacion,fuente) VALUES ($1, $2, $3, $4, $5, $6,$7,$8) RETURNING id_poliza,tipo AS "tipo: TipoPoliza",numero,sucursal,fecha_poliza,fecha_registro_poliza,concepto,usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",fuente AS "fuente: FuentePoliza",automatico"#,
         tipo as TipoPoliza,
+        numero,
         body.sucursal,
         body.concepto.to_string(),
-        usuario_id
+        usuario_id,
+        usuario_id, 
+        aplicacion as AplicacionPoliza,
+        fuente as FuentePoliza
     )
     .fetch_one(&data.db)
     .await;
