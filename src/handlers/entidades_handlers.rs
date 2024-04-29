@@ -41,6 +41,18 @@ pub async fn crear_nueva_sucursal_handler(
     });
     Ok(Json(respuesta))
 }
+
+// pub async fn crear_nuevo_proveedor_handler(
+//     State(data): State<Arc<AppState>>,
+//     Json(body): Json<CrearProveedorSchema>
+// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>{
+
+//     let respuesta = json!({
+//         "estado": "exitoso",
+//     });
+//     Ok(Json(respuesta))
+// }
+
 pub async fn crear_nuevo_banco_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearBancoSchema>,

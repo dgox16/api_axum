@@ -14,6 +14,15 @@ pub struct BancoModelo {
     pub nombre: String,
 }
 
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct ProveedorModelo {
+    pub id_proveedor: i32,
+    pub nombre: String,
+    pub domiclio: i32,
+    pub rfc: String,
+    pub curp: String,
+}
+
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
 #[sqlx(type_name = "clasificacion_cuenta", rename_all = "lowercase")]
 pub enum ClasificacionCuenta {
