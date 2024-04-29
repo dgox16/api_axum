@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 
+// MODELOS DE SUCURSALES
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct SucursalModelo {
     pub id_sucursal: i32,
@@ -8,10 +9,28 @@ pub struct SucursalModelo {
     pub domicilio: i32,
 }
 
+// MODELOS DE BANCOS
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct BancoModelo {
     pub id_banco: i32,
     pub nombre: String,
+}
+
+// MODELOS DE PROVEEDOR
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "tipo_proveedor", rename_all = "lowercase")]
+pub enum TipoProveedor {
+    Nacional,
+    Extranjera,
+    Global,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "operacion_proveedor", rename_all = "lowercase")]
+pub enum OperacionProveedor {
+    ServiciosProfesionales,
+    Arrendamiento,
+    Otros,
 }
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
@@ -21,8 +40,18 @@ pub struct ProveedorModelo {
     pub domiclio: i32,
     pub rfc: String,
     pub curp: String,
+    pub telefono: String,
+    pub tipo: TipoProveedor,
+    pub operacion: OperacionProveedor,
+    pub regimen: String,
+    pub nombre_extranjero: Option<String>,
+    pub pais_residencia: i32,
+    pub pais_nacimiento: i32,
+    pub banco: i32,
+    pub cuenta_clabe: String,
 }
 
+// MODELOS DE CUENTAS
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
 #[sqlx(type_name = "clasificacion_cuenta", rename_all = "lowercase")]
 pub enum ClasificacionCuenta {
