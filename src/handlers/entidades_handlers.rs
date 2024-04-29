@@ -5,10 +5,9 @@ use serde_json::json;
 
 use crate::{
     models::entidades_models::{
-        BancoModelo, ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta,
-        NaturalezaCuenta, SucursalModelo,
+        BancoModelo, ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta, NaturalezaCuenta, OperacionProveedor, ProveedorModelo, SucursalModelo, TipoProveedor
     },
-    schemas::entidades_schemas::{CrearBancoSchema, CrearCuentaSchema, CrearSucursalSchema},
+    schemas::entidades_schemas::{CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema},
     validators::entidades_validators::{validar_nueva_sucursal, validar_nuevo_banco},
     AppState,
 };
@@ -42,16 +41,48 @@ pub async fn crear_nueva_sucursal_handler(
     Ok(Json(respuesta))
 }
 
-// pub async fn crear_nuevo_proveedor_handler(
-//     State(data): State<Arc<AppState>>,
-//     Json(body): Json<CrearProveedorSchema>
-// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>{
+pub async fn crear_nuevo_proveedor_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearProveedorSchema>
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>{
+    let tipo = body.tipo.unwrap_or(TipoProveedor::Nacional);
+    let operacion = body.operacion.unwrap_or(OperacionProveedor::ServiciosProfesionales);
+    let pais_residencia = body.pais_residencia.unwrap_or(1);
+    let pais_nacimiento = body.pais_nacimiento.unwrap_or(1);
 
-//     let respuesta = json!({
-//         "estado": "exitoso",
-//     });
-//     Ok(Json(respuesta))
-// }
+    let nuevo_proveedor = sqlx::query_as!(
+        ProveedorModelo,
+        r#"INSERT INTO proveedores (nombre, domicilio, rfc, curp, telefono, tipo, operacion, regimen, nombre_extranjero, pais_residencia, pais_nacimiento, banco, cuenta_clabe) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id_proveedor, nombre, domicilio, rfc, curp, telefono, tipo AS "tipo: TipoProveedor", operacion AS "operacion: OperacionProveedor", regimen, nombre_extranjero, pais_residencia, pais_nacimiento, banco, cuenta_clabe"#,
+        body.nombre,
+        body.domicilio,
+        body.rfc,
+        body.curp,
+        body.telefono,
+        tipo as TipoProveedor,
+        operacion as OperacionProveedor,
+        body.regimen,
+        body.nombre_extranjero,
+        pais_residencia,
+        pais_nacimiento,
+        body.banco,
+        body.cuenta_clabe
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = json!({
+        "estado": "exitoso",
+        "data": nuevo_proveedor
+    });
+    Ok(Json(respuesta))
+}
 
 pub async fn crear_nuevo_banco_handler(
     State(data): State<Arc<AppState>>,

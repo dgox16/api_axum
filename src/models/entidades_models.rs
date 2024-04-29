@@ -26,7 +26,7 @@ pub enum TipoProveedor {
 }
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "operacion_proveedor", rename_all = "lowercase")]
+#[sqlx(type_name = "operacion_proveedor", rename_all = "snake_case")]
 pub enum OperacionProveedor {
     ServiciosProfesionales,
     Arrendamiento,
@@ -37,7 +37,7 @@ pub enum OperacionProveedor {
 pub struct ProveedorModelo {
     pub id_proveedor: i32,
     pub nombre: String,
-    pub domiclio: i32,
+    pub domicilio: i32,
     pub rfc: String,
     pub curp: String,
     pub telefono: String,

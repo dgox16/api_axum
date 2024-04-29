@@ -1,7 +1,8 @@
 use serde::Deserialize;
 
 use crate::models::entidades_models::{
-    ClasificacionCuenta, FinalidadCuenta, GrupoCuenta, NaturalezaCuenta,
+    ClasificacionCuenta, FinalidadCuenta, GrupoCuenta, NaturalezaCuenta, OperacionProveedor,
+    TipoProveedor,
 };
 
 #[derive(Deserialize)]
@@ -14,6 +15,23 @@ pub struct CrearSucursalSchema {
 #[derive(Deserialize)]
 pub struct CrearBancoSchema {
     pub nombre: String,
+}
+
+#[derive(Deserialize)]
+pub struct CrearProveedorSchema {
+    pub nombre: String,
+    pub domicilio: i32,
+    pub rfc: String,
+    pub curp: String,
+    pub telefono: String,
+    pub tipo: Option<TipoProveedor>,
+    pub operacion: Option<OperacionProveedor>,
+    pub regimen: String,
+    pub nombre_extranjero: Option<String>,
+    pub pais_residencia: Option<i32>,
+    pub pais_nacimiento: Option<i32>,
+    pub banco: i32,
+    pub cuenta_clabe: String,
 }
 
 #[derive(Deserialize)]

@@ -17,6 +17,22 @@ content-type: application/json
   "domicilio": 1  
 }
 
+### Crear Proveedor
+POST http://localhost:8000/api/proveedor/nuevo HTTP/1.1
+content-type: application/json
+
+{
+  "nombre": "Proveedor 1",
+  "domicilio": 1,
+  "rfc":"GOSDMDMAD",
+  "curp": "GFOMSAADSA",
+  "telefono": "4411313323",
+  "tipo": "Global",
+  "regimen": "Regimen 1",
+  "banco": 1,
+  "cuenta_clabe": "ASDASDASDAS"
+}
+
 ### Crear una cuenta
 POST http://localhost:8000/api/cuenta/nueva HTTP/1.1
 Content-Type: application/json
