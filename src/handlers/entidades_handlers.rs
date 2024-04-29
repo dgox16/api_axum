@@ -72,28 +72,37 @@ pub async fn crear_nueva_cuenta_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearCuentaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let clasificacion = body.clasificacion.unwrap_or(ClasificacionCuenta::Capitulo);
+    let grupo = body.grupo.unwrap_or(GrupoCuenta::Activo);
+    let finalidad = body.finalidad.unwrap_or(FinalidadCuenta::Otros);
+    let naturaleza = body.naturaleza.unwrap_or(NaturalezaCuenta::Deudora);
+    let afectable = body.afectable.unwrap_or(false);
+    let en_balance = body.en_balance.unwrap_or(false);
+    let subcuenta_siti = body.subcuenta_siti.unwrap_or(false);
+    let prorrateo = body.prorrateo.unwrap_or(false);
+
     let nueva_cuenta = sqlx::query_as!(
         CuentaModelo, 
         r#"INSERT INTO cuentas (cuenta,cuenta_siti,nombre,clasificacion,grupo,finalidad,naturaleza,afectable,padre,nivel,en_balance,en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,orden_siti,subcuenta_siti,prorrateo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING id_cuenta, cuenta,cuenta_siti,nombre,clasificacion AS "clasificacion: ClasificacionCuenta",grupo AS "grupo: GrupoCuenta",finalidad AS "finalidad: FinalidadCuenta",naturaleza AS "naturaleza: NaturalezaCuenta",afectable,padre,nivel,en_balance,en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,orden_siti,subcuenta_siti,prorrateo"#,
         body.cuenta,
         body.cuenta_siti,
         body.nombre,
-        body.clasificacion as Option<ClasificacionCuenta>,
-        body.grupo as Option<GrupoCuenta>,
-        body.finalidad as Option<FinalidadCuenta>,
-        body.naturaleza as Option<NaturalezaCuenta>,
-        body.afectable,
+        clasificacion as ClasificacionCuenta,
+        grupo as GrupoCuenta,
+        finalidad as FinalidadCuenta,
+        naturaleza as NaturalezaCuenta,
+        afectable,
         body.padre,
         body.nivel,
-        body.en_balance,
+        en_balance,
         body.en_catalogo_minimo,
         body.nombre_balance,
         body.nombre_siti,
         body.cuenta_padre_siti,
         body.cuenta_agrupar,
         body.orden_siti,
-        body.subcuenta_siti,
-        body.prorrateo
+        subcuenta_siti,
+        prorrateo
     )
     .fetch_one(&data.db)
     .await

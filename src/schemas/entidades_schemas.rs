@@ -29,7 +29,7 @@ pub struct CrearCuentaSchema {
     pub padre: String,
     pub nivel: i32,
     pub en_balance: Option<bool>,
-    pub en_catalogo_minimo: bool,
+    pub en_catalogo_minimo: Option<bool>,
     pub nombre_balance: String,
     pub nombre_siti: String,
     pub cuenta_padre_siti: String,

@@ -16,3 +16,23 @@ content-type: application/json
   "encargado": 2,
   "domicilio": 1  
 }
+
+### Crear una cuenta
+POST http://localhost:8000/api/cuenta/nueva HTTP/1.1
+Content-Type: application/json
+
+{
+  "cuenta": "123213412",
+  "cuenta_siti": "c_siti1",
+  "nombre": "cuenta 2 ",
+  "clasificacion": "Capitulo",
+  "padre": "padre 1",
+  "nivel": 1,
+  "en_catalogo_minimo": true,
+  "nombre_balance": "nombre balance 1",
+  "nombre_siti": "nombre siti 1",
+  "cuenta_padre_siti": "cuenta padre siti 1",
+  "cuenta_agrupar": "cuenta agrupar 1",
+  "orden_siti": 123,
+  "prorrateo": true
+}
