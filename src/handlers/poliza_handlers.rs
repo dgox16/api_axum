@@ -6,13 +6,76 @@ use crate::{
         },
         user_models::UsuarioModelo,
     },
-    schemas::poliza_schema::{CrearDetallePolizaSchema, CrearPolizaSchema},
+    schemas::poliza_schema::{BuscarPolizaQuery, CrearDetallePolizaSchema, CrearPolizaSchema},
     validators::poliza_validators::validar_nueva_poliza_egreso,
     AppState,
 };
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
+use axum::{
+    extract::{Query, State},
+    http::StatusCode,
+    response::IntoResponse,
+    Extension, Json,
+};
 use serde_json::json;
 use std::sync::Arc;
+
+pub async fn buscar_polizas_hanlder(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarPolizaQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let limite = query.limite.unwrap_or(20);
+    match query.concepto {
+        Some(concepto) => {
+            let polizas_encontradas = sqlx::query_as!(
+                PolizaModelo,
+                r#"SELECT id_poliza,tipo AS "tipo: TipoPoliza",numero,
+                sucursal,fecha_poliza,fecha_registro_poliza,concepto,
+                usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",
+                fuente AS "fuente: FuentePoliza",automatico 
+                FROM polizas WHERE concepto ILIKE '%' || $1 || '%' LIMIT $2"#,
+                concepto,
+                limite
+            )
+            .fetch_all(&data.db)
+            .await
+            .map_err(|e| {
+                let respuesta_error = serde_json::json!({
+                    "estado": "error",
+                    "mensaje": format!("Error en la base de datos: {}", e),
+                });
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+            })?;
+
+            let respuesta = json!({
+                "status": "exitoso",
+                "data": polizas_encontradas
+            });
+            Ok(Json(respuesta))
+        }
+        None =>{
+            let polizas_encontradas = sqlx::query_as!(PolizaModelo, 
+                r#"SELECT id_poliza,tipo AS "tipo: TipoPoliza",numero,sucursal,fecha_poliza,fecha_registro_poliza,concepto,
+        usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",fuente AS "fuente: FuentePoliza",automatico FROM polizas LIMIT $1"#,
+                limite
+            )
+            .fetch_all(&data.db)
+            .await
+            .map_err(|e| {
+                let respuesta_error = serde_json::json!({
+                    "estado": "error",
+                    "mensaje": format!("Error en la base de datos: {}", e),
+                });
+                (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+            })?;
+
+            let respuesta = json!({
+                "status": "exitoso",
+                "data": polizas_encontradas
+            });
+            Ok(Json(respuesta))
+        }
+    }
+}
 
 pub async fn crear_nueva_poliza_handler(
     State(data): State<Arc<AppState>>,

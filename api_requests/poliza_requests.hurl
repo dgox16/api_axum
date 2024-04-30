@@ -97,3 +97,7 @@ Content-Type: application/json
     }
   ]
 }
+
+# Buscar polizas por concepto y con la posibilidad de escoger el limite 
+GET http://localhost:8000/api/poliza/buscar?limite=7
+

@@ -21,6 +21,12 @@ pub struct CrearDetallePolizaSchema {
 }
 
 #[derive(Deserialize)]
+pub struct BuscarPolizaQuery {
+    pub concepto: Option<String>,
+    pub limite: Option<i64>,
+}
+
+#[derive(Deserialize)]
 pub struct CrearPolizaSchema {
     pub tipo: TipoPoliza,
     pub numero: Option<i32>,

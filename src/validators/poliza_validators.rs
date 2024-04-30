@@ -9,7 +9,7 @@ pub async fn validar_nueva_poliza_egreso(
     poliza_egreso: &CrearPolizaEgresoSchema,
 ) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
     // Verificar que el campo de beneficiario no esté vacío
-    if poliza_egreso.beneficiario.is_empty() {
+    if poliza_egreso.beneficiario.trim().is_empty() {
         let respuesta_error = serde_json::json!({
             "estado": "error",
             "mensaje": "El campo de beneficiario no puede estar vacío",
@@ -40,7 +40,7 @@ pub async fn validar_nueva_poliza_egreso(
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
 
-    if poliza_egreso.cheque.is_empty() {
+    if poliza_egreso.cheque.trim().is_empty() {
         let respuesta_error = serde_json::json!({
             "estado": "error",
             "mensaje": "El campo de cheque no puede estar vacío",

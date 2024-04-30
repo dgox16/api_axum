@@ -14,7 +14,7 @@ use crate::{
     AppState,
 };
 
-pub async fn buscar_calle_handler(
+pub async fn buscar_calles_handler(
     State(data): State<Arc<AppState>>,
     Query(query): Query<BuscarCalleQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
