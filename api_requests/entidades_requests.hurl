@@ -1,14 +1,13 @@
-
-### Crear banco
-POST http://localhost:8000/api/banco/nuevo HTTP/1.1
+# Crear banco
+POST http://localhost:8000/api/banco/nuevo
 content-type: application/json
 
 {
-  "nombre": "NU"
+  "nombre": "BBVA"
 }
 
-### Crear sucursal
-POST http://localhost:8000/api/sucursal/nueva HTTP/1.1
+# Crear sucursal
+POST http://localhost:8000/api/sucursal/nueva
 content-type: application/json
 
 {
@@ -17,8 +16,8 @@ content-type: application/json
   "domicilio": 1  
 }
 
-### Crear Proveedor
-POST http://localhost:8000/api/proveedor/nuevo HTTP/1.1
+# Crear Proveedor
+POST http://localhost:8000/api/proveedor/nuevo
 content-type: application/json
 
 {
@@ -33,8 +32,8 @@ content-type: application/json
   "cuenta_clabe": "ASDASDASDAS"
 }
 
-### Crear una cuenta
-POST http://localhost:8000/api/cuenta/nueva HTTP/1.1
+# Crear una cuenta
+POST http://localhost:8000/api/cuenta/nueva
 Content-Type: application/json
 
 {

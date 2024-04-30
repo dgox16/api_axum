@@ -22,4 +22,4 @@ CREATE TABLE detalles_poliza (
     FOREIGN KEY (cuenta) REFERENCES cuentas(id_cuenta) ON DELETE RESTRICT,
     FOREIGN KEY (sucursal) REFERENCES sucursales(id_sucursal) ON DELETE RESTRICT,
     FOREIGN KEY (proveedor) REFERENCES proveedores(id_proveedor) ON DELETE RESTRICT
-)
+);

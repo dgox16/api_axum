@@ -1,5 +1,5 @@
-### Crear calle
-POST http://localhost:8000/api/calle/nueva HTTP/1.1
+# Crear calle
+POST http://localhost:8000/api/calle/nueva
 content-type: application/json
 
 {
@@ -7,11 +7,11 @@ content-type: application/json
   "tipo": "Privada"
 }
 
-### Buscar calle
-GET http://localhost:8000/api/calle/buscar/?palabra=privada&limite=50 HTTP/1.1
+# Buscar calle
+GET http://localhost:8000/api/calle/buscar/?palabra=privada&limite=5
 
-### Crear domicilio
-POST http://localhost:8000/api/domicilio/nuevo HTTP/1.1
+## Crear domicilio
+POST http://localhost:8000/api/domicilio/nuevo
 content-type: application/json
 
 {
