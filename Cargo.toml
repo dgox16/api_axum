@@ -9,6 +9,7 @@ edition = "2021"
 argon2 = "0.5.3"
 axum = "0.7.5"
 axum-extra = { version = "0.9.3", features = ["cookie"] }
+bigdecimal = { version = "0.4.3", features = ["serde"] }
 chrono = { version = "0.4.38", features = ["serde"] }
 dotenv = "0.15.0"
 jsonwebtoken = "9.3.0"
@@ -19,6 +20,7 @@ sqlx = { version = "0.7.4", features = [
     "runtime-async-std-native-tls",
     "postgres",
     "chrono",
+    "bigdecimal"
 ] }
 time = "0.3.36"
 tokio = { version = "1.37.0", features = ["full"] }

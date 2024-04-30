@@ -56,3 +56,28 @@ pub struct PolizaEgresoModelo {
     pub banco: i32,
     pub cheque: String,
 }
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "iva_detalle_poliza", rename_all = "snake_case")]
+pub enum IvaDetallePoliza {
+    NoAplica,
+    Iva0,
+    Iva8,
+    Iva11,
+    Iva16,
+    Excento,
+    Retenido,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct DetallePolizaModelo {
+    pub id_detalle_poliza: i32,
+    pub poliza: i32,
+    pub cuenta: i32,
+    pub sucursal: i32,
+    pub cargo: f32,
+    pub abono: f32,
+    pub proveedor: i32,
+    pub concepto: String,
+    pub iva: IvaDetallePoliza,
+}

@@ -1,3 +1,3 @@
-DROP TYPE iva_detalle_poliza;
+DROP TABLE detalles_poliza;
 
-DROP TABLE detalles_polizas;
+DROP TYPE iva_detalle_poliza;
