@@ -19,22 +19,24 @@ pub async fn buscar_calles_handler(
     Query(query): Query<BuscarCalleQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let limite = query.limite.unwrap_or(20);
+    let palabra = query.palabra.unwrap_or(String::from("%"));
 
     let calles_encontradas = sqlx::query_as!(
-                CalleModelo,
-                r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2"#,
-                palabra,
-                limite
-            )
-            .fetch_all(&data.db)
-            .await
-            .map_err(|e| {
-                let respuesta_error = serde_json::json!({
-                    "estado": "error",
-                    "mensaje": format!("Error en la base de datos: {}", e),
-                });
-                (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-            })?;
+        CalleModelo,
+        r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles
+        WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2"#,
+        palabra,
+        limite
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
 
     let respuesta = json!({
         "status": "exitoso",
