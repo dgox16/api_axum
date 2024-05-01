@@ -7,7 +7,9 @@ use crate::{
         user_models::UsuarioModelo,
     },
     schemas::poliza_schema::{CrearDetallePolizaSchema, CrearPolizaSchema},
-    validators::poliza_validators::{validar_nueva_poliza, validar_nueva_poliza_egreso},
+    validators::poliza_validators::{
+        validar_nueva_poliza, validar_nueva_poliza_egreso, validar_nuevo_detalle_poliza,
+    },
     AppState,
 };
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
@@ -19,6 +21,15 @@ pub async fn crear_nueva_poliza_handler(
     Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearPolizaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    match &body.detalles_poliza {
+        Some(detalles_poliza) => {
+            for detalle in detalles_poliza {
+                validar_nuevo_detalle_poliza(detalle)?;
+            }
+        }
+        None => {}
+    }
+
     let (nueva_poliza, nueva_poliza_egreso) = match body.tipo {
         TipoPoliza::Egreso => insertar_poliza_con_egreso(&data, &usuario, &body).await?,
         _ => insertar_poliza_solamente(&data, &usuario, &body).await?,

@@ -3,7 +3,9 @@ use std::sync::Arc;
 use axum::{http::StatusCode, Json};
 
 use crate::{
-    schemas::poliza_schema::{CrearPolizaEgresoSchema, CrearPolizaSchema},
+    schemas::poliza_schema::{
+        CrearDetallePolizaSchema, CrearPolizaEgresoSchema, CrearPolizaSchema,
+    },
     AppState,
 };
 
@@ -68,6 +70,33 @@ pub fn validar_nueva_poliza(
         let respuesta_error = serde_json::json!({
             "estado": "error",
             "mensaje": "El numero de la poliza debe ser mayor o igual a 1",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    Ok(())
+}
+
+pub fn validar_nuevo_detalle_poliza(
+    body: &CrearDetallePolizaSchema,
+) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
+    if body.concepto.trim().is_empty() {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "El concepto del detalle de poliza no puede estar vacío",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.cargo < 0.00 {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "El cargo no puede ser negativo",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.abono < 0.00 {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "El abono no puede ser negativo",
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
