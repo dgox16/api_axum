@@ -6,7 +6,7 @@ Content-Type: application/json
 {
   "tipo": "Diario",
   "sucursal": 1,
-  "concepto": "Concepto 11",
+  "concepto": "Concepto 21",
   "numero":20
 }
 
@@ -18,8 +18,8 @@ Content-Type: application/json
 {
   "tipo": "Diario",
   "sucursal": 1,
-  "concepto": "Concepto 14",
-  "numero":20,
+  "concepto": "Concepto 21",
+  "numero": 1,
   "detalles_poliza":[
     {
       "poliza":1,

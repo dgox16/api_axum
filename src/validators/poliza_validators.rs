@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use axum::{http::StatusCode, Json};
 
-use crate::{schemas::poliza_schema::CrearPolizaEgresoSchema, AppState};
+use crate::{
+    schemas::poliza_schema::{CrearPolizaEgresoSchema, CrearPolizaSchema},
+    AppState,
+};
 
 pub async fn validar_nueva_poliza_egreso(
     data: &Arc<AppState>,
@@ -48,5 +51,25 @@ pub async fn validar_nueva_poliza_egreso(
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
 
+    Ok(())
+}
+
+pub fn validar_nueva_poliza(
+    body: &CrearPolizaSchema,
+) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
+    if body.concepto.trim().is_empty() {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "El concepto de la poliza no puede estar vacío",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.numero.is_some() && body.numero.unwrap() < 1 {
+        let respuesta_error = serde_json::json!({
+            "estado": "error",
+            "mensaje": "El numero de la poliza debe ser mayor o igual a 1",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
     Ok(())
 }

@@ -7,7 +7,7 @@ use crate::{
         user_models::UsuarioModelo,
     },
     schemas::poliza_schema::{CrearDetallePolizaSchema, CrearPolizaSchema},
-    validators::poliza_validators::validar_nueva_poliza_egreso,
+    validators::poliza_validators::{validar_nueva_poliza, validar_nueva_poliza_egreso},
     AppState,
 };
 use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
@@ -148,13 +148,11 @@ async fn crear_poliza(
     usuario_id: i32,
     body: &CrearPolizaSchema,
 ) -> Result<PolizaModelo, (StatusCode, Json<serde_json::Value>)> {
-    let tipo = body.tipo.clone();
+    validar_nueva_poliza(body)?;
     let numero = body.numero.unwrap_or(1);
-    let aplicacion = <std::option::Option<AplicacionPoliza> as Clone>::clone(&body.aplicacion)
-        .unwrap_or(AplicacionPoliza::Normal);
-    let fuente = <std::option::Option<FuentePoliza> as Clone>::clone(&body.fuente)
-        .unwrap_or(FuentePoliza::Operacion);
-    let poliza_result = sqlx::query_as!(
+    let aplicacion = body.aplicacion.clone().unwrap_or(AplicacionPoliza::Normal);
+    let fuente = body.fuente.clone().unwrap_or(FuentePoliza::Operacion);
+    let poliza_resultado = sqlx::query_as!(
         PolizaModelo,
         r#"INSERT INTO polizas 
         (tipo, numero, sucursal, concepto, usuario_autoriza, usuario_elabora, aplicacion,fuente)
@@ -163,7 +161,7 @@ async fn crear_poliza(
         fecha_poliza,fecha_registro_poliza,concepto,
         usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",
         fuente AS "fuente: FuentePoliza",automatico"#,
-        tipo as TipoPoliza,
+        body.tipo.clone() as TipoPoliza,
         numero,
         body.sucursal,
         body.concepto.to_string(),
@@ -175,7 +173,7 @@ async fn crear_poliza(
     .fetch_one(&data.db)
     .await;
 
-    match poliza_result {
+    match poliza_resultado {
         Ok(poliza) => Ok(poliza),
         Err(e) => Err((
             StatusCode::INTERNAL_SERVER_ERROR,
