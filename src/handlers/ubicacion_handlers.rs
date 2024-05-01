@@ -51,7 +51,8 @@ pub async fn crear_nueva_calle_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let nueva_calle = sqlx::query_as!(
         CalleModelo,
-        r#"INSERT INTO calles (nombre, tipo) VALUES ($1, $2) RETURNING id_calle,nombre,tipo AS "tipo: TipoCalle""#,
+        r#"INSERT INTO calles (nombre, tipo) VALUES ($1, $2)
+        RETURNING id_calle,nombre,tipo AS "tipo: TipoCalle""#,
         body.nombre.to_string(),
         body.tipo as TipoCalle
     )
@@ -79,7 +80,8 @@ pub async fn crear_nuevo_domicilio_handler(
     let nuevo_domicilio = sqlx::query_as!(
         DomicilioModel,
         "INSERT INTO domicilios
-        (cp,colonia,calle_id,entre_calle_id,y_calle_id,numero_exterior,numero_interior,geolocalizacion)
+        (cp,colonia,calle_id,entre_calle_id,y_calle_id,
+        numero_exterior,numero_interior,geolocalizacion)
         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *",
         body.cp.to_string(),
         body.colonia.to_string(),

@@ -104,11 +104,9 @@ pub async fn buscar_polizas_concepto_handler(
     let polizas_encontradas = sqlx::query_as!(
         PolizaModelo,
         r#"SELECT id_poliza, tipo AS "tipo: TipoPoliza", numero, sucursal, fecha_poliza,
-        fecha_registro_poliza, concepto, usuario_autoriza, usuario_elabora, aplicacion AS "aplicacion: AplicacionPoliza",
-        fuente AS "fuente: FuentePoliza", automatico
-        FROM polizas
-        WHERE concepto ILIKE '%' || $1 || '%'
-        LIMIT $2"#,
+        fecha_registro_poliza, concepto, usuario_autoriza, usuario_elabora, 
+        aplicacion AS "aplicacion: AplicacionPoliza",fuente AS "fuente: FuentePoliza", automatico
+        FROM polizas WHERE concepto ILIKE '%' || $1 || '%' LIMIT $2"#,
         concepto,
         limite
     )
@@ -200,31 +198,32 @@ async fn crear_detalles_poliza(
     for detalle in detalles_poliza {
         let iva = detalle.iva.unwrap_or(IvaDetallePoliza::NoAplica);
         let nuevo_detalle = sqlx::query_as!(
-                DetallePolizaModelo,
-                r#"INSERT INTO detalles_poliza
-                (poliza,cuenta,sucursal,cargo,abono,proveedor,concepto,iva) 
-                VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
-                RETURNING id_detalle_poliza, poliza,cuenta,sucursal,cargo,abono,proveedor,concepto,iva AS "iva: IvaDetallePoliza""#,
-                nueva_poliza_id,
-                detalle.cuenta,
-                detalle.sucursal,
-                detalle.cargo,
-                detalle.abono,
-                detalle.proveedor,
-                detalle.concepto,
-                iva as IvaDetallePoliza
+            DetallePolizaModelo,
+            r#"INSERT INTO detalles_poliza
+            (poliza,cuenta,sucursal,cargo,abono,proveedor,concepto,iva) 
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+            RETURNING id_detalle_poliza, poliza,cuenta,sucursal,cargo,
+            abono,proveedor,concepto,iva AS "iva: IvaDetallePoliza""#,
+            nueva_poliza_id,
+            detalle.cuenta,
+            detalle.sucursal,
+            detalle.cargo,
+            detalle.abono,
+            detalle.proveedor,
+            detalle.concepto,
+            iva as IvaDetallePoliza
+        )
+        .fetch_one(&data.db)
+        .await
+        .map_err(|e| {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json(serde_json::json!({
+                    "estado": "error",
+                    "mensaje": format!("Error en la base de datos: {}", e),
+                })),
             )
-            .fetch_one(&data.db)
-            .await
-            .map_err(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({
-                        "estado": "error",
-                        "mensaje": format!("Error en la base de datos: {}", e),
-                    })),
-                )
-            })?;
+        })?;
         detalles_creados.push(nuevo_detalle);
     }
     Ok(detalles_creados)
@@ -254,7 +253,8 @@ async fn insertar_poliza_con_egreso(
     let nueva_poliza = crear_poliza(data, usuario.id, body).await?;
     let nueva_poliza_egreso = sqlx::query_as!(
         PolizaEgresoModelo,
-        "INSERT INTO polizas_egreso (poliza,beneficiario, banco, cheque) VALUES ($1,$2,$3,$4) RETURNING *",
+        "INSERT INTO polizas_egreso (poliza,beneficiario, banco, cheque)
+        VALUES ($1,$2,$3,$4) RETURNING *",
         nueva_poliza.id_poliza,
         body_poliza_egreso.beneficiario.to_string(),
         body_poliza_egreso.banco,
@@ -300,8 +300,10 @@ async fn crear_poliza(
         r#"INSERT INTO polizas 
         (tipo, numero, sucursal, concepto, usuario_autoriza, usuario_elabora, aplicacion,fuente)
         VALUES ($1, $2, $3, $4, $5, $6,$7,$8)
-        RETURNING id_poliza,tipo AS "tipo: TipoPoliza",numero,sucursal,fecha_poliza,fecha_registro_poliza,concepto,
-        usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",fuente AS "fuente: FuentePoliza",automatico"#,
+        RETURNING id_poliza,tipo AS "tipo: TipoPoliza",numero,sucursal,
+        fecha_poliza,fecha_registro_poliza,concepto,
+        usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",
+        fuente AS "fuente: FuentePoliza",automatico"#,
         tipo as TipoPoliza,
         numero,
         body.sucursal,

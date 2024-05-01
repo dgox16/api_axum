@@ -5,9 +5,12 @@ use serde_json::json;
 
 use crate::{
     models::entidades_models::{
-        BancoModelo, ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta, NaturalezaCuenta, OperacionProveedor, ProveedorModelo, SucursalModelo, TipoProveedor
+        BancoModelo, ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta,
+        NaturalezaCuenta, OperacionProveedor, ProveedorModelo, SucursalModelo, TipoProveedor,
     },
-    schemas::entidades_schemas::{CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema},
+    schemas::entidades_schemas::{
+        CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema,
+    },
     validators::entidades_validators::{validar_nueva_sucursal, validar_nuevo_banco},
     AppState,
 };
@@ -19,7 +22,8 @@ pub async fn crear_nueva_sucursal_handler(
     validar_nueva_sucursal(&body)?;
     let nueva_sucursal = sqlx::query_as!(
         SucursalModelo,
-        "INSERT INTO sucursales (nombre, encargado, domicilio) VALUES ($1,$2,$3) RETURNING *",
+        "INSERT INTO sucursales (nombre, encargado, domicilio)
+        VALUES ($1,$2,$3) RETURNING *",
         body.nombre,
         body.encargado,
         body.domicilio
@@ -43,16 +47,24 @@ pub async fn crear_nueva_sucursal_handler(
 
 pub async fn crear_nuevo_proveedor_handler(
     State(data): State<Arc<AppState>>,
-    Json(body): Json<CrearProveedorSchema>
-) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)>{
+    Json(body): Json<CrearProveedorSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let tipo = body.tipo.unwrap_or(TipoProveedor::Nacional);
-    let operacion = body.operacion.unwrap_or(OperacionProveedor::ServiciosProfesionales);
+    let operacion = body
+        .operacion
+        .unwrap_or(OperacionProveedor::ServiciosProfesionales);
     let pais_residencia = body.pais_residencia.unwrap_or(1);
     let pais_nacimiento = body.pais_nacimiento.unwrap_or(1);
 
     let nuevo_proveedor = sqlx::query_as!(
         ProveedorModelo,
-        r#"INSERT INTO proveedores (nombre, domicilio, rfc, curp, telefono, tipo, operacion, regimen, nombre_extranjero, pais_residencia, pais_nacimiento, banco, cuenta_clabe) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13) RETURNING id_proveedor, nombre, domicilio, rfc, curp, telefono, tipo AS "tipo: TipoProveedor", operacion AS "operacion: OperacionProveedor", regimen, nombre_extranjero, pais_residencia, pais_nacimiento, banco, cuenta_clabe"#,
+        r#"INSERT INTO proveedores
+        (nombre, domicilio, rfc, curp, telefono, tipo, operacion, regimen,
+        nombre_extranjero, pais_residencia, pais_nacimiento, banco, cuenta_clabe)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+        RETURNING id_proveedor, nombre, domicilio, rfc, curp, telefono,
+        tipo AS "tipo: TipoProveedor", operacion AS "operacion: OperacionProveedor",
+        regimen, nombre_extranjero, pais_residencia, pais_nacimiento, banco, cuenta_clabe"#,
         body.nombre,
         body.domicilio,
         body.rfc,
@@ -125,8 +137,18 @@ pub async fn crear_nueva_cuenta_handler(
     let prorrateo = body.prorrateo.unwrap_or(false);
 
     let nueva_cuenta = sqlx::query_as!(
-        CuentaModelo, 
-        r#"INSERT INTO cuentas (cuenta,cuenta_siti,nombre,clasificacion,grupo,finalidad,naturaleza,afectable,padre,nivel,en_balance,en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,orden_siti,subcuenta_siti,prorrateo) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19) RETURNING id_cuenta, cuenta,cuenta_siti,nombre,clasificacion AS "clasificacion: ClasificacionCuenta",grupo AS "grupo: GrupoCuenta",finalidad AS "finalidad: FinalidadCuenta",naturaleza AS "naturaleza: NaturalezaCuenta",afectable,padre,nivel,en_balance,en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,orden_siti,subcuenta_siti,prorrateo"#,
+        CuentaModelo,
+        r#"INSERT INTO cuentas
+        (cuenta,cuenta_siti,nombre,clasificacion,grupo,finalidad,naturaleza,afectable
+        ,padre,nivel,en_balance,en_catalogo_minimo,nombre_balance,nombre_siti,
+        cuenta_padre_siti,cuenta_agrupar,orden_siti,subcuenta_siti,prorrateo)
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19)
+        RETURNING id_cuenta, cuenta,cuenta_siti,nombre,
+        clasificacion AS "clasificacion: ClasificacionCuenta",
+        grupo AS "grupo: GrupoCuenta",finalidad AS "finalidad: FinalidadCuenta",
+        naturaleza AS "naturaleza: NaturalezaCuenta",afectable,padre,nivel,en_balance,
+        en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,
+        orden_siti,subcuenta_siti,prorrateo"#,
         body.cuenta,
         body.cuenta_siti,
         body.nombre,
