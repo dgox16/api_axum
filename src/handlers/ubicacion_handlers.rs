@@ -19,9 +19,8 @@ pub async fn buscar_calles_handler(
     Query(query): Query<BuscarCalleQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let limite = query.limite.unwrap_or(20);
-    match query.palabra {
-        Some(palabra) => {
-            let calles_encontradas = sqlx::query_as!(
+
+    let calles_encontradas = sqlx::query_as!(
                 CalleModelo,
                 r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2"#,
                 palabra,
@@ -37,35 +36,11 @@ pub async fn buscar_calles_handler(
                 (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
             })?;
 
-            let respuesta = json!({
-                "status": "exitoso",
-                "data": calles_encontradas
-            });
-            Ok(Json(respuesta))
-        }
-        _ => {
-            let calles_encontradas = sqlx::query_as!(
-                CalleModelo,
-                r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles LIMIT $1"#,
-                limite
-            )
-            .fetch_all(&data.db)
-            .await
-            .map_err(|e| {
-                let respuesta_error = serde_json::json!({
-                    "estado": "error",
-                    "mensaje": format!("Error en la base de datos: {}", e),
-                });
-                (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-            })?;
-
-            let respuesta = json!({
-                "status": "success",
-                "data": calles_encontradas
-            });
-            Ok(Json(respuesta))
-        }
-    }
+    let respuesta = json!({
+        "status": "exitoso",
+        "data": calles_encontradas
+    });
+    Ok(Json(respuesta))
 }
 
 pub async fn crear_nueva_calle_handler(

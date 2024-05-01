@@ -27,6 +27,11 @@ pub struct BuscarPolizaQuery {
 }
 
 #[derive(Deserialize)]
+pub struct ObtenerPolizaParams {
+    pub id_poliza: i32,
+}
+
+#[derive(Deserialize)]
 pub struct CrearPolizaSchema {
     pub tipo: TipoPoliza,
     pub numero: Option<i32>,

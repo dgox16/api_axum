@@ -12,13 +12,13 @@ Content-Type: application/json
 
 # Crear poliza junto a detalles  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NDMwMDMyLCJleHAiOjE3MTQ0NDgwMzJ9.swIfRb7LejE3JYz5mRF9XFzy3muLurP2C0P-LdSjdjw
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTQ1NDc3LCJleHAiOjE3MTQ1NjM0Nzd9.CdA99wIlMoeG6r5qcq0-yxA2KkknaRU47w7G_uOWEyM
 Content-Type: application/json
 
 {
   "tipo": "Diario",
   "sucursal": 1,
-  "concepto": "Concepto 11",
+  "concepto": "Concepto 14",
   "numero":20,
   "detalles_poliza":[
     {
@@ -99,5 +99,7 @@ Content-Type: application/json
 }
 
 # Buscar polizas por concepto y con la posibilidad de escoger el limite 
-GET http://localhost:8000/api/poliza/buscar?limite=7
+GET http://localhost:8000/api/poliza/buscar/concepto?limite=2&concepto=11
 
+# Obtienes la poliza, su poliza de egreso en caso de existir y sus detalles de polizas
+GET http://localhost:8000/api/poliza/obtener/30
