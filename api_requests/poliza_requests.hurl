@@ -1,6 +1,6 @@
 # Crear poliza  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NDkwMDY0LCJleHAiOjE3MTQ1MDgwNjR9.cbAbvc55Dtg7i5bqzoXXT2pzo7um-XnTGFhAYrloqzk
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTg1MDMzLCJleHAiOjE3MTQ2MDMwMzN9.CAi3-uYNyYC-2dYN2BkuOgUivWy0EPquj_LbKnR6Hrg
 Content-Type: application/json
 
 {
@@ -12,7 +12,7 @@ Content-Type: application/json
 
 # Crear poliza junto a detalles  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTQ1NDc3LCJleHAiOjE3MTQ1NjM0Nzd9.CdA99wIlMoeG6r5qcq0-yxA2KkknaRU47w7G_uOWEyM
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTg1MDMzLCJleHAiOjE3MTQ2MDMwMzN9.CAi3-uYNyYC-2dYN2BkuOgUivWy0EPquj_LbKnR6Hrg
 Content-Type: application/json
 
 {
@@ -45,7 +45,7 @@ Content-Type: application/json
 
 # Crear poliza de tipo egreso  (Necesario tener una cuenta iniciada y enviar los datos de una poliza de egreso)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NDMwMDMyLCJleHAiOjE3MTQ0NDgwMzJ9.swIfRb7LejE3JYz5mRF9XFzy3muLurP2C0P-LdSjdjw
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTg1MDMzLCJleHAiOjE3MTQ2MDMwMzN9.CAi3-uYNyYC-2dYN2BkuOgUivWy0EPquj_LbKnR6Hrg
 Content-Type: application/json
 
 {
@@ -62,7 +62,7 @@ Content-Type: application/json
 
 # Crear poliza de tipo egreso con detalles (Necesario tener una cuenta iniciada y enviar los datos de una poliza de egreso)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NDkwMDY0LCJleHAiOjE3MTQ1MDgwNjR9.cbAbvc55Dtg7i5bqzoXXT2pzo7um-XnTGFhAYrloqzk
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTg1MDMzLCJleHAiOjE3MTQ2MDMwMzN9.CAi3-uYNyYC-2dYN2BkuOgUivWy0EPquj_LbKnR6Hrg
 Content-Type: application/json
 
 {

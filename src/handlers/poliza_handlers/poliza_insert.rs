@@ -19,61 +19,33 @@ pub async fn crear_nueva_poliza_handler(
     Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearPolizaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let resultado = if body.tipo == TipoPoliza::Egreso {
-        insertar_poliza_con_egreso(&data, &usuario, &body).await
-    } else {
-        insertar_poliza_solamente(&data, &usuario, &body).await
+    let (nueva_poliza, nueva_poliza_egreso) = match body.tipo {
+        TipoPoliza::Egreso => insertar_poliza_con_egreso(&data, &usuario, &body).await?,
+        _ => insertar_poliza_solamente(&data, &usuario, &body).await?,
     };
 
-    match resultado {
-        Ok((nueva_poliza, Some(nueva_poliza_egreso))) => match body.detalles_poliza {
-            Some(detalles_poliza) => {
-                let detalles_creados =
-                    crear_detalles_poliza(&data, nueva_poliza.id_poliza, detalles_poliza).await?;
-                let respuesta = json!({
-                    "estado": "exitoso",
-                    "data": {
-                        "poliza": nueva_poliza,
-                        "detalles_poliza": detalles_creados,
-                        "poliza_egreso": nueva_poliza_egreso,
-                    }
-                });
-                Ok(Json(respuesta))
-            }
-            None => {
-                let respuesta = json!({
-                    "estado": "exitoso",
-                    "data": {
-                        "poliza": nueva_poliza,
-                        "poliza_egreso": nueva_poliza_egreso,
-                    }
-                });
-                Ok(Json(respuesta))
-            }
-        },
-        Ok((nueva_poliza, None)) => match body.detalles_poliza {
-            Some(detalles_poliza) => {
-                let detalles_creados =
-                    crear_detalles_poliza(&data, nueva_poliza.id_poliza, detalles_poliza).await?;
-                let respuesta = json!({
-                    "estado": "exitoso",
-                    "data": {
-                        "poliza": nueva_poliza,
-                        "detalles_poliza": detalles_creados,
-                    }
-                });
-                Ok(Json(respuesta))
-            }
-            None => {
-                let respuesta = json!({
-                    "estado": "exitoso",
-                    "data": nueva_poliza,
-                });
-                Ok(Json(respuesta))
-            }
-        },
-        Err((status, error)) => Err((status, error)),
+    let detalles_creados = if let Some(detalles_poliza) = body.detalles_poliza {
+        Some(crear_detalles_poliza(&data, nueva_poliza.id_poliza, detalles_poliza).await?)
+    } else {
+        None
+    };
+
+    let mut respuesta = json!({
+        "estado": "exitoso",
+        "data": {
+            "poliza": nueva_poliza,
+        }
+    });
+
+    if let Some(poliza_egreso) = nueva_poliza_egreso {
+        respuesta["data"]["poliza_egreso"] = json!(poliza_egreso);
     }
+
+    if let Some(detalles) = detalles_creados {
+        respuesta["data"]["detalles_poliza"] = json!(detalles);
+    }
+
+    Ok(Json(respuesta))
 }
 
 async fn crear_detalles_poliza(
