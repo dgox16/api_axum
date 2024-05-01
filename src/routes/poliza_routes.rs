@@ -8,7 +8,8 @@ use axum::{
 
 use crate::{
     handlers::poliza_handlers::{
-        buscar_polizas_concepto_handler, crear_nueva_poliza_handler, obtener_poliza_handler,
+        poliza_insert::crear_nueva_poliza_handler,
+        poliza_select::{buscar_polizas_concepto_handler, obtener_poliza_handler},
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
