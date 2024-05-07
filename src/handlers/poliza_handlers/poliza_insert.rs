@@ -42,18 +42,18 @@ pub async fn crear_nueva_poliza_handler(
     };
 
     let mut respuesta = json!({
-        "estado": "exitoso",
-        "data": {
+        "estado": true,
+        "datos": {
             "poliza": nueva_poliza,
         }
     });
 
     if let Some(poliza_egreso) = nueva_poliza_egreso {
-        respuesta["data"]["poliza_egreso"] = json!(poliza_egreso);
+        respuesta["datos"]["poliza_egreso"] = json!(poliza_egreso);
     }
 
     if let Some(detalles) = detalles_creados {
-        respuesta["data"]["detalles_poliza"] = json!(detalles);
+        respuesta["datos"]["detalles_poliza"] = json!(detalles);
     }
 
     Ok(Json(respuesta))
@@ -89,7 +89,7 @@ async fn crear_detalles_poliza(
             (
                 StatusCode::INTERNAL_SERVER_ERROR,
                 Json(serde_json::json!({
-                    "estado": "error",
+                    "estado": false,
                     "mensaje": format!("Error en la base de datos: {}", e),
                 })),
             )
@@ -113,7 +113,7 @@ async fn insertar_poliza_con_egreso(
             return Err((
                 StatusCode::BAD_REQUEST,
                 Json(serde_json::json!({
-                    "estado": "error",
+                    "estado": false,
                     "mensaje": "No se ha proporcionado una póliza de egreso",
                 })),
             ));
@@ -136,7 +136,7 @@ async fn insertar_poliza_con_egreso(
         (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": format!("Error en la base de datos: {}", e),
             })),
         )
@@ -189,7 +189,7 @@ async fn crear_poliza(
         Err(e) => Err((
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": format!("Error en la base de datos: {}", e),
             })),
         )),

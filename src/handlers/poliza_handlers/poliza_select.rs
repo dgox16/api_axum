@@ -32,7 +32,7 @@ pub async fn obtener_poliza_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
@@ -49,15 +49,15 @@ pub async fn obtener_poliza_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let mut respuesta = json!({
-        "status": "exitoso",
-        "data": {
+        "estado": true,
+        "datos": {
             "poliza": poliza_encontrada,
         }
     });
@@ -73,17 +73,17 @@ pub async fn obtener_poliza_handler(
         .await
         .map_err(|e| {
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": format!("Error en la base de datos: {}", e),
             });
             (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
         })?;
 
-        respuesta["data"]["poliza_egreso"] = json!(poliza_egreso_encontrada);
+        respuesta["datos"]["poliza_egreso"] = json!(poliza_egreso_encontrada);
     }
 
     if !detalles_encontrados.is_empty() {
-        respuesta["data"]["detalles_poliza"] = json!(detalles_encontrados);
+        respuesta["datos"]["detalles_poliza"] = json!(detalles_encontrados);
     }
 
     Ok(Json(respuesta))
@@ -109,15 +109,15 @@ pub async fn buscar_polizas_concepto_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "status": "exitoso",
-        "data": polizas_encontradas
+        "estado": true,
+        "datos": polizas_encontradas
     });
     Ok(Json(respuesta))
 }
