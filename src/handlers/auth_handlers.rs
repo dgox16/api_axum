@@ -56,7 +56,7 @@ pub async fn registrar_usuario_handler(
     .map_err(|e| {
         // En caso de fallar la conexion devolvemos un json de fallo
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
@@ -66,7 +66,7 @@ pub async fn registrar_usuario_handler(
     if let Some(existe) = usuario_existe {
         if existe {
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": "Ya existe el email y/o el usuario",
             });
             return Err((StatusCode::CONFLICT, Json(respuesta_error)));
@@ -80,7 +80,7 @@ pub async fn registrar_usuario_handler(
         .map_err(|e| {
             // Manejamos el posible error al hashear
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "message": format!("Fallo al encriptar la contraseña: {}", e),
             });
             (StatusCode::CONFLICT, Json(respuesta_error))
@@ -100,7 +100,7 @@ pub async fn registrar_usuario_handler(
     .map_err(|e| {
         // Manejamos el posible fallo con la base de datos
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
@@ -110,8 +110,8 @@ pub async fn registrar_usuario_handler(
     match usuario_formateado {
         Ok(usuario) => {
             let respuesta = json!({
-                "estado": "exitoso",
-                "data": usuario
+                "estado": true,
+                "datos": usuario
             });
 
             // Devolvemos la respuesta HTTP con el JSON
@@ -120,7 +120,7 @@ pub async fn registrar_usuario_handler(
         Err(e) => {
             // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": format!("Fallo con el nuevo usuario: {}", e),
             });
 
@@ -145,7 +145,7 @@ pub async fn inicio_sesion_handler(
     // Manejamos el posible error en la base de datos
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
@@ -153,7 +153,7 @@ pub async fn inicio_sesion_handler(
     // Manejamos el posible fallo al no encontrar un usuario con ese email
     .ok_or_else(|| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": "Invalido usuario o contraseña",
         });
         (StatusCode::BAD_REQUEST, Json(respuesta_error))
@@ -170,7 +170,7 @@ pub async fn inicio_sesion_handler(
     // Si la validadacion no es correcta; devolvemos el fallo de que la contraseña es invalida
     if !es_contraseña_valida {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": "Invalido usuario o contraseña",
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
@@ -205,7 +205,7 @@ pub async fn inicio_sesion_handler(
         .http_only(true);
 
     // Devolvemos exito si no fallo y devolvemos el token
-    let mut respuesta = Response::new(json!({"estado": "exitoso", "data": token}).to_string());
+    let mut respuesta = Response::new(json!({"estado": true, "datos": token}).to_string());
     respuesta
         .headers_mut()
         // Insertamos la cookie en el cliente
@@ -224,7 +224,9 @@ pub async fn cerrar_sesion_handler(
         .http_only(true);
 
     // Devolvemos e insertamos al cliente la cookie vacia
-    let mut respuesta = Response::new(json!({"estado": "exitoso"}).to_string());
+    let mut respuesta = Response::new(
+        json!({"estado": true, "mensaje": "Se cerro session de forma correcta"}).to_string(),
+    );
     respuesta
         .headers_mut()
         .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
@@ -241,8 +243,8 @@ pub async fn obtener_usuario_actual_handler(
     match usuario_formateado {
         Ok(usuario) => {
             let respuesta = json!({
-                "estado": "exitoso",
-                "data": usuario
+                "estado": true,
+                "datos": usuario
             });
 
             // Devolvemos la respuesta HTTP con el JSON
@@ -251,7 +253,7 @@ pub async fn obtener_usuario_actual_handler(
         Err(e) => {
             // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": format!("Fallo con el usuario: {}", e),
             });
 
