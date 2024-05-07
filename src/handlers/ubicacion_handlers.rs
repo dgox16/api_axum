@@ -68,7 +68,7 @@ pub async fn crear_nueva_calle_handler(
 
     let respuesta = json!({
         "estado": true,
-        "datos":nueva_calle
+        "datos": nueva_calle
     });
     Ok(Json(respuesta))
 }

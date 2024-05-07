@@ -32,15 +32,15 @@ pub async fn crear_nueva_sucursal_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "estado": "exitoso",
-        "data": nueva_sucursal
+        "estado": true,
+        "datos": nueva_sucursal
     });
     Ok(Json(respuesta))
 }
@@ -83,15 +83,15 @@ pub async fn crear_nuevo_proveedor_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "estado": "exitoso",
-        "data": nuevo_proveedor
+        "estado": true,
+        "datos": nuevo_proveedor
     });
     Ok(Json(respuesta))
 }
@@ -110,15 +110,15 @@ pub async fn crear_nuevo_banco_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "estado": "exitoso",
-        "data": nuevo_banco
+        "estado": true,
+        "datos": nuevo_banco
     });
     Ok(Json(respuesta))
 }
@@ -173,15 +173,15 @@ pub async fn crear_nueva_cuenta_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "estado": "exitoso",
-        "data": nueva_cuenta
+        "estado": true,
+        "datos": nueva_cuenta
     });
     Ok(Json(respuesta))
 }
