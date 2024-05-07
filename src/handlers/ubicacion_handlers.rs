@@ -32,15 +32,15 @@ pub async fn buscar_calles_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "status": "exitoso",
-        "data": calles_encontradas
+        "estado": true,
+        "datos": calles_encontradas
     });
     Ok(Json(respuesta))
 }
@@ -60,15 +60,15 @@ pub async fn crear_nueva_calle_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "estado": "exitoso",
-        "data":nueva_calle
+        "estado": true,
+        "datos":nueva_calle
     });
     Ok(Json(respuesta))
 }
@@ -96,15 +96,15 @@ pub async fn crear_nuevo_domicilio_handler(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
     })?;
 
     let respuesta = json!({
-        "estado": "exitoso",
-        "data": nuevo_domicilio
+        "estado": true,
+        "datos": nuevo_domicilio
     });
     Ok(Json(respuesta))
 }
