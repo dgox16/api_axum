@@ -11,7 +11,9 @@ use crate::{
     schemas::entidades_schemas::{
         CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema,
     },
-    validators::entidades_validators::{validar_nueva_sucursal, validar_nuevo_banco},
+    validators::entidades_validators::{
+        validar_nueva_sucursal, validar_nuevo_banco, validar_nuevo_proveedor,
+    },
     AppState,
 };
 
@@ -49,6 +51,7 @@ pub async fn crear_nuevo_proveedor_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearProveedorSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nuevo_proveedor(&body)?;
     let tipo = body.tipo.unwrap_or(TipoProveedor::Nacional);
     let operacion = body
         .operacion

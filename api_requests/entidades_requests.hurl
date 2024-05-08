@@ -23,9 +23,9 @@ content-type: application/json
 {
   "nombre": "Proveedor 1",
   "domicilio": 1,
-  "rfc":"GOSDMDMAD",
-  "curp": "GFOMSAADSA",
-  "telefono": "4411313323",
+  "rfc":"GOMD991216123",
+  "curp": "GOMD991216HGT12331",
+  "telefono": "4451312061",
   "tipo": "Global",
   "regimen": "Regimen 1",
   "banco": 1,
