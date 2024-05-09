@@ -21,13 +21,15 @@ pub async fn buscar_calles_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let limite = query.limite.unwrap_or(20);
     let palabra = query.palabra.unwrap_or(String::from("%"));
+    let offset = query.offset.unwrap_or(0);
 
     let calles_encontradas = sqlx::query_as!(
         CalleModelo,
         r#"SELECT id_calle,nombre,tipo AS "tipo: TipoCalle" FROM calles
-        WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2"#,
+        WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2 OFFSET $3"#,
         palabra,
-        limite
+        limite,
+        offset
     )
     .fetch_all(&data.db)
     .await

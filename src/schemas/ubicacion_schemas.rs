@@ -12,6 +12,7 @@ pub struct CrearCalleSchema {
 pub struct BuscarCalleQuery {
     pub palabra: Option<String>,
     pub limite: Option<i64>,
+    pub offset: Option<i64>,
 }
 
 #[derive(Deserialize)]
