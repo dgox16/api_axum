@@ -9,8 +9,10 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    models::ubicacion_models::{CalleModelo, DomicilioModel, TipoCalle},
-    schemas::ubicacion_schemas::{BuscarCalleQuery, CrearCalleSchema, CrearDomicilioSchema},
+    models::ubicacion_models::{CalleModelo, DomicilioModelo, PaisModelo, TipoCalle},
+    schemas::ubicacion_schemas::{
+        BuscarCalleQuery, BuscarPaisQuery, CrearCalleSchema, CrearDomicilioSchema,
+    },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
 };
@@ -44,6 +46,35 @@ pub async fn buscar_calles_handler(
     let respuesta = json!({
         "estado": true,
         "datos": calles_encontradas
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_pais_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarPaisQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nombre = query.nombre.unwrap_or(String::from("%"));
+
+    let paises_encontrados = sqlx::query_as!(
+        PaisModelo,
+        r#"SELECT id_pais, abreviatura, nombre, orden FROM paises
+        WHERE nombre ILIKE '%' || $1 || '%' ORDER BY orden"#,
+        nombre,
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": paises_encontrados
     });
     Ok(Json(respuesta))
 }
@@ -83,7 +114,7 @@ pub async fn crear_nuevo_domicilio_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     validar_nueva_domicilio(&body)?;
     let nuevo_domicilio = sqlx::query_as!(
-        DomicilioModel,
+        DomicilioModelo,
         "INSERT INTO domicilios
         (cp,colonia,calle_id,entre_calle_id,y_calle_id,
         numero_exterior,numero_interior,geolocalizacion)

@@ -19,7 +19,7 @@ pub struct CalleModelo {
 }
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-pub struct DomicilioModel {
+pub struct DomicilioModelo {
     pub id_domicilio: i32,
     pub cp: String,
     pub colonia: String,
@@ -29,4 +29,12 @@ pub struct DomicilioModel {
     pub numero_exterior: String,
     pub numero_interior: Option<String>,
     pub geolocalizacion: Option<String>,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct PaisModelo {
+    pub id_pais: i32,
+    pub abreviatura: String,
+    pub nombre: String,
+    pub orden: i32,
 }

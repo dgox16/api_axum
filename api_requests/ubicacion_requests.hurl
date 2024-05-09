@@ -8,7 +8,10 @@ content-type: application/json
 }
 
 # Buscar calle
-GET http://localhost:8000/api/calle/buscar/?palabra=privada&limite=5&offset=3
+GET http://localhost:8000/api/calle/buscar/?palabra=privada
+
+# Buscar pais
+GET http://localhost:8000/api/pais/buscar/
 
 ## Crear domicilio
 POST http://localhost:8000/api/domicilio/nuevo
