@@ -11,7 +11,7 @@ use serde_json::json;
 use crate::{
     models::ubicacion_models::{CalleModelo, DomicilioModel, TipoCalle},
     schemas::ubicacion_schemas::{BuscarCalleQuery, CrearCalleSchema, CrearDomicilioSchema},
-    validators::ubicacion_validators::validar_nueva_calle,
+    validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
 };
 
@@ -79,6 +79,7 @@ pub async fn crear_nuevo_domicilio_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearDomicilioSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_domicilio(&body)?;
     let nuevo_domicilio = sqlx::query_as!(
         DomicilioModel,
         "INSERT INTO domicilios
