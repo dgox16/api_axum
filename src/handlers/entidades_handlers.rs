@@ -12,7 +12,7 @@ use crate::{
         CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema,
     },
     validators::entidades_validators::{
-        validar_nueva_sucursal, validar_nuevo_banco, validar_nuevo_proveedor,
+        validar_nueva_sucursal, validar_nuevo_banco, validar_nuevo_cuenta, validar_nuevo_proveedor,
     },
     AppState,
 };
@@ -130,6 +130,7 @@ pub async fn crear_nueva_cuenta_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearCuentaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nuevo_cuenta(&body)?;
     let clasificacion = body.clasificacion.unwrap_or(ClasificacionCuenta::Capitulo);
     let grupo = body.grupo.unwrap_or(GrupoCuenta::Activo);
     let finalidad = body.finalidad.unwrap_or(FinalidadCuenta::Otros);
