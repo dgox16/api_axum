@@ -11,8 +11,13 @@ content-type: application/json
 GET http://localhost:8000/api/calle/buscar/?palabra=privada
 
 # Buscar pais
-GET http://localhost:8000/api/pais/buscar/
+GET http://localhost:8000/api/pais/buscar/?nombre=me
 
+# Buscar estado
+GET http://localhost:8000/api/estado_mexico/buscar/?nombre=gua
+
+# Buscar pais
+GET http://localhost:8000/api/pais/buscar/?nombre=me
 ## Crear domicilio
 POST http://localhost:8000/api/domicilio/nuevo
 content-type: application/json

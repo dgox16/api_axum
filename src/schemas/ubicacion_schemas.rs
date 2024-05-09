@@ -21,6 +21,11 @@ pub struct BuscarPaisQuery {
 }
 
 #[derive(Deserialize)]
+pub struct BuscarEstadoQuery {
+    pub nombre: Option<String>,
+}
+
+#[derive(Deserialize)]
 pub struct CrearDomicilioSchema {
     pub cp: String,
     pub colonia: String,

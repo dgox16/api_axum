@@ -38,3 +38,12 @@ pub struct PaisModelo {
     pub nombre: String,
     pub orden: i32,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct EstadoModelo {
+    pub id_estado: i32,
+    pub nombre: String,
+    pub abreviado: String,
+    pub corto: String,
+    pub clave_buro: String,
+}

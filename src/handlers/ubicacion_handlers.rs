@@ -9,9 +9,10 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    models::ubicacion_models::{CalleModelo, DomicilioModelo, PaisModelo, TipoCalle},
+    models::ubicacion_models::{CalleModelo, DomicilioModelo, EstadoModelo, PaisModelo, TipoCalle},
     schemas::ubicacion_schemas::{
-        BuscarCalleQuery, BuscarPaisQuery, CrearCalleSchema, CrearDomicilioSchema,
+        BuscarCalleQuery, BuscarEstadoQuery, BuscarPaisQuery, CrearCalleSchema,
+        CrearDomicilioSchema,
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
@@ -75,6 +76,35 @@ pub async fn buscar_pais_handler(
     let respuesta = json!({
         "estado": true,
         "datos": paises_encontrados
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_estado_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarEstadoQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nombre = query.nombre.unwrap_or(String::from("%"));
+
+    let estados_encontrados = sqlx::query_as!(
+        EstadoModelo,
+        r#"SELECT id_estado, nombre, abreviado, corto, clave_buro FROM estados_mexico
+        WHERE nombre ILIKE '%' || $1 || '%' ORDER BY nombre"#,
+        nombre,
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": estados_encontrados
     });
     Ok(Json(respuesta))
 }
