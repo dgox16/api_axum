@@ -6,6 +6,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
+use chrono::offset;
 use serde_json::json;
 
 use crate::{
@@ -16,8 +17,8 @@ use crate::{
     schemas::{
         entidades_schemas::CrearBancoSchema,
         ubicacion_schemas::{
-            BuscarCalleQuery, BuscarEstadoQuery, BuscarPaisQuery, CrearBarrioSchema,
-            CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
+            BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery, BuscarPaisQuery,
+            CrearBarrioSchema, CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
         },
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
@@ -218,6 +219,44 @@ pub async fn crear_nueva_ciudad_handler(
     let respuesta = serde_json::json!({
         "estado": true,
         "data": nueva_ciudad
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_ciudades_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarCiudadQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nombre = query.nombre.unwrap_or(String::from("%"));
+    let limite = query.limite.unwrap_or(50);
+    let offset = query.offset.unwrap_or(0);
+
+    let ciudades_encontradas = sqlx::query_as!(
+        CiudadModelo,
+        r#"SELECT id_ciudad, clave_localidad, estado,
+        municipio, nombre, tipo AS "tipo: TipoCiudad",
+        clasificacion AS "clasificacion: ClasificacionCiudad",
+        numero_habitantes,orden,cp FROM ciudades
+        WHERE nombre ILIKE '%' || $1 || '%'
+        LIMIT $2 OFFSET $3"#,
+        nombre,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e)
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = serde_json::json!({
+        "estado": true,
+        "data": ciudades_encontradas
     });
 
     Ok(Json(respuesta))

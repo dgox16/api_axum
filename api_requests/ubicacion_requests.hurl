@@ -65,3 +65,6 @@ content-type: application/json
     "c_municipio": 1,
     "unico_asentamiento": 1
 }
+
+# Buscar ciudades
+GET http://localhost:8000/api/ciudad/buscar/?nombre=ja&limite=5
