@@ -47,6 +47,13 @@ pub struct CrearMunicipioSchema {
 }
 
 #[derive(Deserialize)]
+pub struct BuscarMunicipioQuery {
+    pub nombre: Option<String>,
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}
+
+#[derive(Deserialize)]
 pub struct CrearCiudadSchema {
     pub clave_localidad: i32,
     pub estado: i32,

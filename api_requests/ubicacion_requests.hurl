@@ -32,6 +32,20 @@ content-type: application/json
   "numero_exterior": "18"
 }
 
+## Crear municipio
+POST http://localhost:8000/api/municipio/nuevo
+content-type: application/json
+
+{
+    "nombre": "Hola",
+    "estado": 11,
+    "factor_riesgo": 12
+}
+
+
+# Buscar municipio
+GET http://localhost:8000/api/municipio/buscar/?nombre=ja&limite=5
+
 ## Crear ciudad
 POST http://localhost:8000/api/ciudad/nueva
 content-type: application/json

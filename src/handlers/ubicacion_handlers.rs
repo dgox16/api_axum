@@ -15,9 +15,9 @@ use crate::{
         TipoZonaBarrio,
     },
     schemas::ubicacion_schemas::{
-        BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery, BuscarPaisQuery,
-        CrearBarrioSchema, CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
-        CrearMunicipioSchema,
+        BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery,
+        BuscarMunicipioQuery, BuscarPaisQuery, CrearBarrioSchema, CrearCalleSchema,
+        CrearCiudadSchema, CrearDomicilioSchema, CrearMunicipioSchema,
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
@@ -186,10 +186,10 @@ pub async fn crear_nuevo_municipio_handler(
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let nuevo_municipio = sqlx::query_as!(
         MunicipioModelo,
-        r#"INSERT INTO municipios
+        "INSERT INTO municipios
         (nombre, estado, factor_riesgo) 
         VALUES ($1,$2,$3) 
-        RETURNING id_municipio, nombre, estado, factor_riesgo"#,
+        RETURNING id_municipio, nombre, estado, factor_riesgo",
         body.nombre,
         body.estado,
         body.factor_riesgo
@@ -207,6 +207,42 @@ pub async fn crear_nuevo_municipio_handler(
     let respuesta = serde_json::json!({
         "estado": true,
         "datos": nuevo_municipio
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_municipios_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarMunicipioQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nombre = query.nombre.unwrap_or(String::from("%"));
+    let limite = query.limite.unwrap_or(20);
+    let offset = query.offset.unwrap_or(0);
+
+    let municipios_encontrados = sqlx::query_as!(
+        MunicipioModelo,
+        "SELECT id_municipio, nombre, estado, factor_riesgo
+        FROM municipios 
+        WHERE nombre ILIKE '%' || $1 || '%'
+        LIMIT $2 OFFSET $3",
+        nombre,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e)
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = serde_json::json!({
+        "estado": true,
+        "datos": municipios_encontrados
     });
 
     Ok(Json(respuesta))
