@@ -18,6 +18,7 @@ GET http://localhost:8000/api/estado_mexico/buscar/?nombre=gua
 
 # Buscar pais
 GET http://localhost:8000/api/pais/buscar/?nombre=me
+
 ## Crear domicilio
 POST http://localhost:8000/api/domicilio/nuevo
 content-type: application/json
@@ -29,4 +30,13 @@ content-type: application/json
   "entre_calle_id": 10000001846,
   "y_calle_id": 10000002369,
   "numero_exterior": "18"
+}
+
+## Crear calle
+POST http://localhost:8000/api/ciudad/nueva
+content-type: application/json
+
+{
+
+  "cp": "38940",
 }

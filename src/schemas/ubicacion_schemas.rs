@@ -1,6 +1,6 @@
 use serde::Deserialize;
 
-use crate::models::ubicacion_models::TipoCalle;
+use crate::models::ubicacion_models::{ClasificacionCiudad, TipoCalle, TipoCiudad};
 
 #[derive(Deserialize)]
 pub struct CrearCalleSchema {
@@ -35,4 +35,17 @@ pub struct CrearDomicilioSchema {
     pub numero_exterior: String,
     pub numero_interior: Option<String>,
     pub geolocalizacion: Option<String>,
+}
+
+#[derive(Deserialize)]
+pub struct CrearCiudadSchema {
+    pub clave_localidad: i32,
+    pub estado: i32,
+    pub municipio: i32,
+    pub nombre: String,
+    pub tipo: TipoCiudad,
+    pub clasificacion: ClasificacionCiudad,
+    pub numero_habitantes: i32,
+    pub orden: i32,
+    pub cp: String,
 }

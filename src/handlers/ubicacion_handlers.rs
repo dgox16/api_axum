@@ -9,9 +9,12 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    models::ubicacion_models::{CalleModelo, DomicilioModelo, EstadoModelo, PaisModelo, TipoCalle},
+    models::ubicacion_models::{
+        CalleModelo, CiudadModelo, ClasificacionCiudad, DomicilioModelo, EstadoModelo, PaisModelo,
+        TipoCalle, TipoCiudad,
+    },
     schemas::ubicacion_schemas::{
-        BuscarCalleQuery, BuscarEstadoQuery, BuscarPaisQuery, CrearCalleSchema,
+        BuscarCalleQuery, BuscarEstadoQuery, BuscarPaisQuery, CrearCalleSchema, CrearCiudadSchema,
         CrearDomicilioSchema,
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
@@ -172,5 +175,47 @@ pub async fn crear_nuevo_domicilio_handler(
         "estado": true,
         "datos": nuevo_domicilio
     });
+    Ok(Json(respuesta))
+}
+
+pub async fn crear_nueva_ciudad_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearCiudadSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nueva_ciudad = sqlx::query_as!(
+        CiudadModelo,
+        r#"INSERT INTO ciudades
+        (clave_localidad, estado, municipio, nombre, tipo,
+        clasificacion, numero_habitantes, orden, cp) 
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) 
+        RETURNING id_ciudad, clave_localidad, estado,
+        municipio, nombre, tipo AS "tipo: TipoCiudad",
+        clasificacion AS "clasificacion: ClasificacionCiudad",
+        numero_habitantes,orden,cp"#,
+        body.clave_localidad,
+        body.estado,
+        body.municipio,
+        body.nombre,
+        body.tipo as TipoCiudad,
+        body.clasificacion as ClasificacionCiudad,
+        body.numero_habitantes,
+        body.orden,
+        body.cp
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e)
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = serde_json::json!({
+        "estado": true,
+        "data": nueva_ciudad
+    });
+
     Ok(Json(respuesta))
 }

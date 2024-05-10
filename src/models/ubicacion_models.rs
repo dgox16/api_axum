@@ -47,3 +47,31 @@ pub struct EstadoModelo {
     pub corto: String,
     pub clave_buro: String,
 }
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "tipo_ciudad", rename_all = "lowercase")]
+pub enum TipoCiudad {
+    Tipo1,
+    Tipo2,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "clasificacion_ciudad", rename_all = "lowercase")]
+pub enum ClasificacionCiudad {
+    Ciudad,
+    Localidad,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct CiudadModelo {
+    pub id_ciudad: i32,
+    pub clave_localidad: i32,
+    pub estado: i32,
+    pub municipio: i32,
+    pub nombre: String,
+    pub tipo: TipoCiudad,
+    pub clasificacion: ClasificacionCiudad,
+    pub numero_habitantes: i32,
+    pub orden: i32,
+    pub cp: String,
+}
