@@ -11,11 +11,13 @@ use serde_json::json;
 use crate::{
     models::ubicacion_models::{
         BarrioModelo, CalleModelo, CiudadModelo, ClasificacionCiudad, DomicilioModelo,
-        EstadoModelo, IndiceMarginacionBarrio, PaisModelo, TipoCalle, TipoCiudad, TipoZonaBarrio,
+        EstadoModelo, IndiceMarginacionBarrio, MunicipioModelo, PaisModelo, TipoCalle, TipoCiudad,
+        TipoZonaBarrio,
     },
     schemas::ubicacion_schemas::{
         BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery, BuscarPaisQuery,
         CrearBarrioSchema, CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
+        CrearMunicipioSchema,
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
@@ -175,6 +177,38 @@ pub async fn crear_nuevo_domicilio_handler(
         "estado": true,
         "datos": nuevo_domicilio
     });
+    Ok(Json(respuesta))
+}
+
+pub async fn crear_nuevo_municipio_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearMunicipioSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nuevo_municipio = sqlx::query_as!(
+        MunicipioModelo,
+        r#"INSERT INTO municipios
+        (nombre, estado, factor_riesgo) 
+        VALUES ($1,$2,$3) 
+        RETURNING id_municipio, nombre, estado, factor_riesgo"#,
+        body.nombre,
+        body.estado,
+        body.factor_riesgo
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e)
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = serde_json::json!({
+        "estado": true,
+        "datos": nuevo_municipio
+    });
+
     Ok(Json(respuesta))
 }
 

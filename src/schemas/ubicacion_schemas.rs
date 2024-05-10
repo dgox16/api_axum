@@ -40,6 +40,13 @@ pub struct CrearDomicilioSchema {
 }
 
 #[derive(Deserialize)]
+pub struct CrearMunicipioSchema {
+    pub nombre: String,
+    pub estado: i32,
+    pub factor_riesgo: i32,
+}
+
+#[derive(Deserialize)]
 pub struct CrearCiudadSchema {
     pub clave_localidad: i32,
     pub estado: i32,

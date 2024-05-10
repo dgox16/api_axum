@@ -48,6 +48,14 @@ pub struct EstadoModelo {
     pub clave_buro: String,
 }
 
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct MunicipioModelo {
+    pub id_municipio: i32,
+    pub nombre: String,
+    pub estado: Option<i32>,
+    pub factor_riesgo: i32,
+}
+
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
 #[sqlx(type_name = "tipo_ciudad", rename_all = "lowercase")]
 pub enum TipoCiudad {
