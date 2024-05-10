@@ -1,4 +1,3 @@
-DROP INDEX idx_nombre_barrio;
-DROP TABLE barrios;
-DROP TYPE tipo_zona_barrio;
-DROP TYPE indice_marginacion_barrio;
+DROP INDEX idx_calle_nombre;
+
+CREATE INDEX idx_nombre ON calles (nombre);

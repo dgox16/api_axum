@@ -1,3 +1,4 @@
-DROP INDEX idx_calle_nombre;
-
-CREATE INDEX idx_nombre ON calles (nombre);
+DROP INDEX idx_nombre_ciudad;
+DROP TABLE ciudades;
+DROP TYPE tipo_ciudad;
+DROP TYPE clasificacion_ciudad;
