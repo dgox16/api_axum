@@ -6,7 +6,6 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use chrono::offset;
 use serde_json::json;
 
 use crate::{
@@ -14,12 +13,9 @@ use crate::{
         BarrioModelo, CalleModelo, CiudadModelo, ClasificacionCiudad, DomicilioModelo,
         EstadoModelo, IndiceMarginacionBarrio, PaisModelo, TipoCalle, TipoCiudad, TipoZonaBarrio,
     },
-    schemas::{
-        entidades_schemas::CrearBancoSchema,
-        ubicacion_schemas::{
-            BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery, BuscarPaisQuery,
-            CrearBarrioSchema, CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
-        },
+    schemas::ubicacion_schemas::{
+        BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery, BuscarPaisQuery,
+        CrearBarrioSchema, CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
@@ -218,7 +214,7 @@ pub async fn crear_nueva_ciudad_handler(
 
     let respuesta = serde_json::json!({
         "estado": true,
-        "data": nueva_ciudad
+        "datos": nueva_ciudad
     });
 
     Ok(Json(respuesta))
@@ -256,7 +252,7 @@ pub async fn buscar_ciudades_handler(
 
     let respuesta = serde_json::json!({
         "estado": true,
-        "data": ciudades_encontradas
+        "datos": ciudades_encontradas
     });
 
     Ok(Json(respuesta))
@@ -300,8 +296,44 @@ pub async fn crear_nuevo_barrio_handler(
 
     let respuesta = serde_json::json!({
         "estado": true,
-        "data": nuevo_barrio
+        "datos": nuevo_barrio
     });
 
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_barrios_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarBarrioQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nombre = query.nombre.unwrap_or(String::from("%"));
+    let limite = query.limite.unwrap_or(50);
+    let offset = query.offset.unwrap_or(0);
+
+    let barrios_encontrados = sqlx::query_as!(
+        BarrioModelo,
+        r#"SELECT id_barrio, ciudad, nombre, cp, tipo_cp, sindicatura,
+        tipo_zona AS "tipo_zona: TipoZonaBarrio", numero_habitantes,
+        indice_marginacion AS "indice_marginacion: IndiceMarginacionBarrio",
+        ponderacion_5c, c_municipio, unico_asentamiento
+        FROM barrios WHERE nombre ILIKE '%' || $1 || '%'
+        LIMIT $2 OFFSET $3"#,
+        nombre,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e)
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+    let respuesta = serde_json::json!({
+        "estado": true,
+        "datos": barrios_encontrados
+    });
     Ok(Json(respuesta))
 }

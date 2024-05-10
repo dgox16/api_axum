@@ -73,3 +73,10 @@ pub struct CrearBarrioSchema {
     pub c_municipio: i32,
     pub unico_asentamiento: i32,
 }
+
+#[derive(Deserialize)]
+pub struct BuscarBarrioQuery {
+    pub nombre: Option<String>,
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}

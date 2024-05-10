@@ -68,3 +68,6 @@ content-type: application/json
 
 # Buscar ciudades
 GET http://localhost:8000/api/ciudad/buscar/?nombre=ja&limite=5
+
+# Buscar barrios
+GET http://localhost:8000/api/barrio/buscar/?nombre=ja&limite=5
