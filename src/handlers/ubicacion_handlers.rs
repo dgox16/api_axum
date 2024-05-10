@@ -19,7 +19,9 @@ use crate::{
         BuscarMunicipioQuery, BuscarPaisQuery, CrearBarrioSchema, CrearCalleSchema,
         CrearCiudadSchema, CrearDomicilioSchema, CrearMunicipioSchema,
     },
-    validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
+    validators::ubicacion_validators::{
+        validar_nueva_calle, validar_nueva_domicilio, validar_nuevo_municipio,
+    },
     AppState,
 };
 
@@ -184,6 +186,7 @@ pub async fn crear_nuevo_municipio_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearMunicipioSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nuevo_municipio(&body)?;
     let nuevo_municipio = sqlx::query_as!(
         MunicipioModelo,
         "INSERT INTO municipios
