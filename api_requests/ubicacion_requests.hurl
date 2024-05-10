@@ -37,6 +37,13 @@ POST http://localhost:8000/api/ciudad/nueva
 content-type: application/json
 
 {
-
-  "cp": "38940",
+    "clave_localidad": 1,
+    "estado": 11,
+    "municipio": 1,
+    "nombre": "Malinche",
+    "tipo": "Tipo1",
+    "clasificacion": "Localidad",
+    "numero_habitantes": 1234,
+    "orden": 0,
+    "cp": "38940"
 }
