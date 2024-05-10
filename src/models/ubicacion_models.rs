@@ -75,3 +75,36 @@ pub struct CiudadModelo {
     pub orden: i32,
     pub cp: String,
 }
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "tipo_zona_barrio", rename_all = "lowercase")]
+pub enum TipoZonaBarrio {
+    Tipo1,
+    Tipo2,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "indice_marginacion_barrio", rename_all = "snake_case")]
+pub enum IndiceMarginacionBarrio {
+    MuyBajo,
+    Bajo,
+    Medio,
+    Alto,
+    MuyAlto,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct BarrioModelo {
+    pub id_barrio: i32,
+    pub ciudad: i32,
+    pub nombre: String,
+    pub cp: String,
+    pub tipo_cp: i32,
+    pub sindicatura: i32,
+    pub tipo_zona: TipoZonaBarrio,
+    pub numero_habitantes: i32,
+    pub indice_marginacion: IndiceMarginacionBarrio,
+    pub ponderacion_5c: f64,
+    pub c_municipio: i32,
+    pub unico_asentamiento: i32,
+}

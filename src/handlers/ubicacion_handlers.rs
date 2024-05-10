@@ -10,12 +10,15 @@ use serde_json::json;
 
 use crate::{
     models::ubicacion_models::{
-        CalleModelo, CiudadModelo, ClasificacionCiudad, DomicilioModelo, EstadoModelo, PaisModelo,
-        TipoCalle, TipoCiudad,
+        BarrioModelo, CalleModelo, CiudadModelo, ClasificacionCiudad, DomicilioModelo,
+        EstadoModelo, IndiceMarginacionBarrio, PaisModelo, TipoCalle, TipoCiudad, TipoZonaBarrio,
     },
-    schemas::ubicacion_schemas::{
-        BuscarCalleQuery, BuscarEstadoQuery, BuscarPaisQuery, CrearCalleSchema, CrearCiudadSchema,
-        CrearDomicilioSchema,
+    schemas::{
+        entidades_schemas::CrearBancoSchema,
+        ubicacion_schemas::{
+            BuscarCalleQuery, BuscarEstadoQuery, BuscarPaisQuery, CrearBarrioSchema,
+            CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema,
+        },
     },
     validators::ubicacion_validators::{validar_nueva_calle, validar_nueva_domicilio},
     AppState,
@@ -215,6 +218,50 @@ pub async fn crear_nueva_ciudad_handler(
     let respuesta = serde_json::json!({
         "estado": true,
         "data": nueva_ciudad
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn crear_nuevo_barrio_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearBarrioSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nuevo_barrio = sqlx::query_as!(
+        BarrioModelo,
+        r#"INSERT INTO barrios
+        (ciudad, nombre, cp, tipo_cp, sindicatura, tipo_zona, numero_habitantes,
+        indice_marginacion, ponderacion_5c, c_municipio, unico_asentamiento) 
+        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) 
+        RETURNING id_barrio, ciudad, nombre, cp, tipo_cp, sindicatura,
+        tipo_zona AS "tipo_zona: TipoZonaBarrio", numero_habitantes,
+        indice_marginacion AS "indice_marginacion: IndiceMarginacionBarrio",
+        ponderacion_5c, c_municipio, unico_asentamiento"#,
+        body.ciudad,
+        body.nombre,
+        body.cp,
+        body.tipo_cp,
+        body.sindicatura,
+        body.tipo_zona as TipoZonaBarrio,
+        body.numero_habitantes,
+        body.indice_marginacion as IndiceMarginacionBarrio,
+        body.ponderacion_5c,
+        body.c_municipio,
+        body.unico_asentamiento
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e)
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = serde_json::json!({
+        "estado": true,
+        "data": nuevo_barrio
     });
 
     Ok(Json(respuesta))

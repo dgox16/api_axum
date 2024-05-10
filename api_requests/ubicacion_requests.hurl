@@ -32,7 +32,7 @@ content-type: application/json
   "numero_exterior": "18"
 }
 
-## Crear calle
+## Crear ciudad
 POST http://localhost:8000/api/ciudad/nueva
 content-type: application/json
 
@@ -46,4 +46,22 @@ content-type: application/json
     "numero_habitantes": 1234,
     "orden": 0,
     "cp": "38940"
+}
+
+## Crear barrio
+POST http://localhost:8000/api/barrio/nuevo
+content-type: application/json
+
+{
+    "ciudad": 10011,
+    "nombre": "La Joya",
+    "cp": "38940",
+    "tipo_cp": 1,
+    "sindicatura": 1,
+    "tipo_zona": "Tipo1",
+    "numero_habitantes": 1000,
+    "indice_marginacion": "Medio",
+    "ponderacion_5c": 10.1,
+    "c_municipio": 1,
+    "unico_asentamiento": 1
 }
