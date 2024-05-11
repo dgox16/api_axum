@@ -20,7 +20,8 @@ use crate::{
         CrearCiudadSchema, CrearDomicilioSchema, CrearMunicipioSchema,
     },
     validators::ubicacion_validators::{
-        validar_nueva_calle, validar_nueva_ciudad, validar_nueva_domicilio, validar_nuevo_municipio,
+        validar_nueva_calle, validar_nueva_ciudad, validar_nueva_domicilio, validar_nuevo_barrio,
+        validar_nuevo_municipio,
     },
     AppState,
 };
@@ -336,6 +337,7 @@ pub async fn crear_nuevo_barrio_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearBarrioSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nuevo_barrio(&body)?;
     let nuevo_barrio = sqlx::query_as!(
         BarrioModelo,
         r#"INSERT INTO barrios
