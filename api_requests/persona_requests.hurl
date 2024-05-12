@@ -17,9 +17,10 @@ Content-Type: application/json
     "vivienda": "Propio",
     "geolocalizacion": "Geolocalizacion 1",
     "observaciones_geolocalizacion": "Observaciones 1",
-    "fecha_nacimiento": "16-12-1999",
+    "fecha_nacimiento": "1999-12-16",
     "pais_nacimiento": 1,
     "estado_civil": "Soltero",
     "es_embargo_precautorio": true,
+    "bloqueado_autoridad": true,
     "tercero_autorizado": 1
 }
