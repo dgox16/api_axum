@@ -4,13 +4,17 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, 
 use serde_json::json;
 
 use crate::{
-    models::persona_models::{EstadoCivilPersona, PersonaModelo, SexoPersona, ViviendaPersona},
+    models::{
+        persona_models::{EstadoCivilPersona, PersonaModelo, SexoPersona, ViviendaPersona},
+        user_models::UsuarioModelo,
+    },
     schemas::persona_schemas::CrearPersonaSchema,
     AppState,
 };
 
 pub async fn crear_nueva_persona_handler(
     State(data): State<Arc<AppState>>,
+    Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearPersonaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let nueva_persona = sqlx::query_as!(
@@ -31,14 +35,13 @@ pub async fn crear_nueva_persona_handler(
         geolocalizacion,observaciones_geolocalizacion,
         fecha_nacimiento,pais_nacimiento,
         estado_civil AS "estado_civil: EstadoCivilPersona",
-        persona_conyuge,es_embargo_precautorio,bloqueado_autoridad,tercero_autorizado
-        "#,
+        persona_conyuge,es_embargo_precautorio,bloqueado_autoridad,tercero_autorizado"#,
         body.nombre,
         body.apellido_paterno,
         body.apellido_materno,
         body.tipo,
         body.sexo as SexoPersona,
-        1,
+        usuario.id,
         body.cp,
         body.barrio,
         body.ciudad,
