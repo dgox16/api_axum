@@ -27,3 +27,8 @@ pub struct CrearPersonaSchema {
     pub bloqueado_autoridad: bool,
     pub tercero_autorizado: i32,
 }
+
+#[derive(Deserialize)]
+pub struct ObtenerPersonaParams {
+    pub id_persona: i32,
+}

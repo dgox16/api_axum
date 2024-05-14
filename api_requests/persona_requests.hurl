@@ -24,3 +24,6 @@ Content-Type: application/json
     "bloqueado_autoridad": true,
     "tercero_autorizado": 1
 }
+
+GET http://localhost:8000/api/persona/obtener/4
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
