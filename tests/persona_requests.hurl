@@ -1,11 +1,12 @@
+# Crear una nueva persona (Necesario tener una sesion iniciado)
 POST http://localhost:8000/api/persona/nueva
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
 Content-Type: application/json
 
 {
-    "nombre": "Diego",
-    "apellido_paterno": "Gomez",
-    "apellido_materno": "Martinez",
+    "nombre": "Andrea Monserrat",
+    "apellido_paterno": "Martinez",
+    "apellido_materno": "Leon",
     "tipo": 1,
     "sexo": "Masculino",
     "cp": "38940",
@@ -25,5 +26,10 @@ Content-Type: application/json
     "tercero_autorizado": 1
 }
 
-GET http://localhost:8000/api/persona/obtener/4
+# Obtener una persona con su id
+GET http://localhost:8000/api/persona/obtener/3
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
+
+# Obtener una persona con su id
+GET http://localhost:8000/api/persona/buscar/?palabra_clave=mon
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
