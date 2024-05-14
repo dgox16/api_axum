@@ -1,6 +1,6 @@
 # Crear una nueva persona (Necesario tener una sesion iniciado)
 POST http://localhost:8000/api/persona/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {

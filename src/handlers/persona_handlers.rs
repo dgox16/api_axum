@@ -14,6 +14,7 @@ use crate::{
         user_models::UsuarioModelo,
     },
     schemas::persona_schemas::{BuscarPersonaQuery, CrearPersonaSchema, ObtenerPersonaParams},
+    validators::persona_validators::validar_nueva_persona,
     AppState,
 };
 
@@ -22,6 +23,7 @@ pub async fn crear_nueva_persona_handler(
     Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearPersonaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_persona(&body)?;
     let nueva_persona = sqlx::query_as!(
         PersonaModelo,
         r#"INSERT INTO personas 

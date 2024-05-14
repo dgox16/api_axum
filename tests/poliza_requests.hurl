@@ -1,6 +1,6 @@
 # Crear poliza  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE0NTg1MDMzLCJleHAiOjE3MTQ2MDMwMzN9.CAi3-uYNyYC-2dYN2BkuOgUivWy0EPquj_LbKnR6Hrg
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
