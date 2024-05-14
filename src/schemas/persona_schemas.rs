@@ -32,3 +32,10 @@ pub struct CrearPersonaSchema {
 pub struct ObtenerPersonaParams {
     pub id_persona: i32,
 }
+
+#[derive(Deserialize)]
+pub struct BuscarPersonaQuery {
+    pub palabra_clave: Option<String>,
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}
