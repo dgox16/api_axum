@@ -36,6 +36,7 @@ pub struct ObtenerPersonaParams {
 #[derive(Deserialize)]
 pub struct BuscarPersonaQuery {
     pub palabra_clave: Option<String>,
+    pub tipo: Option<String>,
     pub limite: Option<i64>,
     pub offset: Option<i64>,
 }

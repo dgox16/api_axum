@@ -7,7 +7,7 @@ Content-Type: application/json
     "nombre": "Andrea Monserrat",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 1,
+    "tipo": 3,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -31,5 +31,5 @@ GET http://localhost:8000/api/persona/obtener/3
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/buscar/?palabra_clave=mon
+GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
 Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE

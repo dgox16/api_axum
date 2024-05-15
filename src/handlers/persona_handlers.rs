@@ -131,40 +131,110 @@ pub async fn buscar_personas_handler(
     let limite = query.limite.unwrap_or(20);
     let offset = query.offset.unwrap_or(0);
 
-    let personas_encontradas = sqlx::query_as!(
-        PersonaModelo,
-        r#"SELECT id_persona,nombre,apellido_paterno,apellido_materno,tipo,
-        sexo AS "sexo: SexoPersona",fecha_actualizacion,
-        usuario_actualizo,cp,barrio,ciudad,calle,numero_exterior,
-        numero_interior,vivienda AS "vivienda: ViviendaPersona",
-        geolocalizacion,observaciones_geolocalizacion,
-        fecha_nacimiento,pais_nacimiento,
-        estado_civil AS "estado_civil: EstadoCivilPersona",
-        persona_conyuge,es_embargo_precautorio,bloqueado_autoridad,tercero_autorizado
-        FROM personas WHERE nombre ILIKE '%' || $1 || '%'
-        OR apellido_paterno ILIKE '%' || $1 || '%'
-        OR apellido_materno ILIKE '%' || $1 || '%'
-        LIMIT $2 OFFSET $3"#,
-        palabra_clave,
-        limite,
-        offset
-    )
-    .fetch_all(&data.db)
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    match query.tipo {
+        Some(tipo) => {
+            let tipo_bd = match tipo.as_str() {
+                "aspirante" => 1,
+                "socio" => 2,
+                "aval_externo" => 3,
+                "menor" => 4,
+                "conyuge" => 5,
+                "cliente" => 6,
+                "sucursal" => 7,
+                "tercero_autorizado" => 8,
+                "propietario_real" => 9,
+                "proveedor_de_recursos" => 10,
+                "tutor" => 11,
+                "referencia" => 12,
+                "beneficiario" => 13,
+                _ => 0,
+            };
 
-    let respuesta = json!({
-        "estado": true,
-        "datos": personas_encontradas
-    });
+            if tipo_bd == 0 {
+                let respuesta_error = serde_json::json!({
+                    "estado": "error",
+                    "mensaje": "El tipo de persona es invalido",
+                });
+                return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+            }
 
-    Ok(Json(respuesta))
+            let personas_encontradas = sqlx::query_as!(
+                PersonaModelo,
+                r#"SELECT id_persona,nombre,apellido_paterno,apellido_materno,tipo,
+                sexo AS "sexo: SexoPersona",fecha_actualizacion,
+                usuario_actualizo,cp,barrio,ciudad,calle,numero_exterior,
+                numero_interior,vivienda AS "vivienda: ViviendaPersona",
+                geolocalizacion,observaciones_geolocalizacion,
+                fecha_nacimiento,pais_nacimiento,
+                estado_civil AS "estado_civil: EstadoCivilPersona",
+                persona_conyuge,es_embargo_precautorio,bloqueado_autoridad,tercero_autorizado
+                FROM personas WHERE 
+                (nombre ILIKE '%' || $1 || '%'
+                OR apellido_paterno ILIKE '%' || $1 || '%'
+                OR apellido_materno ILIKE '%' || $1 || '%')
+                AND tipo=$2
+                LIMIT $3 OFFSET $4"#,
+                palabra_clave,
+                tipo_bd,
+                limite,
+                offset
+            )
+            .fetch_all(&data.db)
+            .await
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({
+                        "estado": false,
+                        "mensaje": format!("Error en la base de datos: {}", e),
+                    })),
+                )
+            })?;
+
+            let respuesta = json!({
+                "estado": true,
+                "datos": personas_encontradas
+            });
+
+            Ok(Json(respuesta))
+        }
+        None => {
+            let personas_encontradas = sqlx::query_as!(
+                PersonaModelo,
+                r#"SELECT id_persona,nombre,apellido_paterno,apellido_materno,tipo,
+                sexo AS "sexo: SexoPersona",fecha_actualizacion,
+                usuario_actualizo,cp,barrio,ciudad,calle,numero_exterior,
+                numero_interior,vivienda AS "vivienda: ViviendaPersona",
+                geolocalizacion,observaciones_geolocalizacion,
+                fecha_nacimiento,pais_nacimiento,
+                estado_civil AS "estado_civil: EstadoCivilPersona",
+                persona_conyuge,es_embargo_precautorio,bloqueado_autoridad,tercero_autorizado
+                FROM personas WHERE nombre ILIKE '%' || $1 || '%'
+                OR apellido_paterno ILIKE '%' || $1 || '%'
+                OR apellido_materno ILIKE '%' || $1 || '%'
+                LIMIT $2 OFFSET $3"#,
+                palabra_clave,
+                limite,
+                offset
+            )
+            .fetch_all(&data.db)
+            .await
+            .map_err(|e| {
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    Json(serde_json::json!({
+                        "estado": false,
+                        "mensaje": format!("Error en la base de datos: {}", e),
+                    })),
+                )
+            })?;
+
+            let respuesta = json!({
+                "estado": true,
+                "datos": personas_encontradas
+            });
+
+            Ok(Json(respuesta))
+        }
+    }
 }
