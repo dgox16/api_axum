@@ -21,3 +21,20 @@ pub struct ActividadPldModelo {
     pub maximo_prestamo: f32,
     pub ponderacion_5c: i32,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct EspecificacionPldModelo {
+    pub id_especificacion_pld: i32,
+    pub ocupacion: i32,
+    pub nombre_ocupacion: String,
+    pub especificacion: String,
+    pub actividad_economica: i32,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct LavadoAntiguedadModelo {
+    pub id_lavado_antiguedad: i32,
+    pub nombre: String,
+    pub antiguedad: i32,
+    pub factor_riesgo: f32,
+}
