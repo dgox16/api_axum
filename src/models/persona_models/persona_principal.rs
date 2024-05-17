@@ -30,6 +30,22 @@ pub enum EstadoCivilPersona {
     NoAplica,
 }
 
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "clasificacion_persona", rename_all = "lowercase")]
+pub enum ClasificacionPersona {
+    Fisica,
+    Moral,
+}
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "periodo_persona", rename_all = "lowercase")]
+pub enum PeriodoPersona {
+    Catorcenal,
+    Semanal,
+    Quincenal,
+    Mensual,
+}
+
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct PersonaModelo {
     pub id_persona: i32,

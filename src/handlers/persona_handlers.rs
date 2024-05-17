@@ -10,7 +10,9 @@ use serde_json::json;
 
 use crate::{
     models::{
-        persona_models::{EstadoCivilPersona, PersonaModelo, SexoPersona, ViviendaPersona},
+        persona_models::persona_principal::{
+            EstadoCivilPersona, PersonaModelo, SexoPersona, ViviendaPersona,
+        },
         user_models::UsuarioModelo,
     },
     schemas::persona_schemas::{BuscarPersonaQuery, CrearPersonaSchema, ObtenerPersonaParams},

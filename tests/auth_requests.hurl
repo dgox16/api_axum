@@ -21,7 +21,7 @@ content-type: application/json
 
 # Se cierra sesion
 GET http://localhost:8000/api/auth/cerrar_sesion
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzEzNDc0NTMxLCJleHAiOjE3MTM0NzgxMzF9.DB9y8FPRciGh5oaYlRPWNxpL9LowPXJZwEa5XWASZmE
+Authorization: Bearer {{token}}
 
 # Se devuelve un usuario
 GET http://localhost:8000/api/usuarios/actual

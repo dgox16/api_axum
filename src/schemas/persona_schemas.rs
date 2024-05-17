@@ -1,7 +1,9 @@
 use chrono::NaiveDate;
 use serde::Deserialize;
 
-use crate::models::persona_models::{EstadoCivilPersona, SexoPersona, ViviendaPersona};
+use crate::models::persona_models::persona_principal::{
+    EstadoCivilPersona, SexoPersona, ViviendaPersona,
+};
 
 #[derive(Deserialize)]
 pub struct CrearPersonaSchema {
