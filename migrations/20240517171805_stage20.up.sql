@@ -3,7 +3,7 @@ CREATE TABLE ocupaciones_pld (
     nombre VARCHAR(60) NOT NULL,
     cnbv VARCHAR(10) NOT NULL,
     descripcion VARCHAR(200) NOT NULL,
-    factor_riesgo VARCHAR(100) NOT NULL
+    factor_riesgo INTEGER NOT NULL
 );
 
 CREATE INDEX idx_nombre_ocupacion_pld ON ocupaciones_pld (nombre);
