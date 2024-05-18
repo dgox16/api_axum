@@ -73,3 +73,21 @@ pub struct PersonaModelo {
     pub bloqueado_autoridad: bool,
     pub tercero_autorizado: i32,
 }
+
+#[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
+#[sqlx(type_name = "grado_parentesco", rename_all = "snake_case")]
+pub enum GradoParentesco {
+    Primero,
+    Segundo,
+    Tercero,
+    NoAplica,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct ParentescoModelo {
+    pub id_parentesco: i32,
+    pub nombre: String,
+    pub es_familiar: bool,
+    pub grado: GradoParentesco,
+    pub tipo_id: i32,
+}
