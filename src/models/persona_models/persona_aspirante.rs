@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use super::persona_principal::{ClasificacionPersona, PeriodoPersona};
+use super::persona_enum::{ClasificacionPersona, PeriodoPersona};
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct AspirantePersonaModelo {
