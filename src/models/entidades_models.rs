@@ -111,3 +111,21 @@ pub struct CuentaModelo {
     pub subcuenta_siti: bool,
     pub prorrateo: bool,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct FrecuenciaEmpresaModelo {
+    pub id_frecuencia_empresa: i32,
+    pub nombre: String,
+    pub dias: i32,
+    pub meses: i32,
+}
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct EmpresaModelo {
+    pub id_empresa: i32,
+    pub nombre: String,
+    pub domicilio: i32,
+    pub telefono: String,
+    pub empleos_fijos: i32,
+    pub frecuencia: i32,
+}
