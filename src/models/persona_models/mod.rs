@@ -7,3 +7,4 @@ pub mod persona_menor;
 pub mod persona_principal;
 pub mod persona_socio;
 pub mod persona_sucursal;
+pub mod persona_tercero_autorizado;
