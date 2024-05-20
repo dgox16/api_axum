@@ -14,3 +14,9 @@ pub struct ProfesionModelo {
     pub nombre: String,
     pub abreviatura: String,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct PuestoTrabajoModelo {
+    pub id_puesto_trabajo: i32,
+    pub nombre: String,
+}
