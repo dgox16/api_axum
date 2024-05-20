@@ -1,5 +1,6 @@
 pub mod persona_aspirante;
 pub mod persona_aval;
+pub mod persona_beneficiario;
 pub mod persona_cliente;
 pub mod persona_conyuge;
 pub mod persona_enum;
