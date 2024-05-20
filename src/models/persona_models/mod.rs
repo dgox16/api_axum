@@ -1,3 +1,5 @@
+pub mod contactos;
+pub mod documentos;
 pub mod persona_aspirante;
 pub mod persona_aval;
 pub mod persona_beneficiario;
