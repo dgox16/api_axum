@@ -1,3 +1,9 @@
 pub mod persona_aspirante;
+pub mod persona_aval;
+pub mod persona_cliente;
+pub mod persona_conyuge;
+pub mod persona_enum;
+pub mod persona_menor;
 pub mod persona_principal;
 pub mod persona_socio;
+pub mod persona_sucursal;
