@@ -15,3 +15,4 @@ pub mod persona_sucursal;
 pub mod persona_tercero_autorizado;
 pub mod persona_tutor;
 pub mod relaciones;
+pub mod tutores;

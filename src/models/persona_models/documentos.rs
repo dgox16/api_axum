@@ -10,7 +10,7 @@ pub enum TipoDocumento {
 }
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-pub struct DocumentoModelos {
+pub struct DocumentoModelo {
     pub id_documento: i32,
     pub nombre: String,
     pub tipo: Option<TipoDocumento>,
