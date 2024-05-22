@@ -1,2 +1,2 @@
-pub mod poliza_insert;
-pub mod poliza_select;
+pub mod poliza_insert_handlers;
+pub mod poliza_select_handlers;
