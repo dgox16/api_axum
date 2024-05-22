@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use super::persona_enum::RegimenConyugalPersona;
+use super::persona_types::RegimenConyugalPersona;
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct ConyugePersonaModelo {

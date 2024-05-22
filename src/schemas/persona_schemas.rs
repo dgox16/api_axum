@@ -1,7 +1,7 @@
 use chrono::NaiveDate;
 use serde::Deserialize;
 
-use crate::models::persona_models::persona_enum::{
+use crate::models::persona_models::persona_types::{
     EstadoCivilPersona, SexoPersona, ViviendaPersona,
 };
 

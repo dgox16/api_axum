@@ -11,8 +11,8 @@ use serde_json::json;
 use crate::{
     models::{
         persona_models::{
-            persona_enum::{EstadoCivilPersona, SexoPersona, ViviendaPersona},
-            persona_principal::PersonaModelo,
+            persona_principal_models::PersonaModelo,
+            persona_types::{EstadoCivilPersona, SexoPersona, ViviendaPersona},
         },
         user_models::UsuarioModelo,
     },

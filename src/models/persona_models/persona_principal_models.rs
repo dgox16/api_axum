@@ -1,7 +1,7 @@
 use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 
-use super::persona_enum::{EstadoCivilPersona, SexoPersona, ViviendaPersona};
+use super::persona_types::{EstadoCivilPersona, SexoPersona, ViviendaPersona};
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct PersonaModelo {

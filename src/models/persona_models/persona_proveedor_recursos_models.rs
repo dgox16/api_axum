@@ -1,11 +1,11 @@
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use super::persona_enum::{ClasificacionPersona, PeriodoPersona, RegimenConyugalPersona};
+use super::persona_types::{ClasificacionPersona, PeriodoPersona, RegimenConyugalPersona};
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-pub struct PropietarioRealPersonaModelo {
-    pub id_persona_propietario_real: i32,
+pub struct ProveedorRecursosPersonaModelo {
+    pub id_persona_proveedor_recursos: i32,
     pub id_persona: i32,
     pub clasificacion: ClasificacionPersona,
     pub ocupacion_pld: i32,
