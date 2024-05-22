@@ -7,8 +7,11 @@ use axum::{
 };
 
 use crate::{
-    handlers::persona_handlers::persona_principal_handlers::{
-        buscar_personas_handler, crear_nueva_persona_handler, obtener_persona_handler,
+    handlers::persona_handlers::{
+        persona_aspirante_handlers::crear_nueva_persona_aspirante_handler,
+        persona_principal_handlers::{
+            buscar_personas_handler, crear_nueva_persona_handler, obtener_persona_handler,
+        },
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -28,5 +31,9 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
             get(obtener_persona_handler),
         )
         .route("/api/persona/buscar/", get(buscar_personas_handler))
+        .route(
+            "/api/persona/aspirante/nuevo/:id_persona",
+            get(crear_nueva_persona_aspirante_handler),
+        )
         .with_state(app_state)
 }
