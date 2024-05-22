@@ -28,8 +28,39 @@ Content-Type: application/json
 
 # Obtener una persona con su id
 GET http://localhost:8000/api/persona/obtener/3
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
+Authorization: Bearer {{token}}
 
-# Obtener una persona con su id
+# Buscar personas por tipo, nombre, apellidos
 GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1NjM5OTkzLCJleHAiOjE3MTU2NTc5OTN9.IOrqSCwYAI9x8VGD30WRaRlcVYhjx9lGBo997-TYzhE
+Authorization: Bearer {{token}}
+
+# Rellenar los datos de un aspirante 
+GET http://localhost:8000/api/persona/aspirante/nuevo/2
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
+    "ocupacion_pld": 1, 
+    "especificacion_pld": 26,
+    "actividad_pld": 1078,
+    "antiguedad": 2,
+    "periodo": "Mensual",
+    "frecuencia_captacion": 12,
+    "operacion_maxima_captacion": 10.11,
+    "perfil_frecuencia_prestamo": 10,
+    "operacion_maxima_prestamo": 17.2,
+    "ingresos_mensual": 32.2,
+    "egresos_mensual": 32.2,
+    "grado_afectacion": 32,
+    "afectacion": 32.6,
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true
+}
