@@ -7,7 +7,7 @@ use axum::{
 };
 
 use crate::{
-    handlers::persona_handlers::{
+    handlers::persona_handlers::persona_principal_handlers::{
         buscar_personas_handler, crear_nueva_persona_handler, obtener_persona_handler,
     },
     middlewares::jwt_middlewares::auth_required,
