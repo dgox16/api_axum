@@ -1,6 +1,6 @@
 use axum::{http::StatusCode, Json};
 
-use crate::schemas::persona_schemas::CrearPersonaSchema;
+use crate::schemas::persona_schemas::persona_principal_schemas::CrearPersonaSchema;
 
 pub fn validar_nueva_persona(
     body: &CrearPersonaSchema,

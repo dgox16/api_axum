@@ -16,7 +16,9 @@ use crate::{
         },
         user_models::UsuarioModelo,
     },
-    schemas::persona_schemas::{BuscarPersonaQuery, CrearPersonaSchema, ObtenerPersonaParams},
+    schemas::persona_schemas::persona_principal_schemas::{
+        BuscarPersonaQuery, CrearPersonaSchema, ObtenerPersonaParams,
+    },
     validators::persona_validators::validar_nueva_persona,
     AppState,
 };
