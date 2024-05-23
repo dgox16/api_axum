@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/3
+GET http://localhost:8000/api/persona/obtener/7
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -35,7 +35,7 @@ GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
 Authorization: Bearer {{token}}
 
 # Rellenar los datos de un aspirante 
-GET http://localhost:8000/api/persona/aspirante/nuevo/6
+GET http://localhost:8000/api/persona/aspirante/nuevo/5
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -59,6 +59,49 @@ Content-Type: application/json
     "fecha_residencia": "2020-12-16",
     "lugar_nacimiento": "Yuriria",
     "estado_nacimiento": 11,   
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un socio
+GET http://localhost:8000/api/persona/socio/nuevo/7
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
+    "ocupacion_pld": 1, 
+    "especificacion_pld": 26,
+    "actividad_pld": 1078,
+    "antiguedad": 2,
+    "periodo": "Mensual",
+    "frecuencia_captacion": 12,
+    "operacion_maxima_captacion": 10.11,
+    "perfil_frecuencia_prestamo": 10,
+    "operacion_maxima_prestamo": 17.2,
+    "ingresos_mensual": 32.2,
+    "egresos_mensual": 32.2,
+    "grado_afectacion": 32,
+    "afectacion": 32.6,
+    "proveedor_recursos": 1,
+    "parentesco": 1,
+    "persona_recomendo": 1,
+    "manera_enterarse": 1,
+    "lengua": 1,
+    "empresa": 1,
+    "puesto": 1,
+    "fecha_trabajo": "2021-01-10",
+    "ingreso_ordinario": 10.21,
+    "otros_ingresos": 12.13,
+    "es_propietario": "Si",
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
     "profesion": 38,
     "escolaridad": 8,
     "autorizo_compartir_informacion_ifai": true,

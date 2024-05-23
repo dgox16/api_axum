@@ -1,20 +1,12 @@
 use chrono::NaiveDate;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-use super::persona_types::{
+use crate::models::persona_models::persona_types::{
     ClasificacionPersona, EsPropietarioPersona, PeriodoPersona, RegimenConyugalPersona,
 };
 
-#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-pub struct ManerasEnterarse {
-    id_manera_enterarse: i32,
-    nombre: String,
-}
-
-#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-pub struct SocioPersonaModelo {
-    pub id_persona_socio: i32,
-    pub id_persona: i32,
+#[derive(Deserialize)]
+pub struct CrearPersonaSocioSchema {
     pub clasificacion: ClasificacionPersona,
     pub ocupacion_pld: i32,
     pub especificacion_pld: i32,

@@ -46,7 +46,7 @@ pub enum PeriodoPersona {
 }
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "regimen_conyugal_persona", rename_all = "lowercase")]
+#[sqlx(type_name = "regimen_conyugal_persona", rename_all = "snake_case")]
 pub enum RegimenConyugalPersona {
     NoAplica,
     BienesMancomunados,
@@ -54,7 +54,7 @@ pub enum RegimenConyugalPersona {
 }
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "propietario_persona", rename_all = "lowercase")]
+#[sqlx(type_name = "es_propietario_persona", rename_all = "lowercase")]
 pub enum EsPropietarioPersona {
     Si,
     No,
