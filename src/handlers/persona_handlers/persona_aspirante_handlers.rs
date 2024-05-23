@@ -17,6 +17,7 @@ use crate::{
         persona_aspirante_schemas::CrearPersonaAspiranteSchema,
         persona_principal_schemas::ObtenerPersonaParams,
     },
+    validators::persona_validators::persona_aspirante_validators::validar_nueva_persona_aspirante,
     AppState,
 };
 
@@ -25,6 +26,7 @@ pub async fn crear_nueva_persona_aspirante_handler(
     Path(params): Path<ObtenerPersonaParams>,
     Json(body): Json<CrearPersonaAspiranteSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_persona_aspirante(&body)?;
     let nuevo_aspirante = sqlx::query_as!(
         AspirantePersonaModelo,
         r#"INSERT INTO aspirantes_persona
