@@ -6,7 +6,7 @@ CREATE TABLE frecuencias_empresa (
 );
 
 CREATE TABLE empresas (
-    id_empresa SERIAL NOT NULL,
+    id_empresa SERIAL PRIMARY KEY,
     nombre VARCHAR(75) NOT NULL,
     domicilio INTEGER NOT NULL,
     telefono VARCHAR(10) NOT NULL,

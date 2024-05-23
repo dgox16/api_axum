@@ -1,0 +1,68 @@
+CREATE TYPE es_propietario_persona AS ENUM (
+    'si',
+    'no',
+    'autoempleo'
+);
+
+CREATE TYPE regimen_conyugal_persona AS ENUM (
+    'no_aplica',
+    'bienes_mancomunados',
+    'bienes_separados'
+);
+
+
+CREATE TABLE socios_persona (
+    id_persona_socio SERIAL PRIMARY KEY,
+    id_persona INTEGER NOT NULL,
+    clasificacion clasificacion_persona NOT NULL,
+    ocupacion_pld INTEGER NOT NULL,
+    especificacion_pld INTEGER NOT NULL,
+    actividad_pld INTEGER NOT NULL,
+    antiguedad INTEGER NOT NULL,
+    periodo periodo_persona NOT NULL,
+    frecuencia_captacion INTEGER NOT NULL,
+    operacion_maxima_captacion REAL NOT NULL,
+    perfil_frecuencia_prestamo INTEGER NOT NULL,
+    operacion_maxima_prestamo REAL NOT NULL,
+    ingresos_mensual REAL NOT NULL,
+    egresos_mensual REAL NOT NULL,
+    grado_afectacion INTEGER NOT NULL,
+    afectacion REAL NOT NULL,
+    proveedor_recursos INTEGER NOT NULL,
+    parentesco INTEGER NOT NULL,
+    persona_recomendo INTEGER NOT NULL,
+    manera_enterarse INTEGER NOT NULL,
+    lengua INTEGER NOT NULL,
+    empresa INTEGER NOT NULL,
+    puesto INTEGER NOT NULL,
+    fecha_trabajo DATE NOT NULL,
+    ingreso_ordinario REAL NOT NULL,
+    otros_ingresos REAL NOT NULL,
+    es_propietario es_propietario_persona NOT NULL,
+    entre_calle BIGINT NOT NULL,
+    y_calle BIGINT NOT NULL,
+    fecha_residencia DATE NOT NULL,
+    lugar_nacimiento VARCHAR(75) NOT NULL,
+    estado_nacimiento INTEGER NOT NULL,
+    regimen_conyugal regimen_conyugal_persona NOT NULL,
+    profesion INTEGER NOT NULL,
+    escolaridad INTEGER NOT NULL,
+    autorizo_compartir_informacion_ifai BOOLEAN NOT NULL,
+    autorizo_publicidad BOOLEAN NOT NULL,
+    FOREIGN KEY (id_persona) REFERENCES personas (id_persona) ON DELETE RESTRICT,
+    FOREIGN KEY (ocupacion_pld) REFERENCES ocupaciones_pld (id_ocupacion_pld) ON DELETE RESTRICT,
+    FOREIGN KEY (especificacion_pld) REFERENCES especificaciones_pld (id_especificacion_pld) ON DELETE RESTRICT,
+    FOREIGN KEY (actividad_pld) REFERENCES actividades_pld (id_actividad_pld) ON DELETE RESTRICT,
+    FOREIGN KEY (antiguedad) REFERENCES lavado_antiguedad (id_lavado_antiguedad) ON DELETE RESTRICT,
+    FOREIGN KEY (proveedor_recursos) REFERENCES personas (id_persona) ON DELETE RESTRICT,
+    FOREIGN KEY (parentesco) REFERENCES parentescos (id_parentesco) ON DELETE RESTRICT,
+    FOREIGN KEY (persona_recomendo) REFERENCES personas (id_persona) ON DELETE RESTRICT,
+    FOREIGN KEY (manera_enterarse) REFERENCES maneras_enterarse (id_manera_enterarse) ON DELETE RESTRICT,
+    FOREIGN KEY (lengua) REFERENCES lenguas (id_lenguas) ON DELETE RESTRICT,
+    FOREIGN KEY (empresa) REFERENCES empresas (id_empresa) ON DELETE RESTRICT,
+    FOREIGN KEY (puesto) REFERENCES puestos_trabajo (id_puesto_trabajo) ON DELETE RESTRICT,
+    FOREIGN KEY (entre_calle) REFERENCES calles (id_calle) ON DELETE RESTRICT,
+    FOREIGN KEY (y_calle) REFERENCES calles (id_calle) ON DELETE RESTRICT,
+    FOREIGN KEY (profesion) REFERENCES profesiones (id_profesion) ON DELETE RESTRICT,
+    FOREIGN KEY (escolaridad) REFERENCES escolaridades (id_escolaridad) ON DELETE RESTRICT
+);
