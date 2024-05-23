@@ -23,6 +23,8 @@ use crate::{
     AppState,
 };
 
+use super::persona_aspirante_handlers::obtener_persona_aspirante_handler;
+
 pub async fn crear_nueva_persona_handler(
     State(data): State<Arc<AppState>>,
     Extension(usuario): Extension<UsuarioModelo>,
@@ -120,10 +122,19 @@ pub async fn obtener_persona_handler(
         )
     })?;
 
-    let respuesta = json!({
+    let mut respuesta = json!({
         "estado": true,
-        "datos": persona_encontrada
+        "datos": {
+            "persona": persona_encontrada
+        }
     });
+
+    if persona_encontrada.tipo == 1 {
+        let aspirante =
+            obtener_persona_aspirante_handler(&data, persona_encontrada.id_persona).await?;
+
+        respuesta["datos"]["datos_aspirante"] = json!(aspirante);
+    }
 
     Ok(Json(respuesta))
 }

@@ -89,3 +89,34 @@ pub async fn crear_nueva_persona_aspirante_handler(
 
     Ok(Json(respuesta))
 }
+
+pub async fn obtener_persona_aspirante_handler(
+    data: &Arc<AppState>,
+    id_persona: i32,
+) -> Result<AspirantePersonaModelo, (StatusCode, Json<serde_json::Value>)> {
+    let aspirante_encontrado = sqlx::query_as!(
+        AspirantePersonaModelo,
+        r#"SELECT id_persona_aspirante, id_persona, clasificacion AS "clasificacion: ClasificacionPersona",
+        ocupacion_pld, especificacion_pld, antiguedad, actividad_pld,
+        periodo AS "periodo: PeriodoPersona", frecuencia_captacion, operacion_maxima_captacion,
+        perfil_frecuencia_prestamo, operacion_maxima_prestamo,
+        ingresos_mensual, egresos_mensual, grado_afectacion, afectacion,
+        entre_calle, y_calle, fecha_residencia, lugar_nacimiento, estado_nacimiento, profesion,
+        escolaridad, autorizo_compartir_informacion_ifai, autorizo_publicidad
+        FROM aspirantes_persona WHERE id_persona=$1"#,
+        id_persona,
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })?;
+
+    Ok(aspirante_encontrado)
+}

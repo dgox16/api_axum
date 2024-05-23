@@ -35,7 +35,7 @@ GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
 Authorization: Bearer {{token}}
 
 # Rellenar los datos de un aspirante 
-GET http://localhost:8000/api/persona/aspirante/nuevo/2
+GET http://localhost:8000/api/persona/aspirante/nuevo/6
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
