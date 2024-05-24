@@ -26,7 +26,7 @@ pub async fn crear_nueva_persona_aspirante_handler(
     Path(params): Path<ObtenerPersonaParams>,
     Json(body): Json<CrearPersonaAspiranteSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    validar_nueva_persona_aspirante(&body)?;
+    validar_nueva_persona_aspirante(&data, params.id_persona, &body).await?;
     let nuevo_aspirante = sqlx::query_as!(
         AspirantePersonaModelo,
         r#"INSERT INTO aspirantes_persona

@@ -4,7 +4,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Andrea Monserrat",
+    "nombre": "Monserrat",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
     "tipo": 3,
@@ -109,7 +109,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un aval
-GET http://localhost:8000/api/persona/aval/nuevo/9
+GET http://localhost:8000/api/persona/aval/nuevo/10
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
