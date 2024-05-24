@@ -23,7 +23,10 @@ use crate::{
     AppState,
 };
 
-use super::persona_aspirante_handlers::obtener_persona_aspirante_handler;
+use super::{
+    persona_aspirante_handlers::obtener_persona_aspirante_handler,
+    persona_socio_handlers::obtener_persona_socio_handler,
+};
 
 pub async fn crear_nueva_persona_handler(
     State(data): State<Arc<AppState>>,
@@ -129,11 +132,17 @@ pub async fn obtener_persona_handler(
         }
     });
 
-    if persona_encontrada.tipo == 1 {
-        let aspirante =
-            obtener_persona_aspirante_handler(&data, persona_encontrada.id_persona).await?;
-
-        respuesta["datos"]["datos_aspirante"] = json!(aspirante);
+    match persona_encontrada.tipo {
+        1 => {
+            let aspirante =
+                obtener_persona_aspirante_handler(&data, persona_encontrada.id_persona).await?;
+            respuesta["datos"]["datos_aspirante"] = json!(aspirante);
+        }
+        2 => {
+            let socio = obtener_persona_socio_handler(&data, persona_encontrada.id_persona).await?;
+            respuesta["datos"]["datos_socio"] = json!(socio);
+        }
+        _ => {}
     }
 
     Ok(Json(respuesta))

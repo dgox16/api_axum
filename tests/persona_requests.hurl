@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/7
+GET http://localhost:8000/api/persona/obtener/8
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -85,9 +85,9 @@ Content-Type: application/json
     "egresos_mensual": 32.2,
     "grado_afectacion": 32,
     "afectacion": 32.6,
-    "proveedor_recursos": 1,
+    "proveedor_recursos": 2,
     "parentesco": 1,
-    "persona_recomendo": 1,
+    "persona_recomendo": 2,
     "manera_enterarse": 1,
     "lengua": 1,
     "empresa": 1,

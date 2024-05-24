@@ -110,3 +110,39 @@ pub async fn crear_nueva_persona_socio_handler(
 
     Ok(Json(respuesta))
 }
+
+pub async fn obtener_persona_socio_handler(
+    data: &Arc<AppState>,
+    id_persona: i32,
+) -> Result<SocioPersonaModelo, (StatusCode, Json<serde_json::Value>)> {
+    let socio_encontrado = sqlx::query_as!(
+        SocioPersonaModelo,
+        r#"SELECT id_persona_socio, id_persona, 
+        clasificacion AS "clasificacion: ClasificacionPersona",ocupacion_pld, especificacion_pld,
+        antiguedad, actividad_pld,periodo AS "periodo: PeriodoPersona", frecuencia_captacion,
+        operacion_maxima_captacion,perfil_frecuencia_prestamo, operacion_maxima_prestamo,
+        ingresos_mensual, egresos_mensual, grado_afectacion, afectacion,
+        proveedor_recursos, parentesco, persona_recomendo, manera_enterarse, lengua, empresa,
+        puesto, fecha_trabajo, ingreso_ordinario, otros_ingresos, 
+        es_propietario AS "es_propietario: EsPropietarioPersona",entre_calle, y_calle, 
+        fecha_residencia, lugar_nacimiento, estado_nacimiento,
+        regimen_conyugal AS "regimen_conyugal: RegimenConyugalPersona",profesion,escolaridad, 
+        autorizo_compartir_informacion_ifai,autorizo_publicidad 
+        FROM socios_persona 
+        WHERE id_persona=$1"#,
+        id_persona,
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })?;
+
+    Ok(socio_encontrado)
+}
