@@ -1,10 +1,8 @@
 use chrono::NaiveDate;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 
-#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
-pub struct MenorPersonaModelo {
-    pub id_persona_menor: i32,
-    pub id_persona: i32,
+#[derive(Deserialize)]
+pub struct CrearPersonaMenorSchema {
     pub entre_calle: i64,
     pub y_calle: i64,
     pub fecha_residencia: NaiveDate,

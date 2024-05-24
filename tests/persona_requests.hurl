@@ -7,7 +7,7 @@ Content-Type: application/json
     "nombre": "Monserrat",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 3,
+    "tipo": 4,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -128,4 +128,20 @@ Content-Type: application/json
     "autorizo_publicidad": true,
     "fecha_bloqueo": "2025-12-16",
     "usuario_bloqueo": 1
+}
+
+# Rellenar los datos de un menor
+GET http://localhost:8000/api/persona/menor/nuevo/10
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true,
 }
