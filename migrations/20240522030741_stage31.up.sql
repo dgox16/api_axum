@@ -43,6 +43,7 @@ CREATE TABLE aspirantes_persona (
     FOREIGN KEY (antiguedad) REFERENCES lavado_antiguedad (id_lavado_antiguedad) ON DELETE RESTRICT,
     FOREIGN KEY (entre_calle) REFERENCES calles (id_calle) ON DELETE RESTRICT,
     FOREIGN KEY (y_calle) REFERENCES calles (id_calle) ON DELETE RESTRICT,
+    FOREIGN KEY (estado_nacimiento) REFERENCES estados_mexico (id_estado) ON DELETE RESTRICT,
     FOREIGN KEY (profesion) REFERENCES profesiones (id_profesion) ON DELETE RESTRICT,
     FOREIGN KEY (escolaridad) REFERENCES escolaridades (id_escolaridad) ON DELETE RESTRICT
 );
