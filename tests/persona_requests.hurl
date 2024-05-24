@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Luis",
+    "nombre": "Juan",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 5,
+    "tipo": 6,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/11
+GET http://localhost:8000/api/persona/obtener/13
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -156,4 +156,38 @@ Content-Type: application/json
     "lugar_nacimiento": "Yuriria",
     "estado_nacimiento": 11,
     "regimen_conyugal": "BienesMancomunados"
+}
+
+# Rellenar los datos de un socio
+GET http://localhost:8000/api/persona/cliente/nuevo/9
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
+    "ocupacion_pld": 1, 
+    "especificacion_pld": 26,
+    "actividad_pld": 1078,
+    "antiguedad": 2,
+    "periodo": "Mensual",
+    "frecuencia_captacion": 12,
+    "operacion_maxima_captacion": 10.11,
+    "perfil_frecuencia_prestamo": 10,
+    "operacion_maxima_prestamo": 17.2,
+    "ingresos_mensual": 32.2,
+    "egresos_mensual": 32.2,
+    "grado_afectacion": 32,
+    "afectacion": 32.6,
+    "proveedor_recursos": 2,
+    "parentesco": 1,
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true
 }
