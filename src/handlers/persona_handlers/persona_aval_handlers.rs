@@ -17,6 +17,7 @@ use crate::{
         persona_aval_schemas::CrearPersonaAvalSchema,
         persona_principal_schemas::ObtenerPersonaParams,
     },
+    validators::persona_validators::persona_aval_validators::validar_nueva_persona_aval,
     AppState,
 };
 
@@ -25,6 +26,7 @@ pub async fn crear_nueva_persona_aval_handler(
     Path(params): Path<ObtenerPersonaParams>,
     Json(body): Json<CrearPersonaAvalSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_persona_aval(&body)?;
     let nuevo_aval = sqlx::query_as!(
         AvalPersonaModelo,
         r#"INSERT INTO avales_persona
