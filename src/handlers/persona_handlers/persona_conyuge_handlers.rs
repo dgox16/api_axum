@@ -10,11 +10,7 @@ use serde_json::json;
 
 use crate::{
     models::persona_models::{
-        persona_conyuge_models::ConyugePersonaModelo,
-        persona_socio_models::SocioPersonaModelo,
-        persona_types::{
-            ClasificacionPersona, EsPropietarioPersona, PeriodoPersona, RegimenConyugalPersona,
-        },
+        persona_conyuge_models::ConyugePersonaModelo, persona_types::RegimenConyugalPersona,
     },
     schemas::persona_schemas::{
         persona_conyuge_schemas::CrearPersonaConyugeSchema,
@@ -65,24 +61,15 @@ pub async fn crear_nueva_persona_conyuge_handler(
     Ok(Json(respuesta))
 }
 
-pub async fn obtener_persona_socio_handler(
+pub async fn obtener_persona_conyuge_handler(
     data: &Arc<AppState>,
     id_persona: i32,
-) -> Result<SocioPersonaModelo, (StatusCode, Json<serde_json::Value>)> {
-    let socio_encontrado = sqlx::query_as!(
-        SocioPersonaModelo,
-        r#"SELECT id_persona_socio, id_persona, 
-        clasificacion AS "clasificacion: ClasificacionPersona",ocupacion_pld, especificacion_pld,
-        antiguedad, actividad_pld,periodo AS "periodo: PeriodoPersona", frecuencia_captacion,
-        operacion_maxima_captacion,perfil_frecuencia_prestamo, operacion_maxima_prestamo,
-        ingresos_mensual, egresos_mensual, grado_afectacion, afectacion,
-        proveedor_recursos, parentesco, persona_recomendo, manera_enterarse, lengua, empresa,
-        puesto, fecha_trabajo, ingreso_ordinario, otros_ingresos, 
-        es_propietario AS "es_propietario: EsPropietarioPersona",entre_calle, y_calle, 
-        fecha_residencia, lugar_nacimiento, estado_nacimiento,
-        regimen_conyugal AS "regimen_conyugal: RegimenConyugalPersona",profesion,escolaridad, 
-        autorizo_compartir_informacion_ifai,autorizo_publicidad 
-        FROM socios_persona 
+) -> Result<ConyugePersonaModelo, (StatusCode, Json<serde_json::Value>)> {
+    let conyuge_encontrado = sqlx::query_as!(
+        ConyugePersonaModelo,
+        r#"SELECT id_persona_conyuge, id_persona,fecha_residencia, lugar_nacimiento,
+        estado_nacimiento,regimen_conyugal AS "regimen_conyugal: RegimenConyugalPersona"
+        FROM conyuges_persona 
         WHERE id_persona=$1"#,
         id_persona,
     )
@@ -98,5 +85,5 @@ pub async fn obtener_persona_socio_handler(
         )
     })?;
 
-    Ok(socio_encontrado)
+    Ok(conyuge_encontrado)
 }
