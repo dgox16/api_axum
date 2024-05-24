@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/8
+GET http://localhost:8000/api/persona/obtener/7
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -106,4 +106,26 @@ Content-Type: application/json
     "escolaridad": 8,
     "autorizo_compartir_informacion_ifai": true,
     "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un aval
+GET http://localhost:8000/api/persona/aval/nuevo/9
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
+    "socio_migrado": "Socio1",
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true,
+    "fecha_bloqueo": "2025-12-16",
+    "usuario_bloqueo": 1
 }
