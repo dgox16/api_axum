@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Monserrat",
+    "nombre": "Luis",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 4,
+    "tipo": 5,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -35,7 +35,7 @@ GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
 Authorization: Bearer {{token}}
 
 # Rellenar los datos de un aspirante 
-GET http://localhost:8000/api/persona/aspirante/nuevo/5
+GET http://localhost:8000/api/persona/aspirante/nuevo/6
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -66,7 +66,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un socio
-GET http://localhost:8000/api/persona/socio/nuevo/7
+GET http://localhost:8000/api/persona/socio/nuevo/9
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -109,7 +109,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un aval
-GET http://localhost:8000/api/persona/aval/nuevo/10
+GET http://localhost:8000/api/persona/aval/nuevo/9
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -131,7 +131,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un menor
-GET http://localhost:8000/api/persona/menor/nuevo/4
+GET http://localhost:8000/api/persona/menor/nuevo/11
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -144,4 +144,16 @@ Content-Type: application/json
     "escolaridad": 8,
     "autorizo_compartir_informacion_ifai": true,
     "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un conyuge
+GET http://localhost:8000/api/persona/conyuge/nuevo/12
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,
+    "regimen_conyugal": "BienesMancomunados"
 }
