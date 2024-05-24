@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/9
+GET http://localhost:8000/api/persona/obtener/11
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -131,7 +131,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un menor
-GET http://localhost:8000/api/persona/menor/nuevo/10
+GET http://localhost:8000/api/persona/menor/nuevo/4
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -143,5 +143,5 @@ Content-Type: application/json
     "estado_nacimiento": 11,   
     "escolaridad": 8,
     "autorizo_compartir_informacion_ifai": true,
-    "autorizo_publicidad": true,
+    "autorizo_publicidad": true
 }
