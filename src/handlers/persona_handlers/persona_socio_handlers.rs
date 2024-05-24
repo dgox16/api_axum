@@ -19,6 +19,7 @@ use crate::{
         persona_principal_schemas::ObtenerPersonaParams,
         persona_socio_schemas::CrearPersonaSocioSchema,
     },
+    validators::persona_validators::persona_socio_validators::validar_nueva_persona_socio,
     AppState,
 };
 
@@ -27,6 +28,7 @@ pub async fn crear_nueva_persona_socio_handler(
     Path(params): Path<ObtenerPersonaParams>,
     Json(body): Json<CrearPersonaSocioSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_persona_socio(&body)?;
     let nuevo_socio = sqlx::query_as!(
         SocioPersonaModelo,
         r#"INSERT INTO socios_persona
