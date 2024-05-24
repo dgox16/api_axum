@@ -73,3 +73,33 @@ pub async fn crear_nueva_persona_aval_handler(
 
     Ok(Json(respuesta))
 }
+
+pub async fn obtener_persona_aval_handler(
+    data: &Arc<AppState>,
+    id_persona: i32,
+) -> Result<AvalPersonaModelo, (StatusCode, Json<serde_json::Value>)> {
+    let aval_encontrado = sqlx::query_as!(
+        AvalPersonaModelo,
+        r#"SELECT id_persona_aval, id_persona, clasificacion AS "clasificacion: ClasificacionPersona",
+        socio_migrado,entre_calle, y_calle,fecha_residencia, lugar_nacimiento,
+        estado_nacimiento,regimen_conyugal AS "regimen_conyugal: RegimenConyugalPersona",
+        profesion,escolaridad, autorizo_compartir_informacion_ifai,autorizo_publicidad,
+        fecha_bloqueo,usuario_bloqueo 
+        FROM avales_persona 
+        WHERE id_persona=$1"#,
+        id_persona,
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })?;
+
+    Ok(aval_encontrado)
+}
