@@ -16,6 +16,7 @@ use crate::{
         persona_principal_handlers::{
             buscar_personas_handler, crear_nueva_persona_handler, obtener_persona_handler,
         },
+        persona_propietario_real_handlers::crear_nueva_persona_propietario_real_handler,
         persona_proveedor_recursos_handlers::crear_nueva_persona_proveedor_recursos_handler,
         persona_socio_handlers::crear_nueva_persona_socio_handler,
         persona_sucursal_handlers::crear_nueva_persona_sucursal_handler,
@@ -70,6 +71,10 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
         .route(
             "/api/persona/tercero_autorizado/nuevo/:id_persona",
             get(crear_nueva_persona_tercero_autorizado_handler),
+        )
+        .route(
+            "/api/persona/propietario_real/nuevo/:id_persona",
+            get(crear_nueva_persona_propietario_real_handler),
         )
         .route(
             "/api/persona/proveedor_recursos/nuevo/:id_persona",
