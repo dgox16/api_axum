@@ -29,6 +29,7 @@ use super::{
     persona_cliente_handlers::obtener_persona_cliente_handler,
     persona_conyuge_handlers::obtener_persona_conyuge_handler,
     persona_menor_handlers::obtener_persona_menor_handler,
+    persona_proveedor_recursos_handlers::obtener_persona_proveedor_recursos_handler,
     persona_socio_handlers::obtener_persona_socio_handler,
     persona_sucursal_handlers::obtener_persona_sucursal_handler,
     persona_tercero_autorizado_handlers::obtener_persona_tercero_autorizado_handler,
@@ -176,6 +177,13 @@ pub async fn obtener_persona_handler(
                 obtener_persona_tercero_autorizado_handler(&data, persona_encontrada.id_persona)
                     .await?;
             respuesta["datos"]["datos_tercero_autorizado"] = json!(tercero_autorizado);
+        }
+
+        10 => {
+            let proveedor =
+                obtener_persona_proveedor_recursos_handler(&data, persona_encontrada.id_persona)
+                    .await?;
+            respuesta["datos"]["datos_proveedor_recursos"] = json!(proveedor);
         }
         _ => {}
     }

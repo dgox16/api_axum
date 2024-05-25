@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Teofilo",
+    "nombre": "Pedro",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 7,
+    "tipo": 10,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/14
+GET http://localhost:8000/api/persona/obtener/17
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -199,6 +199,60 @@ Content-Type: application/json
 
 {
     "clasificacion": "Fisica",
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un tercero autorizado
+GET http://localhost:8000/api/persona/tercero_autorizado/nuevo/16
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
+    "socio_migrado": "Socio1",
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true,
+    "fecha_bloqueo": "2025-12-16",
+    "usuario_bloqueo": 1
+}
+
+# Rellenar los datos de un proveedor_recursos
+GET http://localhost:8000/api/persona/proveedor_recursos/nuevo/17
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
+    "ocupacion_pld": 1, 
+    "especificacion_pld": 26,
+    "actividad_pld": 1078,
+    "antiguedad": 2,
+    "periodo": "Mensual",
+    "frecuencia_captacion": 12,
+    "operacion_maxima_captacion": 10.11,
+    "perfil_frecuencia_prestamo": 10,
+    "operacion_maxima_prestamo": 17.2,
+    "ingresos_mensual": 32.2,
+    "egresos_mensual": 32.2,
+    "grado_afectacion": 32,
+    "afectacion": 32.6,
     "entre_calle": 10000000001,
     "y_calle": 10000000002,
     "fecha_residencia": "2020-12-16",
