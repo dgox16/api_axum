@@ -1,0 +1,1 @@
+DROP TABLE proveedores_recursos_persona;

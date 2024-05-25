@@ -159,7 +159,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un socio
-GET http://localhost:8000/api/persona/cliente/nuevo/9
+GET http://localhost:8000/api/persona/cliente/nuevo/13
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
