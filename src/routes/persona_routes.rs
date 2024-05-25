@@ -17,6 +17,7 @@ use crate::{
             buscar_personas_handler, crear_nueva_persona_handler, obtener_persona_handler,
         },
         persona_socio_handlers::crear_nueva_persona_socio_handler,
+        persona_sucursal_handlers::crear_nueva_persona_sucursal_handler,
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -59,6 +60,10 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
         .route(
             "/api/persona/cliente/nuevo/:id_persona",
             get(crear_nueva_persona_cliente_handler),
+        )
+        .route(
+            "/api/persona/sucursal/nuevo/:id_persona",
+            get(crear_nueva_persona_sucursal_handler),
         )
         .with_state(app_state)
 }

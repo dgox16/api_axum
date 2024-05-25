@@ -5,3 +5,4 @@ pub mod persona_conyuge_validators;
 pub mod persona_menor_validators;
 pub mod persona_principal_validators;
 pub mod persona_socio_validators;
+pub mod persona_sucursal_validators;

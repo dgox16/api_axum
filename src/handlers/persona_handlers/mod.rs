@@ -5,3 +5,4 @@ pub mod persona_conyuge_handlers;
 pub mod persona_menor_handlers;
 pub mod persona_principal_handlers;
 pub mod persona_socio_handlers;
+pub mod persona_sucursal_handlers;

@@ -5,3 +5,4 @@ pub mod persona_conyuge_schemas;
 pub mod persona_menor_schema;
 pub mod persona_principal_schemas;
 pub mod persona_socio_schemas;
+pub mod persona_sucursal_schemas;

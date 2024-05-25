@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Juan",
+    "nombre": "Teofilo",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 6,
+    "tipo": 7,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/13
+GET http://localhost:8000/api/persona/obtener/14
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -158,7 +158,7 @@ Content-Type: application/json
     "regimen_conyugal": "BienesMancomunados"
 }
 
-# Rellenar los datos de un socio
+# Rellenar los datos de un cliente
 GET http://localhost:8000/api/persona/cliente/nuevo/13
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -180,6 +180,25 @@ Content-Type: application/json
     "afectacion": 32.6,
     "proveedor_recursos": 2,
     "parentesco": 1,
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un sucursal-persona
+GET http://localhost:8000/api/persona/sucursal/nuevo/15
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
     "entre_calle": 10000000001,
     "y_calle": 10000000002,
     "fecha_residencia": "2020-12-16",
