@@ -31,6 +31,7 @@ use super::{
     persona_menor_handlers::obtener_persona_menor_handler,
     persona_socio_handlers::obtener_persona_socio_handler,
     persona_sucursal_handlers::obtener_persona_sucursal_handler,
+    persona_tercero_autorizado_handlers::obtener_persona_tercero_autorizado_handler,
 };
 
 pub async fn crear_nueva_persona_handler(
@@ -169,6 +170,12 @@ pub async fn obtener_persona_handler(
             let sucursal =
                 obtener_persona_sucursal_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_sucursal"] = json!(sucursal);
+        }
+        8 => {
+            let tercero_autorizado =
+                obtener_persona_tercero_autorizado_handler(&data, persona_encontrada.id_persona)
+                    .await?;
+            respuesta["datos"]["datos_tercero_autorizado"] = json!(tercero_autorizado);
         }
         _ => {}
     }
