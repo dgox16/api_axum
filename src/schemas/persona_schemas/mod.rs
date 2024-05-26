@@ -1,5 +1,6 @@
 pub mod persona_aspirante_schemas;
 pub mod persona_aval_schemas;
+pub mod persona_beneficiario_schemas;
 pub mod persona_cliente_schemas;
 pub mod persona_conyuge_schemas;
 pub mod persona_menor_schema;

@@ -10,6 +10,7 @@ use crate::{
     handlers::persona_handlers::{
         persona_aspirante_handlers::crear_nueva_persona_aspirante_handler,
         persona_aval_handlers::crear_nueva_persona_aval_handler,
+        persona_beneficiario_handlers::crear_nueva_persona_beneficiario_handler,
         persona_cliente_handlers::crear_nueva_persona_cliente_handler,
         persona_conyuge_handlers::crear_nueva_persona_conyuge_handler,
         persona_menor_handlers::crear_nueva_persona_menor_handler,
@@ -84,6 +85,10 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
         .route(
             "/api/persona/tutor/nuevo/:id_persona",
             get(crear_nueva_persona_tutor_handler),
+        )
+        .route(
+            "/api/persona/beneficiario/nuevo/:id_persona",
+            get(crear_nueva_persona_beneficiario_handler),
         )
         .with_state(app_state)
 }

@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Messi",
+    "nombre": "Pedro",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 11,
+    "tipo": 13,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/20
+GET http://localhost:8000/api/persona/obtener/23
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -314,4 +314,14 @@ Content-Type: application/json
     "escolaridad": 8,
     "autorizo_compartir_informacion_ifai": true,
     "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un beneficiario
+GET http://localhost:8000/api/persona/beneficiario/nuevo/23
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002
 }

@@ -1,5 +1,6 @@
 pub mod persona_aspirante_validators;
 pub mod persona_aval_validators;
+pub mod persona_beneficiario_validators;
 pub mod persona_cliente_validators;
 pub mod persona_conyuge_validators;
 pub mod persona_menor_validators;

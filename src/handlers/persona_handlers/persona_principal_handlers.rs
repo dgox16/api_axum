@@ -26,6 +26,7 @@ use crate::{
 use super::{
     persona_aspirante_handlers::obtener_persona_aspirante_handler,
     persona_aval_handlers::obtener_persona_aval_handler,
+    persona_beneficiario_handlers::obtener_persona_beneficiario_handler,
     persona_cliente_handlers::obtener_persona_cliente_handler,
     persona_conyuge_handlers::obtener_persona_conyuge_handler,
     persona_menor_handlers::obtener_persona_menor_handler,
@@ -195,6 +196,11 @@ pub async fn obtener_persona_handler(
         11 => {
             let tutor = obtener_persona_tutor_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_tutor"] = json!(tutor);
+        }
+        13 => {
+            let beneficiario =
+                obtener_persona_beneficiario_handler(&data, persona_encontrada.id_persona).await?;
+            respuesta["datos"]["datos_beneficiario"] = json!(beneficiario);
         }
         _ => {}
     }
