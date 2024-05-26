@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Pedrinho",
+    "nombre": "Messi",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 9,
+    "tipo": 11,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/19
+GET http://localhost:8000/api/persona/obtener/20
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -265,7 +265,7 @@ Content-Type: application/json
     "autorizo_publicidad": true
 }
 
-# Rellenar los datos de un proveedor_recursos
+# Rellenar los datos de un proveedor de recursos
 GET http://localhost:8000/api/persona/proveedor_recursos/nuevo/17
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -285,6 +285,25 @@ Content-Type: application/json
     "egresos_mensual": 32.2,
     "grado_afectacion": 32,
     "afectacion": 32.6,
+    "entre_calle": 10000000001,
+    "y_calle": 10000000002,
+    "fecha_residencia": "2020-12-16",
+    "lugar_nacimiento": "Yuriria",
+    "estado_nacimiento": 11,   
+    "regimen_conyugal": "BienesMancomunados",
+    "profesion": 38,
+    "escolaridad": 8,
+    "autorizo_compartir_informacion_ifai": true,
+    "autorizo_publicidad": true
+}
+
+# Rellenar los datos de un tutor
+GET http://localhost:8000/api/persona/tutor/nuevo/20
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "clasificacion": "Fisica",
     "entre_calle": 10000000001,
     "y_calle": 10000000002,
     "fecha_residencia": "2020-12-16",

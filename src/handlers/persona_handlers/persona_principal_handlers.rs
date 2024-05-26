@@ -34,6 +34,7 @@ use super::{
     persona_socio_handlers::obtener_persona_socio_handler,
     persona_sucursal_handlers::obtener_persona_sucursal_handler,
     persona_tercero_autorizado_handlers::obtener_persona_tercero_autorizado_handler,
+    persona_tutor_handlers::obtener_persona_tutor_handler,
 };
 
 pub async fn crear_nueva_persona_handler(
@@ -190,6 +191,10 @@ pub async fn obtener_persona_handler(
                 obtener_persona_proveedor_recursos_handler(&data, persona_encontrada.id_persona)
                     .await?;
             respuesta["datos"]["datos_proveedor_recursos"] = json!(proveedor);
+        }
+        11 => {
+            let tutor = obtener_persona_tutor_handler(&data, persona_encontrada.id_persona).await?;
+            respuesta["datos"]["datos_tutor"] = json!(tutor);
         }
         _ => {}
     }
