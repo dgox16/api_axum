@@ -1,5 +1,5 @@
-pub mod contactos_models;
-pub mod documentos_models;
+pub mod contactos_de_persona_models;
+pub mod documentos_de_persona_models;
 pub mod persona_aspirante_models;
 pub mod persona_aval_models;
 pub mod persona_beneficiario_models;
@@ -14,5 +14,5 @@ pub mod persona_sucursal_models;
 pub mod persona_tercero_autorizado_models;
 pub mod persona_tutor_models;
 pub mod persona_types;
-pub mod relaciones_models;
-pub mod tutores_models;
+pub mod relaciones_de_persona_models;
+pub mod tutores_de_persona_models;

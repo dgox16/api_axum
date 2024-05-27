@@ -31,7 +31,7 @@ GET http://localhost:8000/api/persona/obtener/23
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
-GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
+GET http://localhost:8000/api/persona/buscar/?tipo=referencia
 Authorization: Bearer {{token}}
 
 # Rellenar los datos de un aspirante 
@@ -325,3 +325,23 @@ Content-Type: application/json
     "entre_calle": 10000000001,
     "y_calle": 10000000002
 }
+
+# Rellenar los datos de un beneficiario
+GET http://localhost:8000/api/persona/contacto_persona/nuevo/23
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+[
+    {
+        "contacto": "4451312061",
+        "tipo": "TelefonoMovil",
+        "es_principal": true
+
+    },
+    {
+        "contacto": "dgox16@gmail.com",
+        "tipo": "CorreoElectronico",
+        "es_principal": false
+
+    }
+]
