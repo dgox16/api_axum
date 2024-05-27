@@ -326,7 +326,7 @@ Content-Type: application/json
     "y_calle": 10000000002
 }
 
-# Rellenar los datos de un beneficiario
+# Agregar contactos de una persona
 GET http://localhost:8000/api/persona/contacto_persona/nuevo/23
 Authorization: Bearer {{token}}
 Content-Type: application/json
@@ -339,7 +339,7 @@ Content-Type: application/json
 
     },
     {
-        "contacto": "dgox16@gmail.com",
+        "contacto": "",
         "tipo": "CorreoElectronico",
         "es_principal": false
 

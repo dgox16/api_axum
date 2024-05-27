@@ -9,12 +9,12 @@ use axum::{
 use serde_json::json;
 
 use crate::{
-    models::persona_models::contactos_de_persona_models::ContactoDePersonaModelo,
-    models::persona_models::contactos_de_persona_models::TipoContacto,
+    models::persona_models::contactos_de_persona_models::{ContactoDePersonaModelo, TipoContacto},
     schemas::persona_schemas::{
         contactos_de_persona_schemas::CrearContactoDePersonaSchema,
         persona_principal_schemas::ObtenerPersonaParams,
     },
+    validators::persona_validators::contactos_de_persona_validators::validar_nuevo_contacto_de_persona,
     AppState,
 };
 
@@ -24,6 +24,7 @@ pub async fn crear_nuevo_contacto_de_persona_handlers(
     Json(body): Json<Vec<CrearContactoDePersonaSchema>>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let mut contactos_creados = Vec::new();
+    validar_nuevo_contacto_de_persona(&body)?;
     for contacto in body {
         let nuevo_contacto = sqlx::query_as!(
             ContactoDePersonaModelo,
