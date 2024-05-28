@@ -59,3 +59,30 @@ pub async fn crear_nuevo_contacto_de_persona_handlers(
 
     Ok(Json(respuesta))
 }
+
+pub async fn obtener_contactos_de_persona_handlers(
+    data: &Arc<AppState>,
+    id_persona: i32,
+) -> Result<Vec<ContactoDePersonaModelo>, (StatusCode, Json<serde_json::Value>)> {
+    let contactos_encontrados = sqlx::query_as!(
+        ContactoDePersonaModelo,
+        r#"SELECT 
+        id_contacto_de_persona, id_persona, contacto, tipo AS "tipo: TipoContacto", es_principal
+        FROM contactos_de_persona WHERE id_persona=$1
+        "#,
+        id_persona,
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })?;
+
+    Ok(contactos_encontrados)
+}

@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/23
+GET http://localhost:8000/api/persona/obtener/7
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -327,13 +327,13 @@ Content-Type: application/json
 }
 
 # Agregar contactos de una persona
-GET http://localhost:8000/api/persona/contacto_persona/nuevo/23
+GET http://localhost:8000/api/persona/contacto_persona/nuevo/7
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 [
     {
-        "contacto": "445131206",
+        "contacto": "4451112061",
         "tipo": "TelefonoMovil",
         "es_principal": true
     }

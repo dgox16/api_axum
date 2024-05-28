@@ -24,6 +24,7 @@ use crate::{
 };
 
 use super::{
+    contactos_de_persona_handlers::obtener_contactos_de_persona_handlers,
     persona_aspirante_handlers::obtener_persona_aspirante_handler,
     persona_aval_handlers::obtener_persona_aval_handler,
     persona_beneficiario_handlers::obtener_persona_beneficiario_handler,
@@ -147,18 +148,38 @@ pub async fn obtener_persona_handler(
             let aspirante =
                 obtener_persona_aspirante_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_aspirante"] = json!(aspirante);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         2 => {
             let socio = obtener_persona_socio_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_socio"] = json!(socio);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         3 => {
             let aval = obtener_persona_aval_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_aval"] = json!(aval);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         4 => {
             let menor = obtener_persona_menor_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_menor"] = json!(menor);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         5 => {
             let conyuge =
@@ -169,33 +190,63 @@ pub async fn obtener_persona_handler(
             let cliente =
                 obtener_persona_cliente_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_cliente"] = json!(cliente);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         7 => {
             let sucursal =
                 obtener_persona_sucursal_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_sucursal"] = json!(sucursal);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         8 => {
             let tercero_autorizado =
                 obtener_persona_tercero_autorizado_handler(&data, persona_encontrada.id_persona)
                     .await?;
             respuesta["datos"]["datos_tercero_autorizado"] = json!(tercero_autorizado);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         9 => {
             let propietario =
                 obtener_persona_propietario_real_handler(&data, persona_encontrada.id_persona)
                     .await?;
             respuesta["datos"]["datos_propietario_real"] = json!(propietario);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         10 => {
             let proveedor =
                 obtener_persona_proveedor_recursos_handler(&data, persona_encontrada.id_persona)
                     .await?;
             respuesta["datos"]["datos_proveedor_recursos"] = json!(proveedor);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         11 => {
             let tutor = obtener_persona_tutor_handler(&data, persona_encontrada.id_persona).await?;
             respuesta["datos"]["datos_tutor"] = json!(tutor);
+            let contactos =
+                obtener_contactos_de_persona_handlers(&data, persona_encontrada.id_persona).await?;
+            if !contactos.is_empty() {
+                respuesta["datos"]["contactos"] = json!(contactos);
+            }
         }
         13 => {
             let beneficiario =
