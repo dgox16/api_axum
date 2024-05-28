@@ -333,15 +333,8 @@ Content-Type: application/json
 
 [
     {
-        "contacto": "4451312061",
+        "contacto": "445131206",
         "tipo": "TelefonoMovil",
         "es_principal": true
-
-    },
-    {
-        "contacto": "",
-        "tipo": "CorreoElectronico",
-        "es_principal": false
-
     }
 ]
