@@ -1,4 +1,5 @@
 pub mod contactos_de_persona_handlers;
+pub mod documentos_de_persona_handlers;
 pub mod persona_aspirante_handlers;
 pub mod persona_aval_handlers;
 pub mod persona_beneficiario_handlers;

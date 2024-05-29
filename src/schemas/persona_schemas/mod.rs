@@ -1,4 +1,5 @@
 pub mod contactos_de_persona_schemas;
+pub mod documentos_de_persona_schemas;
 pub mod persona_aspirante_schemas;
 pub mod persona_aval_schemas;
 pub mod persona_beneficiario_schemas;

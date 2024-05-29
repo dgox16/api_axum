@@ -9,6 +9,7 @@ use axum::{
 use crate::{
     handlers::persona_handlers::{
         contactos_de_persona_handlers::crear_nuevo_contacto_de_persona_handlers,
+        documentos_de_persona_handlers::crear_nuevo_documento_de_persona_handlers,
         persona_aspirante_handlers::crear_nueva_persona_aspirante_handler,
         persona_aval_handlers::crear_nueva_persona_aval_handler,
         persona_beneficiario_handlers::crear_nueva_persona_beneficiario_handler,
@@ -94,6 +95,10 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
         .route(
             "/api/persona/contacto_persona/nuevo/:id_persona",
             get(crear_nuevo_contacto_de_persona_handlers),
+        )
+        .route(
+            "/api/persona/documento_persona/nuevo/:id_persona",
+            get(crear_nuevo_documento_de_persona_handlers),
         )
         .with_state(app_state)
 }

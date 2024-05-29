@@ -1,4 +1,5 @@
 pub mod contactos_de_persona_validators;
+pub mod documentos_de_persona_validators;
 pub mod persona_aspirante_validators;
 pub mod persona_aval_validators;
 pub mod persona_beneficiario_validators;

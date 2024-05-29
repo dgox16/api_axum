@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/7
+GET http://localhost:8000/api/persona/obtener/6
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -327,7 +327,7 @@ Content-Type: application/json
 }
 
 # Agregar contactos de una persona
-GET http://localhost:8000/api/persona/contacto_persona/nuevo/7
+GET http://localhost:8000/api/persona/contacto_persona/nuevo/6
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -336,5 +336,25 @@ Content-Type: application/json
         "contacto": "4451112061",
         "tipo": "TelefonoMovil",
         "es_principal": true
+    }
+]
+
+# Agregar documentos de una persona
+GET http://localhost:8000/api/persona/documento_persona/nuevo/6
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+[
+    {
+        "documento": 1,
+        "numero_identificacion": "GOMD991216HGTMRG01",
+        "es_identificacion": true,
+        "vigencia": "2027-12-16"
+    },
+    {
+        "documento": 2,
+        "numero_identificacion": "GOMD9912168L8",
+        "es_identificacion": true,
+        "vigencia": "2027-12-16"
     }
 ]
