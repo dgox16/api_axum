@@ -18,7 +18,7 @@ use crate::{
     AppState,
 };
 
-pub async fn crear_nuevo_contacto_de_persona_handlers(
+pub async fn crear_nuevo_contacto_de_persona_handler(
     State(data): State<Arc<AppState>>,
     Path(params): Path<ObtenerPersonaParams>,
     Json(body): Json<Vec<CrearContactoDePersonaSchema>>,
@@ -60,7 +60,7 @@ pub async fn crear_nuevo_contacto_de_persona_handlers(
     Ok(Json(respuesta))
 }
 
-pub async fn obtener_contactos_de_persona_handlers(
+pub async fn obtener_contactos_de_persona_handler(
     data: &Arc<AppState>,
     id_persona: i32,
 ) -> Result<Vec<ContactoDePersonaModelo>, (StatusCode, Json<serde_json::Value>)> {

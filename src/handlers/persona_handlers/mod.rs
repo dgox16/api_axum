@@ -13,3 +13,4 @@ pub mod persona_socio_handlers;
 pub mod persona_sucursal_handlers;
 pub mod persona_tercero_autorizado_handlers;
 pub mod persona_tutor_handlers;
+pub mod relaciones_de_persona_handlers;

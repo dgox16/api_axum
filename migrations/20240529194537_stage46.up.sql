@@ -1,5 +1,5 @@
 CREATE TABLE relaciones_de_persona (
-    id_relacion_persona SERIAL PRIMARY KEY,
+    id_relacion_de_persona SERIAL PRIMARY KEY,
     id_persona INTEGER NOT NULL,
     persona_relacionada INTEGER NOT NULL,
     parentesco INTEGER NOT NULL,

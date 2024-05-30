@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/6
+GET http://localhost:8000/api/persona/obtener/8
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -356,5 +356,21 @@ Content-Type: application/json
         "numero_identificacion": "GOMD9912168L8",
         "es_identificacion": true,
         "vigencia": "2027-12-16"
+    }
+]
+
+# Agregar documentos de una persona
+GET http://localhost:8000/api/persona/relacion_persona/nuevo/7
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+[
+    {
+        "persona_relacionada": 2,
+        "parentesco": 1
+    },
+    {
+        "persona_relacionada": 3,
+        "parentesco": 3
     }
 ]

@@ -8,8 +8,8 @@ use axum::{
 
 use crate::{
     handlers::persona_handlers::{
-        contactos_de_persona_handlers::crear_nuevo_contacto_de_persona_handlers,
-        documentos_de_persona_handlers::crear_nuevo_documento_de_persona_handlers,
+        contactos_de_persona_handlers::crear_nuevo_contacto_de_persona_handler,
+        documentos_de_persona_handlers::crear_nuevo_documento_de_persona_handler,
         persona_aspirante_handlers::crear_nueva_persona_aspirante_handler,
         persona_aval_handlers::crear_nueva_persona_aval_handler,
         persona_beneficiario_handlers::crear_nueva_persona_beneficiario_handler,
@@ -25,6 +25,7 @@ use crate::{
         persona_sucursal_handlers::crear_nueva_persona_sucursal_handler,
         persona_tercero_autorizado_handlers::crear_nueva_persona_tercero_autorizado_handler,
         persona_tutor_handlers::crear_nueva_persona_tutor_handler,
+        relaciones_de_persona_handlers::crear_nueva_relacion_de_persona_handler,
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -94,11 +95,15 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
         )
         .route(
             "/api/persona/contacto_persona/nuevo/:id_persona",
-            get(crear_nuevo_contacto_de_persona_handlers),
+            get(crear_nuevo_contacto_de_persona_handler),
         )
         .route(
             "/api/persona/documento_persona/nuevo/:id_persona",
-            get(crear_nuevo_documento_de_persona_handlers),
+            get(crear_nuevo_documento_de_persona_handler),
+        )
+        .route(
+            "/api/persona/relacion_persona/nuevo/:id_persona",
+            get(crear_nueva_relacion_de_persona_handler),
         )
         .with_state(app_state)
 }

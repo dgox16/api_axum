@@ -13,3 +13,4 @@ pub mod persona_socio_validators;
 pub mod persona_sucursal_validators;
 pub mod persona_tercero_autorizado_validators;
 pub mod persona_tutor_validators;
+pub mod relaciones_de_persona_validators;

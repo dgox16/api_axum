@@ -18,7 +18,7 @@ use crate::{
     AppState,
 };
 
-pub async fn crear_nuevo_documento_de_persona_handlers(
+pub async fn crear_nuevo_documento_de_persona_handler(
     State(data): State<Arc<AppState>>,
     Path(params): Path<ObtenerPersonaParams>,
     Json(body): Json<Vec<CrearDocumentoDePersonaSchema>>,
@@ -62,7 +62,7 @@ pub async fn crear_nuevo_documento_de_persona_handlers(
     Ok(Json(respuesta))
 }
 
-pub async fn obtener_documentos_de_persona_handlers(
+pub async fn obtener_documentos_de_persona_handler(
     data: &Arc<AppState>,
     id_persona: i32,
 ) -> Result<Vec<DocumentoDePersonaModelo>, (StatusCode, Json<serde_json::Value>)> {

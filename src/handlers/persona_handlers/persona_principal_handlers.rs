@@ -24,8 +24,8 @@ use crate::{
 };
 
 use super::{
-    contactos_de_persona_handlers::obtener_contactos_de_persona_handlers,
-    documentos_de_persona_handlers::obtener_documentos_de_persona_handlers,
+    contactos_de_persona_handlers::obtener_contactos_de_persona_handler,
+    documentos_de_persona_handlers::obtener_documentos_de_persona_handler,
     persona_aspirante_handlers::obtener_persona_aspirante_handler,
     persona_aval_handlers::obtener_persona_aval_handler,
     persona_beneficiario_handlers::obtener_persona_beneficiario_handler,
@@ -38,6 +38,7 @@ use super::{
     persona_sucursal_handlers::obtener_persona_sucursal_handler,
     persona_tercero_autorizado_handlers::obtener_persona_tercero_autorizado_handler,
     persona_tutor_handlers::obtener_persona_tutor_handler,
+    relaciones_de_persona_handlers::obtener_relaciones_de_persona_handler,
 };
 
 pub async fn crear_nueva_persona_handler(
@@ -113,11 +114,11 @@ pub async fn agregar_contactos_y_documentos(
     id_persona: i32,
     respuesta: &mut serde_json::Value,
 ) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
-    let contactos = obtener_contactos_de_persona_handlers(data, id_persona).await?;
+    let contactos = obtener_contactos_de_persona_handler(data, id_persona).await?;
     if !contactos.is_empty() {
         respuesta["datos"]["contactos"] = json!(contactos);
     }
-    let documentos = obtener_documentos_de_persona_handlers(data, id_persona).await?;
+    let documentos = obtener_documentos_de_persona_handler(data, id_persona).await?;
     if !documentos.is_empty() {
         respuesta["datos"]["documentos"] = json!(documentos);
     }
@@ -173,6 +174,11 @@ pub async fn obtener_persona_handler(
             respuesta["datos"]["datos_socio"] = json!(socio);
             agregar_contactos_y_documentos(&data, persona_encontrada.id_persona, &mut respuesta)
                 .await?;
+            let relaciones =
+                obtener_relaciones_de_persona_handler(&data, persona_encontrada.id_persona).await?;
+            if !relaciones.is_empty() {
+                respuesta["datos"]["relaciones"] = json!(relaciones);
+            }
         }
         3 => {
             let aval = obtener_persona_aval_handler(&data, persona_encontrada.id_persona).await?;
