@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "quien_es_tutor", rename_all = "snake_case")]
+#[sqlx(type_name = "quien_es_tutor_de_persona", rename_all = "snake_case")]
 pub enum QuienEsTutor {
     Madre,
     Padre,
@@ -9,7 +9,7 @@ pub enum QuienEsTutor {
 }
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "tipo_tutor", rename_all = "lowercase")]
+#[sqlx(type_name = "tipo_tutor_de_persona", rename_all = "lowercase")]
 pub enum TipoTutor {
     Principal,
     Segundo,
