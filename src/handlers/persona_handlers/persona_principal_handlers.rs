@@ -39,6 +39,7 @@ use super::{
     persona_tercero_autorizado_handlers::obtener_persona_tercero_autorizado_handler,
     persona_tutor_handlers::obtener_persona_tutor_handler,
     relaciones_de_persona_handlers::obtener_relaciones_de_persona_handler,
+    tutores_de_persona_handlers::obtener_tutores_de_persona_handler,
 };
 
 pub async fn crear_nueva_persona_handler(
@@ -191,6 +192,11 @@ pub async fn obtener_persona_handler(
             respuesta["datos"]["datos_menor"] = json!(menor);
             agregar_contactos_y_documentos(&data, persona_encontrada.id_persona, &mut respuesta)
                 .await?;
+            let tutores =
+                obtener_tutores_de_persona_handler(&data, persona_encontrada.id_persona).await?;
+            if !tutores.is_empty() {
+                respuesta["datos"]["tutores"] = json!(tutores);
+            }
         }
         5 => {
             let conyuge =

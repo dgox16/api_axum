@@ -27,7 +27,7 @@ Content-Type: application/json
 }
 
 # Obtener una persona con su id
-GET http://localhost:8000/api/persona/obtener/8
+GET http://localhost:8000/api/persona/obtener/11
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
@@ -372,5 +372,28 @@ Content-Type: application/json
     {
         "persona_relacionada": 3,
         "parentesco": 3
+    }
+]
+
+GET http://localhost:8000/api/persona/tutor_persona/nuevo/11
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+[
+    {
+        "tutor": 20,
+        "tutor_migrado": "tutor migrado 1",
+        "quien_es_tutor": "Madre",
+        "documento_legal": "documento 1",
+        "documento": 1,
+        "tipo": "Principal"
+    },
+    {
+        "tutor": 20,
+        "tutor_migrado": "tutor migrado 2",
+        "quien_es_tutor": "Madre",
+        "documento_legal": "documento 2",
+        "documento": 1,
+        "tipo": "Principal"
     }
 ]
