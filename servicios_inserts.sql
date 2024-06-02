@@ -1,75 +1,26 @@
-CREATE TYPE tipo_servicio AS ENUM (
-    'captacion',
-    'prestamo',
-    'clasificacion',
-    'auxiliares',
-    'intereses_prestamo',
-    'intereses_moratorios',
-    'intereses_captacion',
-    'comisiones',
-    'servicios',
-    'orden',
-    'gastos',
-    'activos',
-    'bancos_pasiva',
-    'cartera_pasiva',
-    'interes_cartera_pasiva',
-    'impuestos',
-    'acreedores_deudores',
-    'traslado_valores',
-    'nomina'
-);
+--
+-- PostgreSQL database dump
+--
 
-CREATE TYPE grupo_servicio AS ENUM (
-    'ahorro',
-    'inversion',
-    'prestamos',
-    'otros',
-    'caja',
-    'bancos',
-    'salvo_buen_cobro',
-    'boveda',
-    'traslado_valores',
-    'documento_en_firme'
-);
+-- Dumped from database version 16.1
+-- Dumped by pg_dump version 16.1
 
-CREATE TABLE servicios (
-    id_servicio SERIAL PRIMARY KEY,
-    clave INTEGER NOT NULL,
-    concepto VARCHAR(60) NOT NULL,
-    tipo tipo_servicio NOT NULL,
-    nombre VARCHAR(60) NOT NULL,
-    nombre_corto VARCHAR(30),
-    nombre_regulatorio VARCHAR(100),
-    orden INTEGER NOT NULL,
-    grupo grupo_servicio NOT NULL,
-    sucursal INTEGER,
-    genera_cheque BOOLEAN NOT NULL,
-    genera_iva BOOLEAN NOT NULL,
-    imprime_saldo BOOLEAN NOT NULL,
-    imprime_ficha BOOLEAN NOT NULL,
-    cobro_caja BOOLEAN NOT NULL,
-    seleccionable BOOLEAN NOT NULL,
-    permite_cargos BOOLEAN NOT NULL,
-    permite_abonos BOOLEAN NOT NULL,
-    auditable BOOLEAN NOT NULL,
-    varias_cuentas BOOLEAN NOT NULL,
-    concepto_defecto VARCHAR(50),
-    formato_imprimir VARCHAR(50),
-    formato_imprimir_2 VARCHAR(50),
-    servicio_cargo_cargo INTEGER NOT NULL,
-    servicio_cargo_abono INTEGER NOT NULL,
-    servicio_abono_cargo INTEGER NOT NULL,
-    servicio_abono_abono INTEGER NOT NULL,
-    deducible INTEGER NOT NULL,
-    es_de_orden BOOLEAN NOT NULL,
-    para_cartera_pasiva BOOLEAN NOT NULL,
-    servicio_por_defecto BOOLEAN NOT NULL,
-    es_impuesto BOOLEAN NOT NULL,
-    FOREIGN KEY (sucursal) REFERENCES sucursales(id_sucursal) ON DELETE RESTRICT
-);
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
 
-INSERT INTO servicios (id_servicio, clave, concepto, tipo, nombre, nombre_corto, nombre_regulatorio, orden, grupo, sucursal, genera_cheque, genera_iva, imprime_saldo, imprime_ficha, cobro_caja, seleccionable, permite_cargos, permite_abonos, auditable, varias_cuentas, concepto_defecto, formato_imprimir, formato_imprimir_2, servicio_cargo_cargo, servicio_cargo_abono, servicio_abono_cargo, servicio_abono_abono, deducible, es_de_orden, para_cartera_pasiva, servicio_por_defecto, es_impuesto) VALUES
+--
+-- Data for Name: servicios_copia; Type: TABLE DATA; Schema: public; Owner: dgox16
+--
+
+INSERT INTO public.servicios_copia (id_servicio, clave, concepto, tipo, nombre, nombre_corto, nombre_regulatorio, orden, grupo, sucursal, genera_cheque, genera_iva, imprime_saldo, imprime_ficha, cobro_caja, seleccionable, permite_cargos, permite_abonos, auditable, varias_cuentas, concepto_defecto, formato_imprimir, formato_imprimir_2, servicio_cargo_cargo, servicio_cargo_abono, servicio_abono_cargo, servicio_abono_abono, deducible, es_de_orden, para_cartera_pasiva, servicio_por_defecto, es_impuesto) VALUES
 	(3050, 64, '0', 'intereses_prestamo', 'INTERES COMERCIAL OTROS CREDITOS', 'Interes', NULL, 0, 'otros', NULL, false, false, false, true, false, false, false, false, true, false, '130105010000', NULL, NULL, 0, 0, 0, 0, 0, false, false, false, false),
 	(3060, 65, '0', 'intereses_prestamo', 'INTERES COMERCIAL LIQUIDEZ A OTRAS EACP', 'Interes', NULL, 0, 'otros', NULL, false, false, false, true, false, false, false, false, true, false, '130122000000', NULL, NULL, 0, 0, 66, 68, 0, false, false, false, false),
 	(3070, 66, '0', 'intereses_prestamo', 'INTERES CONSUMO TARJETA DE CREDITO', 'Interes', NULL, 0, 'otros', NULL, false, false, false, true, false, false, false, false, true, false, '131101000000', NULL, NULL, 0, 0, 0, 0, 0, false, false, false, false),
@@ -1197,4 +1148,8 @@ INSERT INTO servicios (id_servicio, clave, concepto, tipo, nombre, nombre_corto,
 	(4313, 2050, '', 'orden', 'ISR AJUSTADO POR SUBSIDIO A', NULL, NULL, 0, 'otros', NULL, false, false, false, false, false, false, false, false, false, false, NULL, NULL, NULL, 0, 0, 0, 0, 0, false, false, false, false),
 	(4314, 2051, '', 'orden', 'AJUSTE AL SUBSIDIO AL EMPLEADO A', NULL, NULL, 0, 'otros', NULL, false, false, false, false, false, false, false, false, false, false, NULL, NULL, NULL, 0, 0, 0, 0, 0, false, false, false, false);
 
+
+--
+-- PostgreSQL database dump complete
+--
 
