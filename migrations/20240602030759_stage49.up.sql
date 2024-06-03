@@ -30,5 +30,9 @@ CREATE TABLE contratos_captacion (
     fecha_interes DATE NOT NULL,
     autoriza_cancelacion BOOLEAN NOT NULL,
     usuario_autoriza_cancelacion INTEGER NOT NULL,
-    FOREIGN KEY (servicio) REFERENCES servicios(id_servicio) ON DELETE RESTRICT
+    FOREIGN KEY (servicio) REFERENCES servicios(id_servicio) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario_desbloqueo) REFERENCES usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario_libera_garantia) REFERENCES usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario) REFERENCES usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario_autoriza_cancelacion) REFERENCES usuarios(id) ON DELETE RESTRICT
 );

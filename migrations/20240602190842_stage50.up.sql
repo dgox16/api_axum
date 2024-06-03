@@ -1,0 +1,22 @@
+CREATE TABLE fichas (
+    id_ficha SERIAL PRIMARY KEY,
+    folio VARCHAR(18) NOT NULL,
+    fecha TIMESTAMP NOT NULL,
+    persona INTEGER NOT NULL,
+    usuario INTEGER NOT NULL,
+    sucursal INTEGER NOT NULL,
+    poliza INTEGER NOT NULL,
+    operacion_fuente INTEGER NOT NULL,
+    efectivo REAL NOT NULL,
+    cheques REAL NOT NULL,
+    transferencia REAL NOT NULL,
+    tarjeta REAL NOT NULL,
+    cancelada BOOLEAN NOT NULL,
+    referencia VARCHAR(100) NOT NULL,
+    factura INTEGER NOT NULL,
+    pagada BOOLEAN NOT NULL,
+    instrumento VARCHAR(2) NOT NULL,
+    FOREIGN KEY (persona) REFERENCES personas(id_persona) ON DELETE RESTRICT,
+    FOREIGN KEY (usuario) REFERENCES usuarios(id) ON DELETE RESTRICT,
+    FOREIGN KEY (sucursal) REFERENCES sucursales(id_sucursal) ON DELETE RESTRICT
+);
