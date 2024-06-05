@@ -26,4 +26,14 @@ INSERT INTO tipos_credito (clave, nombre) VALUES
 ('1', NULL),
 ('2', NULL);
 
+CREATE TABLE tipos_disposicion (
+    id_tipo_disposicion SERIAL PRIMARY KEY,
+    nombre VARCHAR(50) NOT NULL
+);
+
+INSERT INTO tipos_disposicion (nombre) VALUES
+('UNICA A LA CONTRATACION'),
+('VARIABLE'),
+('LINEA DE CREDITO');
+
 
