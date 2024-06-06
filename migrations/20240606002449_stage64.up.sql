@@ -14,8 +14,6 @@ CREATE TABLE prestamos_fira (
     tipo_disposicion INTEGER NOT NULL,
     tipo_credito INTEGER NOT NULL,
     FOREIGN KEY (actividad) REFERENCES actividades(id_actividad) ON DELETE RESTRICT,
-    --FOREIGN KEY (subrama) REFERENCES subramas(id_subrama) ON DELETE RESTRICT,
-    --FOREIGN KEY (cadena) REFERENCES cadenas(id_cadena) ON DELETE RESTRICT,
     FOREIGN KEY (concepto_fira) REFERENCES conceptos_fira(id_concepto_fira) ON DELETE RESTRICT,
     FOREIGN KEY (grupo_finalidad_prestamo) REFERENCES grupos_finalidad_prestamo(id_grupo_finalidad_prestamo) ON DELETE RESTRICT,
     FOREIGN KEY (reciprocidad_subclasificacion) REFERENCES reciprocidades_subclasificacion(id_reciprocidad_subclasificacion) ON DELETE RESTRICT,
