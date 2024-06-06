@@ -1,4 +1,5 @@
 CREATE TABLE prestamos_fira (
+    id_prestamo_fira SERIAL PRIMARY KEY,
     actividad INTEGER NOT NULL,
     subrama INTEGER NOT NULL,
     cadena INTEGER NOT NULL,
