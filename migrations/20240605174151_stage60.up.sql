@@ -1,5 +1,5 @@
 CREATE TABLE conceptos_fira (
-    id_concepto_fira INTEGER NOT NULL,
+    id_concepto_fira SERIAL PRIMARY KEY,
     cadena INTEGER NOT NULL,
     nombre VARCHAR(100) NOT NULL
 );
