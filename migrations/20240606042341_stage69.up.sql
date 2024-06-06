@@ -33,7 +33,8 @@ CREATE TABLE prestamos_crediticio (
     id_prestamo_crediticio SERIAL PRIMARY KEY,
     fecha_buro DATE NOT NULL,
     folio_buro VARCHAR(15) NOT NULL,
-    calificacion_buro VARCHAR(5) NOT NULL,
+    calificacion_buro INTEGER NOT NULL,
     bc_score INTEGER NOT NULL,
-    indice_capacidad_crediticia INTEGER NOT NULL
+    indice_capacidad_crediticia INTEGER NOT NULL,
+    FOREIGN KEY (calificacion_buro) REFERENCES calificaciones_buro(id_calificacion_buro) ON DELETE RESTRICT
 );
