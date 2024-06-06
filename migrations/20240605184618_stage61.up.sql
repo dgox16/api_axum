@@ -1,12 +1,12 @@
 CREATE TABLE reciprocidades_subclasificacion (
-    id_reprocidad_subclasificacion SERIAL PRIMARY KEY,
+    id_reciprocidad_subclasificacion SERIAL PRIMARY KEY,
     nombre VARCHAR(70) NOT NULL,
     servicio INTEGER NOT NULL,
     activo BOOLEAN NOT NULL,
     FOREIGN KEY (servicio) REFERENCES servicios(id_servicio) ON DELETE RESTRICT
 );
 
-INSERT INTO reciprocidades_subclasificacion (id_reprocidad_subclasificacion, nombre, servicio, activo) VALUES 
+INSERT INTO reciprocidades_subclasificacion (id_reciprocidad_subclasificacion, nombre, servicio, activo) VALUES 
 (1,	'ESTANDARD',	2001,	true),
 (2,	'UNICO',	2002,	true),
 (3,	'UNICO',	2003,	true),
