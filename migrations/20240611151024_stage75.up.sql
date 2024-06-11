@@ -1,0 +1,21 @@
+CREATE TABLE detalles_ficha (
+    id_detalle_ficha SERIAL PRIMARY KEY,
+    ficha INTEGER NOT NULL,
+    servicio INTEGER,
+    captacion INTEGER,
+    prestamo INTEGER,
+    inversion INTEGER,
+    cargo REAL NOT NULL,
+    abono REAL NOT NULL,
+    operacion_fuente INTEGER NOT NULL,
+    subficha INTEGER NOT NULL,
+    observacion VARCHAR(20) NOT NULL,
+    proveedor INTEGER,
+    procesado INTEGER NOT NULL,
+    FOREIGN KEY (ficha) REFERENCES fichas(id_ficha) ON DELETE RESTRICT,
+    FOREIGN KEY (servicio) REFERENCES servicios(id_servicio) ON DELETE RESTRICT,
+    FOREIGN KEY (captacion) REFERENCES contratos_captacion(id_contrato_captacion) ON DELETE RESTRICT,
+    FOREIGN KEY (prestamo) REFERENCES prestamos(id_prestamo) ON DELETE RESTRICT,
+    FOREIGN KEY (inversion) REFERENCES inversiones(id_inversion) ON DELETE RESTRICT,
+    FOREIGN KEY (proveedor) REFERENCES proveedores(id_proveedor) ON DELETE RESTRICT
+);
