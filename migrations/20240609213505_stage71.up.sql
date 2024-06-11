@@ -102,7 +102,6 @@ CREATE TABLE carteras_pasiva (
     FOREIGN KEY (servicio) REFERENCES servicios(id_servicio) ON DELETE RESTRICT,
     FOREIGN KEY (plazo) REFERENCES plazos(id_plazo) ON DELETE RESTRICT,
     FOREIGN KEY (concepto_fira) REFERENCES conceptos_fira(id_concepto_fira) ON DELETE RESTRICT
-    
 );
 
 
