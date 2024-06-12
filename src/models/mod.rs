@@ -1,5 +1,7 @@
+pub mod contrato_captacion_models;
 pub mod entidades_models;
 pub mod estudios_models;
+pub mod fichas_models;
 pub mod persona_models;
 pub mod pld_models;
 pub mod poliza_models;
