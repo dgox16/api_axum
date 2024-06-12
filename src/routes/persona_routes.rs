@@ -48,67 +48,67 @@ pub fn persona_router(app_state: Arc<AppState>) -> Router {
         .route("/api/persona/buscar/", get(buscar_personas_handler))
         .route(
             "/api/persona/aspirante/nuevo/:id_persona",
-            get(crear_nueva_persona_aspirante_handler),
+            post(crear_nueva_persona_aspirante_handler),
         )
         .route(
             "/api/persona/socio/nuevo/:id_persona",
-            get(crear_nueva_persona_socio_handler),
+            post(crear_nueva_persona_socio_handler),
         )
         .route(
             "/api/persona/aval/nuevo/:id_persona",
-            get(crear_nueva_persona_aval_handler),
+            post(crear_nueva_persona_aval_handler),
         )
         .route(
             "/api/persona/menor/nuevo/:id_persona",
-            get(crear_nueva_persona_menor_handler),
+            post(crear_nueva_persona_menor_handler),
         )
         .route(
             "/api/persona/conyuge/nuevo/:id_persona",
-            get(crear_nueva_persona_conyuge_handler),
+            post(crear_nueva_persona_conyuge_handler),
         )
         .route(
             "/api/persona/cliente/nuevo/:id_persona",
-            get(crear_nueva_persona_cliente_handler),
+            post(crear_nueva_persona_cliente_handler),
         )
         .route(
             "/api/persona/sucursal/nuevo/:id_persona",
-            get(crear_nueva_persona_sucursal_handler),
+            post(crear_nueva_persona_sucursal_handler),
         )
         .route(
             "/api/persona/tercero_autorizado/nuevo/:id_persona",
-            get(crear_nueva_persona_tercero_autorizado_handler),
+            post(crear_nueva_persona_tercero_autorizado_handler),
         )
         .route(
             "/api/persona/propietario_real/nuevo/:id_persona",
-            get(crear_nueva_persona_propietario_real_handler),
+            post(crear_nueva_persona_propietario_real_handler),
         )
         .route(
             "/api/persona/proveedor_recursos/nuevo/:id_persona",
-            get(crear_nueva_persona_proveedor_recursos_handler),
+            post(crear_nueva_persona_proveedor_recursos_handler),
         )
         .route(
             "/api/persona/tutor/nuevo/:id_persona",
-            get(crear_nueva_persona_tutor_handler),
+            post(crear_nueva_persona_tutor_handler),
         )
         .route(
             "/api/persona/beneficiario/nuevo/:id_persona",
-            get(crear_nueva_persona_beneficiario_handler),
+            post(crear_nueva_persona_beneficiario_handler),
         )
         .route(
             "/api/persona/contacto_persona/nuevo/:id_persona",
-            get(crear_nuevo_contacto_de_persona_handler),
+            post(crear_nuevo_contacto_de_persona_handler),
         )
         .route(
             "/api/persona/documento_persona/nuevo/:id_persona",
-            get(crear_nuevo_documento_de_persona_handler),
+            post(crear_nuevo_documento_de_persona_handler),
         )
         .route(
             "/api/persona/relacion_persona/nuevo/:id_persona",
-            get(crear_nueva_relacion_de_persona_handler),
+            post(crear_nueva_relacion_de_persona_handler),
         )
         .route(
             "/api/persona/tutor_persona/nuevo/:id_persona",
-            get(crear_nuevo_tutor_de_persona_handler),
+            post(crear_nuevo_tutor_de_persona_handler),
         )
         .with_state(app_state)
 }

@@ -7,7 +7,7 @@ Content-Type: application/json
     "nombre": "Pedro",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 13,
+    "tipo": 1,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -31,11 +31,11 @@ GET http://localhost:8000/api/persona/obtener/11
 Authorization: Bearer {{token}}
 
 # Buscar personas por tipo, nombre, apellidos
-GET http://localhost:8000/api/persona/buscar/?tipo=referencia
+GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
 Authorization: Bearer {{token}}
 
 # Rellenar los datos de un aspirante 
-GET http://localhost:8000/api/persona/aspirante/nuevo/6
+POST http://localhost:8000/api/persona/aspirante/nuevo/1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -66,7 +66,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un socio
-GET http://localhost:8000/api/persona/socio/nuevo/9
+POST http://localhost:8000/api/persona/socio/nuevo/1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -109,7 +109,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un aval
-GET http://localhost:8000/api/persona/aval/nuevo/9
+POST http://localhost:8000/api/persona/aval/nuevo/9
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -131,7 +131,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un menor
-GET http://localhost:8000/api/persona/menor/nuevo/11
+POST http://localhost:8000/api/persona/menor/nuevo/11
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -147,7 +147,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un conyuge
-GET http://localhost:8000/api/persona/conyuge/nuevo/12
+POST http://localhost:8000/api/persona/conyuge/nuevo/12
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -159,7 +159,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un cliente
-GET http://localhost:8000/api/persona/cliente/nuevo/13
+POST http://localhost:8000/api/persona/cliente/nuevo/13
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -193,7 +193,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un sucursal-persona
-GET http://localhost:8000/api/persona/sucursal/nuevo/15
+POST http://localhost:8000/api/persona/sucursal/nuevo/15
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -212,7 +212,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un tercero autorizado
-GET http://localhost:8000/api/persona/tercero_autorizado/nuevo/16
+POST http://localhost:8000/api/persona/tercero_autorizado/nuevo/16
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -234,7 +234,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un propietario real
-GET http://localhost:8000/api/persona/propietario_real/nuevo/19
+POST http://localhost:8000/api/persona/propietario_real/nuevo/19
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -266,7 +266,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un proveedor de recursos
-GET http://localhost:8000/api/persona/proveedor_recursos/nuevo/17
+POST http://localhost:8000/api/persona/proveedor_recursos/nuevo/17
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -298,7 +298,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un tutor
-GET http://localhost:8000/api/persona/tutor/nuevo/20
+POST http://localhost:8000/api/persona/tutor/nuevo/20
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -317,7 +317,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un beneficiario
-GET http://localhost:8000/api/persona/beneficiario/nuevo/23
+POST http://localhost:8000/api/persona/beneficiario/nuevo/23
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -327,7 +327,7 @@ Content-Type: application/json
 }
 
 # Agregar contactos de una persona
-GET http://localhost:8000/api/persona/contacto_persona/nuevo/6
+POST http://localhost:8000/api/persona/contacto_persona/nuevo/6
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -340,7 +340,7 @@ Content-Type: application/json
 ]
 
 # Agregar documentos de una persona
-GET http://localhost:8000/api/persona/documento_persona/nuevo/6
+POST http://localhost:8000/api/persona/documento_persona/nuevo/6
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -360,7 +360,7 @@ Content-Type: application/json
 ]
 
 # Agregar documentos de una persona
-GET http://localhost:8000/api/persona/relacion_persona/nuevo/7
+POST http://localhost:8000/api/persona/relacion_persona/nuevo/7
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -375,7 +375,7 @@ Content-Type: application/json
     }
 ]
 
-GET http://localhost:8000/api/persona/tutor_persona/nuevo/11
+POST http://localhost:8000/api/persona/tutor_persona/nuevo/11
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
