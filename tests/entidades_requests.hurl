@@ -51,3 +51,15 @@ Content-Type: application/json
   "orden_siti": 123,
   "prorrateo": true
 }
+
+# Crear una empresa
+POST http://localhost:8000/api/empresa/nueva
+Content-Type: application/json
+
+{
+    "nombre": "empresa 1",
+    "domicilio": 1,
+    "telefono": "4451312061",
+    "empleos_fijos": 100,
+    "frecuencia": 1
+}

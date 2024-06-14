@@ -1,7 +1,8 @@
 use axum::{http::StatusCode, Json};
 
 use crate::schemas::entidades_schemas::{
-    CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema,
+    CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearProveedorSchema,
+    CrearSucursalSchema,
 };
 
 pub fn validar_nuevo_banco(
@@ -78,7 +79,7 @@ pub fn validar_nuevo_proveedor(
     Ok(())
 }
 
-pub fn validar_nuevo_cuenta(
+pub fn validar_nueva_cuenta(
     body: &CrearCuentaSchema,
 ) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
     if body.cuenta.trim().is_empty() {
@@ -149,6 +150,33 @@ pub fn validar_nuevo_cuenta(
         let respuesta_error = serde_json::json!({
             "estado": false,
             "mensaje": "La order SITI no puede ser menos de 0",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    Ok(())
+}
+
+pub fn validar_nueva_empresa(
+    body: &CrearEmpresaSchema,
+) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
+    if body.nombre.trim().is_empty() {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "El nombre de la empresa no puede estar vacío",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.telefono.trim().is_empty() || body.telefono.trim().len() != 10 {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "El telefono no puede estar vacio o tener una extension diferente a 10",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.empleos_fijos < 0 {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "No puede haber empleos fijos negativos"
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }

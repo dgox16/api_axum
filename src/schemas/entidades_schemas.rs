@@ -56,3 +56,12 @@ pub struct CrearCuentaSchema {
     pub subcuenta_siti: Option<bool>,
     pub prorrateo: Option<bool>,
 }
+
+#[derive(Deserialize)]
+pub struct CrearEmpresaSchema {
+    pub nombre: String,
+    pub domicilio: i32,
+    pub telefono: String,
+    pub empleos_fijos: i32,
+    pub frecuencia: i32,
+}

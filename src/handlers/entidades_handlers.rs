@@ -5,14 +5,17 @@ use serde_json::json;
 
 use crate::{
     models::entidades_models::{
-        BancoModelo, ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta,
-        NaturalezaCuenta, OperacionProveedor, ProveedorModelo, SucursalModelo, TipoProveedor,
+        BancoModelo, ClasificacionCuenta, CuentaModelo, EmpresaModelo, FinalidadCuenta,
+        GrupoCuenta, NaturalezaCuenta, OperacionProveedor, ProveedorModelo, SucursalModelo,
+        TipoProveedor,
     },
     schemas::entidades_schemas::{
-        CrearBancoSchema, CrearCuentaSchema, CrearProveedorSchema, CrearSucursalSchema,
+        CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearProveedorSchema,
+        CrearSucursalSchema,
     },
     validators::entidades_validators::{
-        validar_nueva_sucursal, validar_nuevo_banco, validar_nuevo_cuenta, validar_nuevo_proveedor,
+        validar_nueva_cuenta, validar_nueva_empresa, validar_nueva_sucursal, validar_nuevo_banco,
+        validar_nuevo_proveedor,
     },
     AppState,
 };
@@ -130,7 +133,7 @@ pub async fn crear_nueva_cuenta_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<CrearCuentaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    validar_nuevo_cuenta(&body)?;
+    validar_nueva_cuenta(&body)?;
     let clasificacion = body.clasificacion.unwrap_or(ClasificacionCuenta::Capitulo);
     let grupo = body.grupo.unwrap_or(GrupoCuenta::Activo);
     let finalidad = body.finalidad.unwrap_or(FinalidadCuenta::Otros);
@@ -186,6 +189,38 @@ pub async fn crear_nueva_cuenta_handler(
     let respuesta = json!({
         "estado": true,
         "datos": nueva_cuenta
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn crear_nueva_empresa_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearEmpresaSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_empresa(&body)?;
+    let nueva_empresa = sqlx::query_as!(
+        EmpresaModelo,
+        "INSERT INTO empresas (nombre,domicilio,telefono,empleos_fijos, frecuencia)
+        VALUES ($1,$2,$3,$4,$5) RETURNING *",
+        body.nombre,
+        body.domicilio,
+        body.telefono,
+        body.empleos_fijos,
+        body.frecuencia
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": nueva_empresa
     });
     Ok(Json(respuesta))
 }
