@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "id_persona": 2,
-    "cuenta": "12323213123",
+    "cuenta": "1232321312312345",
     "servicio": 1020,
     "fecha": "2024-6-14",
     "no_dejar_retirar_antes_de": "2025-6-14",

@@ -1,3 +1,4 @@
+pub mod contrato_captacion_validators;
 pub mod entidades_validators;
 pub mod persona_validators;
 pub mod poliza_validators;

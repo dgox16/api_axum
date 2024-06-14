@@ -16,6 +16,7 @@ use crate::{
     schemas::contratos_captacion_schemas::{
         CrearContratoCaptacionSchema, ListarContratosCaptacionQuery,
     },
+    validators::contrato_captacion_validators::validar_nueva_contrato_captacion,
     AppState,
 };
 
@@ -24,6 +25,7 @@ pub async fn crear_contrato_captacion_handler(
     Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearContratoCaptacionSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_contrato_captacion(&data, &body).await?;
     let nuevo_contrato_captacion = sqlx::query_as!(
         ContratoCaptacionModelo,
         r#"INSERT INTO contratos_captacion 
