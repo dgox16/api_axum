@@ -6,16 +6,16 @@ use serde_json::json;
 use crate::{
     models::entidades_models::{
         BancoModelo, ClasificacionCuenta, CuentaModelo, EmpresaModelo, FinalidadCuenta,
-        GrupoCuenta, NaturalezaCuenta, OperacionProveedor, ProveedorModelo, SucursalModelo,
-        TipoProveedor,
+        FrecuenciaEmpresaModelo, GrupoCuenta, NaturalezaCuenta, OperacionProveedor,
+        ProveedorModelo, SucursalModelo, TipoProveedor,
     },
     schemas::entidades_schemas::{
-        CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearProveedorSchema,
-        CrearSucursalSchema,
+        CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearFrecuenciaEmpresaSchema,
+        CrearProveedorSchema, CrearSucursalSchema,
     },
     validators::entidades_validators::{
-        validar_nueva_cuenta, validar_nueva_empresa, validar_nueva_sucursal, validar_nuevo_banco,
-        validar_nuevo_proveedor,
+        validar_nueva_cuenta, validar_nueva_empresa, validar_nueva_frecuencia_empresa,
+        validar_nueva_sucursal, validar_nuevo_banco, validar_nuevo_proveedor,
     },
     AppState,
 };
@@ -189,6 +189,36 @@ pub async fn crear_nueva_cuenta_handler(
     let respuesta = json!({
         "estado": true,
         "datos": nueva_cuenta
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn crear_nueva_frecuencia_empresa_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<CrearFrecuenciaEmpresaSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    validar_nueva_frecuencia_empresa(&body)?;
+    let nueva_frecuencia_empresa = sqlx::query_as!(
+        FrecuenciaEmpresaModelo,
+        "INSERT INTO frecuencias_empresa (nombre, dias, meses)
+        VALUES ($1,$2,$3) RETURNING id_frecuencias_empresa, nombre, dias, meses",
+        body.nombre,
+        body.dias,
+        body.meses
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": format!("Error en la base de datos: {}", e),
+        });
+        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
+    })?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": nueva_frecuencia_empresa
     });
     Ok(Json(respuesta))
 }

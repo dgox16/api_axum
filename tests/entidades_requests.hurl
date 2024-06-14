@@ -52,6 +52,16 @@ Content-Type: application/json
   "prorrateo": true
 }
 
+# Crear una frecuencia empresa
+POST http://localhost:8000/api/frecuencia_empresa/nueva
+Content-Type: application/json
+
+{
+    "nombre": "",
+    "dias": 1,
+    "meses": 1
+}
+
 # Crear una empresa
 POST http://localhost:8000/api/empresa/nueva
 Content-Type: application/json

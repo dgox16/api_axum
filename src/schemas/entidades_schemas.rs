@@ -65,3 +65,10 @@ pub struct CrearEmpresaSchema {
     pub empleos_fijos: i32,
     pub frecuencia: i32,
 }
+
+#[derive(Deserialize)]
+pub struct CrearFrecuenciaEmpresaSchema {
+    pub nombre: String,
+    pub dias: i32,
+    pub meses: i32,
+}

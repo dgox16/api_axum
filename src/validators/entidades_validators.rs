@@ -1,8 +1,8 @@
 use axum::{http::StatusCode, Json};
 
 use crate::schemas::entidades_schemas::{
-    CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearProveedorSchema,
-    CrearSucursalSchema,
+    CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearFrecuenciaEmpresaSchema,
+    CrearProveedorSchema, CrearSucursalSchema,
 };
 
 pub fn validar_nuevo_banco(
@@ -177,6 +177,33 @@ pub fn validar_nueva_empresa(
         let respuesta_error = serde_json::json!({
             "estado": false,
             "mensaje": "No puede haber empleos fijos negativos"
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    Ok(())
+}
+
+pub fn validar_nueva_frecuencia_empresa(
+    body: &CrearFrecuenciaEmpresaSchema,
+) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
+    if body.nombre.trim().is_empty() {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "El nombre de la frecuencia de empresa no puede estar vacío",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.dias < 0 {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "No puede haber dias negativos"
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+    if body.meses < 0 {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "No puede haber dias negativos"
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
