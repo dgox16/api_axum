@@ -31,7 +31,6 @@ pub struct CrearContratoCaptacionSchema {
     pub tasa_pactada: f32,
     pub bloqueada: bool,
     pub monto_bloqueado_adicional: f32,
-    pub usuario: i32,
     pub fecha_interes: NaiveDate,
     pub autoriza_cancelacion: bool,
     pub usuario_autoriza_cancelacion: i32,

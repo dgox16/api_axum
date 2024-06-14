@@ -2,7 +2,7 @@ use chrono::{NaiveDate, NaiveDateTime};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, PartialOrd, sqlx::Type, Deserialize, Serialize)]
-#[sqlx(type_name = "tipo_contrato_captacion", rename_all = "lowercase")]
+#[sqlx(type_name = "tipo_contrato_captacion", rename_all = "snake_case")]
 pub enum TipoContratoCaptacion {
     PersonaFisica,
     Grupo,

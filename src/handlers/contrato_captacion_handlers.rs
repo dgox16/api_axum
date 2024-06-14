@@ -4,12 +4,15 @@ use axum::{
     extract::{Query, State},
     http::StatusCode,
     response::IntoResponse,
-    Json,
+    Extension, Json,
 };
 use serde_json::json;
 
 use crate::{
-    models::contrato_captacion_models::{ContratoCaptacionModelo, TipoContratoCaptacion},
+    models::{
+        contrato_captacion_models::{ContratoCaptacionModelo, TipoContratoCaptacion},
+        user_models::UsuarioModelo,
+    },
     schemas::contratos_captacion_schemas::{
         CrearContratoCaptacionSchema, ListarContratosCaptacionQuery,
     },
@@ -18,6 +21,7 @@ use crate::{
 
 pub async fn crear_contrato_captacion_handler(
     State(data): State<Arc<AppState>>,
+    Extension(usuario): Extension<UsuarioModelo>,
     Json(body): Json<CrearContratoCaptacionSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     let nuevo_contrato_captacion = sqlx::query_as!(
@@ -59,7 +63,7 @@ pub async fn crear_contrato_captacion_handler(
         body.tasa_pactada,
         body.bloqueada,
         body.monto_bloqueado_adicional,
-        body.usuario,
+        usuario.id,
         body.fecha_interes,
         body.autoriza_cancelacion,
         body.usuario_autoriza_cancelacion
