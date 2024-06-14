@@ -4,10 +4,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "nombre": "Pedro",
+    "nombre": "Juan",
     "apellido_paterno": "Martinez",
     "apellido_materno": "Leon",
-    "tipo": 1,
+    "tipo": 2,
     "sexo": "Masculino",
     "cp": "38940",
     "barrio": 1,
@@ -35,7 +35,7 @@ GET http://localhost:8000/api/persona/buscar/?tipo=aspirante
 Authorization: Bearer {{token}}
 
 # Rellenar los datos de un aspirante 
-POST http://localhost:8000/api/persona/aspirante/nuevo/1
+POST http://localhost:8000/api/persona/aspirante/nuevo/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -66,7 +66,7 @@ Content-Type: application/json
 }
 
 # Rellenar los datos de un socio
-POST http://localhost:8000/api/persona/socio/nuevo/1
+POST http://localhost:8000/api/persona/socio/nuevo/2
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -90,7 +90,7 @@ Content-Type: application/json
     "persona_recomendo": 2,
     "manera_enterarse": 1,
     "lengua": 1,
-    "empresa": 1,
+    "empresa": 3,
     "puesto": 1,
     "fecha_trabajo": "2021-01-10",
     "ingreso_ordinario": 10.21,

@@ -57,7 +57,7 @@ POST http://localhost:8000/api/frecuencia_empresa/nueva
 Content-Type: application/json
 
 {
-    "nombre": "",
+    "nombre": "frecuencia 1",
     "dias": 1,
     "meses": 1
 }
