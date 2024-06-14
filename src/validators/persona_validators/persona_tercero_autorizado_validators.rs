@@ -20,7 +20,7 @@ pub async fn validar_nueva_persona_tercero_autorizado(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
@@ -29,21 +29,21 @@ pub async fn validar_nueva_persona_tercero_autorizado(
     if let Some(tipo) = persona_existente {
         if tipo != 8 {
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": "El tipo de persona no coincide",
             });
             return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
         }
     } else {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": "El ID de la persona no existe",
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
     if body.lugar_nacimiento.trim().is_empty() {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": "El lugar de nacimiento no puede estar vacio",
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));

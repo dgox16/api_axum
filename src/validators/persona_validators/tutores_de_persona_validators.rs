@@ -19,7 +19,7 @@ pub async fn validar_nuevo_tutor_de_persona(
     .await
     .map_err(|e| {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": format!("Error en la base de datos: {}", e),
         });
         (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
@@ -28,14 +28,14 @@ pub async fn validar_nuevo_tutor_de_persona(
     if let Some(tipo) = persona_existente {
         if tipo != 4 {
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": "El tipo de persona no coincide",
             });
             return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
         }
     } else {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": "El ID de la persona no existe",
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
@@ -44,14 +44,14 @@ pub async fn validar_nuevo_tutor_de_persona(
     for tutor in tutores_de_persona {
         if tutor.tutor_migrado.trim().is_empty() {
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": "El tutor migrado no puede estar vacio",
             });
             return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
         }
         if tutor.documento_legal.trim().is_empty() {
             let respuesta_error = serde_json::json!({
-                "estado": "error",
+                "estado": false,
                 "mensaje": "El documento legal no puede estar vacio",
             });
             return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));

@@ -287,7 +287,7 @@ pub async fn buscar_personas_handler(
 
             if tipo_bd == 0 {
                 let respuesta_error = serde_json::json!({
-                    "estado": "error",
+                    "estado": false,
                     "mensaje": "El tipo de persona es invalido",
                 });
                 return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));

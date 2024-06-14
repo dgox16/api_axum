@@ -36,7 +36,7 @@ pub fn validar_nuevo_proveedor(
 ) -> Result<(), (StatusCode, Json<serde_json::Value>)> {
     if body.nombre.trim().is_empty() {
         let respuesta_error = serde_json::json!({
-            "estado": "error",
+            "estado": false,
             "mensaje": "El nombre de la sucursal no puede estar vacío",
         });
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));

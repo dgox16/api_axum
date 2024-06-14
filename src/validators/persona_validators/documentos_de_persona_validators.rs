@@ -12,7 +12,7 @@ pub fn validar_nuevo_documento_de_persona(
                     || documento.numero_identificacion.trim().len() != 18
                 {
                     let respuesta_error = serde_json::json!({
-                        "estado": "error",
+                        "estado": false,
                         "mensaje": "El formato de la CURP es incorrecta",
                     });
                     return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
@@ -23,7 +23,7 @@ pub fn validar_nuevo_documento_de_persona(
                     || documento.numero_identificacion.trim().len() != 13
                 {
                     let respuesta_error = serde_json::json!({
-                        "estado": "error",
+                        "estado": false,
                         "mensaje": "El formato del RFC es incorrecto",
                     });
                     return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
@@ -32,7 +32,7 @@ pub fn validar_nuevo_documento_de_persona(
             _ => {
                 if documento.numero_identificacion.trim().is_empty() {
                     let respuesta_error = serde_json::json!({
-                        "estado": "error",
+                        "estado": false,
                         "mensaje": "El numero de identificacion no puede estar vacio",
                     });
                     return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
