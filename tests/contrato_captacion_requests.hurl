@@ -28,3 +28,6 @@ Content-Type: application/json
     "autoriza_cancelacion": true,
     "usuario_autoriza_cancelacion": 1
 }
+
+GET http://localhost:8000/api/contrato_captacion/listar/?persona=2
+Authorization: Bearer {{token}}
