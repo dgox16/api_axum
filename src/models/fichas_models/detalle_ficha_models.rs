@@ -19,8 +19,8 @@ pub struct DetalleFichaModelo {
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct DetalleFichaTemporalModelo {
-    pub id_detalle_ficha: i32,
-    pub ficha: i32,
+    pub id_detalle_ficha_temporal: i32,
+    pub persona: i32,
     pub servicio: Option<i32>,
     pub captacion: Option<i32>,
     pub prestamo: Option<i32>,
