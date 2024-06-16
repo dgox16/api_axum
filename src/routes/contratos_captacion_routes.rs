@@ -8,6 +8,7 @@ use axum::{
 
 use crate::{
     handlers::contrato_captacion_handlers::{
+        abono_contrato_captacion_handler, cargo_contrato_captacion_handler,
         crear_contrato_captacion_handler, listar_contratos_captacion_handler,
     },
     middlewares::jwt_middlewares::auth_required,
@@ -26,6 +27,14 @@ pub fn contrato_captacion_router(app_state: Arc<AppState>) -> Router {
         .route(
             "/api/contrato_captacion/listar/",
             get(listar_contratos_captacion_handler),
+        )
+        .route(
+            "/api/contrato_captacion/abono/",
+            post(abono_contrato_captacion_handler),
+        )
+        .route(
+            "/api/contrato_captacion/cargo/",
+            post(cargo_contrato_captacion_handler),
         )
         .with_state(app_state)
 }

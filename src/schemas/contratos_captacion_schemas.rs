@@ -9,6 +9,14 @@ pub struct ListarContratosCaptacionQuery {
 }
 
 #[derive(Deserialize)]
+pub struct AbonoCargoContratoCaptacionSchema {
+    pub persona: i32,
+    pub captacion: i32,
+    pub abono: Option<f32>,
+    pub cargo: Option<f32>,
+}
+
+#[derive(Deserialize)]
 pub struct CrearContratoCaptacionSchema {
     pub id_persona: i32,
     pub cuenta: String,

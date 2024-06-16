@@ -31,3 +31,25 @@ Content-Type: application/json
 
 GET http://localhost:8000/api/contrato_captacion/listar/?persona=2
 Authorization: Bearer {{token}}
+
+POST http://localhost:8000/api/contrato_captacion/abono/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "persona": 2,
+    "captacion": 5,
+    "abono": 200.21,
+    "cargo": 300.31
+}
+
+POST http://localhost:8000/api/contrato_captacion/cargo/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "persona": 2,
+    "captacion": 5,
+    "abono": 200.21,
+    "cargo": 300.31
+}

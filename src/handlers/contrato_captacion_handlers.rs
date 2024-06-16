@@ -11,11 +11,13 @@ use serde_json::json;
 use crate::{
     models::{
         contrato_captacion_models::{ContratoCaptacionModelo, TipoContratoCaptacion},
+        fichas_models::detalle_ficha_models::DetalleFichaTemporalModelo,
         user_models::UsuarioModelo,
     },
     responses::contrato_captacion_responses::ListarContratoCaptacionRespuesta,
     schemas::contratos_captacion_schemas::{
-        CrearContratoCaptacionSchema, ListarContratosCaptacionQuery,
+        AbonoCargoContratoCaptacionSchema, CrearContratoCaptacionSchema,
+        ListarContratosCaptacionQuery,
     },
     validators::contrato_captacion_validators::validar_nueva_contrato_captacion,
     AppState,
@@ -207,6 +209,76 @@ pub async fn listar_contratos_captacion_handler(
     let respuesta = json!({
         "estado": true,
         "datos": contratos_formateados
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn abono_contrato_captacion_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<AbonoCargoContratoCaptacionSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nuevo_detalle_temporal = sqlx::query_as!(
+        DetalleFichaTemporalModelo,
+        "INSERT INTO detalles_ficha_temporal 
+        (persona, captacion, abono, cargo) VALUES 
+        ($1, $2, $3, $4) 
+        RETURNING *",
+        body.persona,
+        body.captacion,
+        body.abono,
+        0.0
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": nuevo_detalle_temporal
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn cargo_contrato_captacion_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<AbonoCargoContratoCaptacionSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let nuevo_detalle_temporal = sqlx::query_as!(
+        DetalleFichaTemporalModelo,
+        "INSERT INTO detalles_ficha_temporal 
+        (persona, captacion, abono, cargo) VALUES 
+        ($1, $2, $3, $4) 
+        RETURNING *",
+        body.persona,
+        body.captacion,
+        0.0,
+        body.cargo
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": nuevo_detalle_temporal
     });
 
     Ok(Json(respuesta))
