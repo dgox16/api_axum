@@ -21,12 +21,19 @@ pub struct ObtenerSaldoContratosCaptacionQuery {
     pub tipo: TipoSaldoContratoCaptacion,
 }
 
+#[derive(Deserialize, Serialize)]
+pub enum CargoAbonoEnum {
+    Cargo,
+    Abono,
+}
+
 #[derive(Deserialize)]
 pub struct AbonoCargoContratoCaptacionSchema {
     pub persona: i32,
     pub captacion: i32,
     pub abono: Option<f32>,
     pub cargo: Option<f32>,
+    pub abono_cargo: CargoAbonoEnum,
 }
 
 #[derive(Deserialize)]

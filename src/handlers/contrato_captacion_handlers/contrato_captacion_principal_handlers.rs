@@ -15,7 +15,7 @@ use crate::{
         user_models::UsuarioModelo,
     },
     schemas::contratos_captacion_schemas::{
-        AbonoCargoContratoCaptacionSchema, CrearContratoCaptacionSchema,
+        AbonoCargoContratoCaptacionSchema, CargoAbonoEnum, CrearContratoCaptacionSchema,
         ListarContratosCaptacionQuery, ObtenerSaldoContratosCaptacionQuery,
     },
     validators::contrato_captacion_validators::validar_nueva_contrato_captacion,
@@ -135,10 +135,38 @@ pub async fn listar_contratos_captacion_handler(
     Ok(Json(respuesta))
 }
 
-pub async fn abono_contrato_captacion_handler(
+pub async fn abono_cargo_contrato_captacion_handler(
     State(data): State<Arc<AppState>>,
     Json(body): Json<AbonoCargoContratoCaptacionSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let abono = match body.abono_cargo {
+        CargoAbonoEnum::Cargo => 0.0,
+        CargoAbonoEnum::Abono => match body.abono {
+            Some(valor) => valor,
+            None => {
+                let respuesta_error = json!({
+                    "estado": false,
+                    "mensaje": "El valor del abono no puede estar vacío cuando se selecciona 'Abono'",
+                });
+                return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+            }
+        },
+    };
+
+    let cargo = match body.abono_cargo {
+        CargoAbonoEnum::Abono => 0.0,
+        CargoAbonoEnum::Cargo => match body.cargo {
+            Some(valor) => valor,
+            None => {
+                let respuesta_error = json!({
+                    "estado": false,
+                    "mensaje": "El valor del cargo no puede estar vacío cuando se selecciona 'Abono'",
+                });
+                return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+            }
+        },
+    };
+
     let nuevo_detalle_temporal = sqlx::query_as!(
         DetalleFichaTemporalModelo,
         "INSERT INTO detalles_ficha_temporal 
@@ -147,43 +175,8 @@ pub async fn abono_contrato_captacion_handler(
         RETURNING *",
         body.persona,
         body.captacion,
-        body.abono,
-        0.0
-    )
-    .fetch_one(&data.db)
-    .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
-
-    let respuesta = json!({
-        "estado": true,
-        "datos": nuevo_detalle_temporal
-    });
-
-    Ok(Json(respuesta))
-}
-
-pub async fn cargo_contrato_captacion_handler(
-    State(data): State<Arc<AppState>>,
-    Json(body): Json<AbonoCargoContratoCaptacionSchema>,
-) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let nuevo_detalle_temporal = sqlx::query_as!(
-        DetalleFichaTemporalModelo,
-        "INSERT INTO detalles_ficha_temporal 
-        (persona, captacion, abono, cargo) VALUES 
-        ($1, $2, $3, $4) 
-        RETURNING *",
-        body.persona,
-        body.captacion,
-        0.0,
-        body.cargo
+        abono,
+        cargo
     )
     .fetch_one(&data.db)
     .await

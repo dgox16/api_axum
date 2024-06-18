@@ -5,7 +5,7 @@ use serde_json::json;
 
 use crate::{
     models::{
-        contrato_captacion_models::{ContratoCaptacionModelo, TipoContratoCaptacion},
+        contrato_captacion_models::ContratoCaptacionModelo,
         fichas_models::detalle_ficha_models::DetalleFichaTemporalModelo,
     },
     responses::contrato_captacion_responses::ListarContratoCaptacionRespuesta,
