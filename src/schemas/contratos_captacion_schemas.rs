@@ -1,5 +1,5 @@
 use chrono::{NaiveDate, NaiveDateTime};
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 use crate::models::contrato_captacion_models::TipoContratoCaptacion;
 
@@ -8,9 +8,17 @@ pub struct ListarContratosCaptacionQuery {
     pub persona: i32,
 }
 
+#[derive(Debug, Deserialize, Serialize)]
+pub enum TipoSaldoContratoCaptacion {
+    Cargos,
+    Abonos,
+    Todos,
+}
+
 #[derive(Deserialize)]
-pub struct ObtenerDeudaContratoCaptacionQuery {
+pub struct ObtenerSaldoContratosCaptacionQuery {
     pub persona: i32,
+    pub tipo: TipoSaldoContratoCaptacion,
 }
 
 #[derive(Deserialize)]

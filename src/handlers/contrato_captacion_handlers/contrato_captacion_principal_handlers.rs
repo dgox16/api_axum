@@ -16,7 +16,7 @@ use crate::{
     },
     schemas::contratos_captacion_schemas::{
         AbonoCargoContratoCaptacionSchema, CrearContratoCaptacionSchema,
-        ListarContratosCaptacionQuery, ObtenerDeudaContratoCaptacionQuery,
+        ListarContratosCaptacionQuery, ObtenerSaldoContratosCaptacionQuery,
     },
     validators::contrato_captacion_validators::validar_nueva_contrato_captacion,
     AppState,
@@ -205,25 +205,11 @@ pub async fn cargo_contrato_captacion_handler(
     Ok(Json(respuesta))
 }
 
-pub async fn obtener_saldo_negativo_contrato_captacion_handler(
+pub async fn obtener_saldo_contrato_captacion_handler(
     State(data): State<Arc<AppState>>,
-    Query(query): Query<ObtenerDeudaContratoCaptacionQuery>,
+    Query(query): Query<ObtenerSaldoContratosCaptacionQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let saldo = calcular_totales_captacion(data, query.persona, false).await?;
-
-    let respuesta = json!({
-        "estado": true,
-        "datos": saldo
-    });
-
-    Ok(Json(respuesta))
-}
-
-pub async fn obtener_saldo_positivo_contrato_captacion_handler(
-    State(data): State<Arc<AppState>>,
-    Query(query): Query<ObtenerDeudaContratoCaptacionQuery>,
-) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let saldo = calcular_totales_captacion(data, query.persona, true).await?;
+    let saldo = calcular_totales_captacion(data, query.persona, query.tipo).await?;
 
     let respuesta = json!({
         "estado": true,

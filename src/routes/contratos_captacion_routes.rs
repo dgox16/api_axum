@@ -10,8 +10,7 @@ use crate::{
     handlers::contrato_captacion_handlers::contrato_captacion_principal_handlers::{
         abono_contrato_captacion_handler, cargo_contrato_captacion_handler,
         crear_contrato_captacion_handler, listar_contratos_captacion_handler,
-        obtener_saldo_negativo_contrato_captacion_handler,
-        obtener_saldo_positivo_contrato_captacion_handler,
+        obtener_saldo_contrato_captacion_handler,
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -31,12 +30,8 @@ pub fn contrato_captacion_router(app_state: Arc<AppState>) -> Router {
             get(listar_contratos_captacion_handler),
         )
         .route(
-            "/api/contrato_captacion/saldo_negativo/",
-            get(obtener_saldo_negativo_contrato_captacion_handler),
-        )
-        .route(
-            "/api/contrato_captacion/saldo_positivo/",
-            get(obtener_saldo_positivo_contrato_captacion_handler),
+            "/api/contrato_captacion/obtener_saldo/",
+            get(obtener_saldo_contrato_captacion_handler),
         )
         .route(
             "/api/contrato_captacion/abono/",

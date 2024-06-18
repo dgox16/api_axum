@@ -5,10 +5,11 @@ use serde_json::json;
 
 use crate::{
     models::{
-        contrato_captacion_models::ContratoCaptacionModelo,
+        contrato_captacion_models::{ContratoCaptacionModelo, TipoContratoCaptacion},
         fichas_models::detalle_ficha_models::DetalleFichaTemporalModelo,
     },
     responses::contrato_captacion_responses::ListarContratoCaptacionRespuesta,
+    schemas::contratos_captacion_schemas::TipoSaldoContratoCaptacion,
     AppState,
 };
 
@@ -98,26 +99,39 @@ pub async fn formatear_contratos_captacion(
 pub async fn obtener_temporales_captacion(
     data: Arc<AppState>,
     persona: i32,
-    es_abono: bool,
+    tipo: &TipoSaldoContratoCaptacion,
 ) -> Result<Vec<DetalleFichaTemporalModelo>, (StatusCode, Json<serde_json::Value>)> {
-    let peticion_detalles_temporales = if es_abono {
-        sqlx::query_as!(
-            DetalleFichaTemporalModelo,
-            "SELECT * FROM detalles_ficha_temporal
-            WHERE persona=$1 AND abono > 0 AND cargo = 0",
-            persona
-        )
-        .fetch_all(&data.db)
-        .await
-    } else {
-        sqlx::query_as!(
-            DetalleFichaTemporalModelo,
-            "SELECT * FROM detalles_ficha_temporal
-            WHERE persona=$1 AND cargo > 0 AND abono = 0",
-            persona
-        )
-        .fetch_all(&data.db)
-        .await
+    let peticion_detalles_temporales = match tipo {
+        TipoSaldoContratoCaptacion::Abonos => {
+            sqlx::query_as!(
+                DetalleFichaTemporalModelo,
+                "SELECT * FROM detalles_ficha_temporal
+                WHERE persona=$1 AND abono > 0 AND cargo = 0",
+                persona
+            )
+            .fetch_all(&data.db)
+            .await
+        }
+        TipoSaldoContratoCaptacion::Cargos => {
+            sqlx::query_as!(
+                DetalleFichaTemporalModelo,
+                "SELECT * FROM detalles_ficha_temporal
+                WHERE persona=$1 AND cargo > 0 AND abono = 0",
+                persona
+            )
+            .fetch_all(&data.db)
+            .await
+        }
+        TipoSaldoContratoCaptacion::Todos => {
+            sqlx::query_as!(
+                DetalleFichaTemporalModelo,
+                "SELECT * FROM detalles_ficha_temporal
+                WHERE persona=$1",
+                persona
+            )
+            .fetch_all(&data.db)
+            .await
+        }
     };
 
     peticion_detalles_temporales.map_err(|e| {
@@ -134,17 +148,15 @@ pub async fn obtener_temporales_captacion(
 pub async fn calcular_totales_captacion(
     data: Arc<AppState>,
     persona: i32,
-    es_abono: bool,
+    tipo: TipoSaldoContratoCaptacion,
 ) -> Result<f32, (StatusCode, Json<serde_json::Value>)> {
-    let detalles_temporales = obtener_temporales_captacion(data, persona, es_abono).await?;
+    let detalles_temporales = obtener_temporales_captacion(data, persona, &tipo).await?;
     let total: f32 = detalles_temporales
         .iter()
-        .map(|detalle| {
-            if es_abono {
-                detalle.abono
-            } else {
-                detalle.cargo
-            }
+        .map(|detalle| match tipo {
+            TipoSaldoContratoCaptacion::Abonos => detalle.abono,
+            TipoSaldoContratoCaptacion::Cargos => detalle.cargo,
+            TipoSaldoContratoCaptacion::Todos => detalle.abono - detalle.cargo,
         })
         .sum();
 
