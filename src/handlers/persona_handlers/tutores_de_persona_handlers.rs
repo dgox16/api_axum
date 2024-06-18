@@ -12,6 +12,7 @@ use crate::{
     models::persona_models::tutores_de_persona_models::{
         QuienEsTutor, TipoTutor, TutorDePersonaModelo,
     },
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_principal_schemas::ObtenerPersonaParams,
         tutores_de_persona_schemas::CrearTutorDePersonaSchema,
@@ -47,15 +48,8 @@ pub async fn crear_nuevo_tutor_de_persona_handler(
         )
         .fetch_one(&data.db)
         .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "estado": false,
-                    "mensaje": format!("Error en la base de datos: {}", e),
-                })),
-            )
-        })?;
+        .map_err(error_base_datos)?;
+
         tutores_creados.push(nuevo_tutor);
     }
 
@@ -83,15 +77,7 @@ pub async fn obtener_tutores_de_persona_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(tutores_encontrados)
 }

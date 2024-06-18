@@ -10,6 +10,7 @@ use serde_json::json;
 
 use crate::{
     models::persona_models::contactos_de_persona_models::{ContactoDePersonaModelo, TipoContacto},
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         contactos_de_persona_schemas::CrearContactoDePersonaSchema,
         persona_principal_schemas::ObtenerPersonaParams,
@@ -40,15 +41,8 @@ pub async fn crear_nuevo_contacto_de_persona_handler(
         )
         .fetch_one(&data.db)
         .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "estado": false,
-                    "mensaje": format!("Error en la base de datos: {}", e),
-                })),
-            )
-        })?;
+        .map_err(error_base_datos)?;
+
         contactos_creados.push(nuevo_contacto);
     }
 
@@ -74,15 +68,7 @@ pub async fn obtener_contactos_de_persona_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(contactos_encontrados)
 }

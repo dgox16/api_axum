@@ -16,6 +16,7 @@ use crate::{
         },
         user_models::UsuarioModelo,
     },
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::persona_principal_schemas::{
         BuscarPersonaQuery, CrearPersonaSchema, ObtenerPersonaParams,
     },
@@ -92,15 +93,7 @@ pub async fn crear_nueva_persona_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -145,15 +138,7 @@ pub async fn obtener_persona_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let mut respuesta = json!({
         "estado": true,
@@ -316,15 +301,7 @@ pub async fn buscar_personas_handler(
             )
             .fetch_all(&data.db)
             .await
-            .map_err(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({
-                        "estado": false,
-                        "mensaje": format!("Error en la base de datos: {}", e),
-                    })),
-                )
-            })?;
+            .map_err(error_base_datos)?;
 
             let respuesta = json!({
                 "estado": true,
@@ -354,15 +331,7 @@ pub async fn buscar_personas_handler(
             )
             .fetch_all(&data.db)
             .await
-            .map_err(|e| {
-                (
-                    StatusCode::INTERNAL_SERVER_ERROR,
-                    Json(serde_json::json!({
-                        "estado": false,
-                        "mensaje": format!("Error en la base de datos: {}", e),
-                    })),
-                )
-            })?;
+            .map_err(error_base_datos)?;
 
             let respuesta = json!({
                 "estado": true,

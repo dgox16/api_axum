@@ -14,6 +14,7 @@ use crate::{
         EstadoModelo, IndiceMarginacionBarrio, MunicipioModelo, PaisModelo, TipoCalle, TipoCiudad,
         TipoZonaBarrio,
     },
+    responses::error_responses::error_base_datos,
     schemas::ubicacion_schemas::{
         BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery,
         BuscarMunicipioQuery, BuscarPaisQuery, CrearBarrioSchema, CrearCalleSchema,
@@ -44,13 +45,7 @@ pub async fn buscar_calles_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -73,13 +68,7 @@ pub async fn buscar_pais_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -102,13 +91,7 @@ pub async fn buscar_estado_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -131,13 +114,7 @@ pub async fn crear_nueva_calle_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -168,13 +145,7 @@ pub async fn crear_nuevo_domicilio_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -200,13 +171,7 @@ pub async fn crear_nuevo_municipio_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e)
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = serde_json::json!({
         "estado": true,
@@ -236,13 +201,7 @@ pub async fn buscar_municipios_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e)
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = serde_json::json!({
         "estado": true,
@@ -279,13 +238,7 @@ pub async fn crear_nueva_ciudad_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e)
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = serde_json::json!({
         "estado": true,
@@ -317,13 +270,7 @@ pub async fn buscar_ciudades_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e)
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = serde_json::json!({
         "estado": true,
@@ -362,13 +309,7 @@ pub async fn crear_nuevo_barrio_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e)
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = serde_json::json!({
         "estado": true,
@@ -400,13 +341,8 @@ pub async fn buscar_barrios_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e)
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
+
     let respuesta = serde_json::json!({
         "estado": true,
         "datos": barrios_encontrados

@@ -9,6 +9,7 @@ use crate::{
         FrecuenciaEmpresaModelo, GrupoCuenta, NaturalezaCuenta, OperacionProveedor,
         ProveedorModelo, SucursalModelo, TipoProveedor,
     },
+    responses::error_responses::error_base_datos,
     schemas::entidades_schemas::{
         CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearFrecuenciaEmpresaSchema,
         CrearProveedorSchema, CrearSucursalSchema,
@@ -35,13 +36,7 @@ pub async fn crear_nueva_sucursal_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -87,13 +82,7 @@ pub async fn crear_nuevo_proveedor_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -114,13 +103,7 @@ pub async fn crear_nuevo_banco_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -178,13 +161,7 @@ pub async fn crear_nueva_cuenta_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -208,13 +185,7 @@ pub async fn crear_nueva_frecuencia_empresa_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -240,13 +211,7 @@ pub async fn crear_nueva_empresa_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,

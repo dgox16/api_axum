@@ -13,6 +13,7 @@ use crate::{
         persona_aval_models::AvalPersonaModelo,
         persona_types::{ClasificacionPersona, RegimenConyugalPersona},
     },
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_aval_schemas::CrearPersonaAvalSchema,
         persona_principal_schemas::ObtenerPersonaParams,
@@ -58,15 +59,7 @@ pub async fn crear_nueva_persona_aval_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -93,15 +86,7 @@ pub async fn obtener_persona_aval_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(aval_encontrado)
 }

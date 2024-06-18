@@ -6,6 +6,7 @@ use crate::{
         },
         user_models::UsuarioModelo,
     },
+    responses::error_responses::error_base_datos,
     schemas::poliza_schema::{CrearDetallePolizaSchema, CrearPolizaSchema},
     validators::poliza_validators::{
         validar_nueva_poliza, validar_nueva_poliza_egreso, validar_nuevo_detalle_poliza,
@@ -85,15 +86,7 @@ async fn crear_detalles_poliza(
         )
         .fetch_one(&data.db)
         .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "estado": false,
-                    "mensaje": format!("Error en la base de datos: {}", e),
-                })),
-            )
-        })?;
+        .map_err(error_base_datos)?;
         detalles_creados.push(nuevo_detalle);
     }
     Ok(detalles_creados)
@@ -132,15 +125,7 @@ async fn insertar_poliza_con_egreso(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok((nueva_poliza, Some(nueva_poliza_egreso)))
 }

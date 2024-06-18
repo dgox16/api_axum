@@ -4,7 +4,7 @@ use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
 use serde_json::json;
 
 use crate::{
-    models::trabajo_models::PuestoTrabajoModelo,
+    models::trabajo_models::PuestoTrabajoModelo, responses::error_responses::error_base_datos,
     schemas::trabajo_schemas::CrearPuestoTrabajoSchema,
     validators::trabajo_validators::validar_nuevo_puesto_trabajo, AppState,
 };
@@ -23,13 +23,7 @@ pub async fn crear_puesto_trabajo_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,

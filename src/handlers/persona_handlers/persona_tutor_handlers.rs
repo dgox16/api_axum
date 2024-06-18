@@ -13,6 +13,7 @@ use crate::{
         persona_tutor_models::TutorPersonaModelo,
         persona_types::{ClasificacionPersona, RegimenConyugalPersona},
     },
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_principal_schemas::ObtenerPersonaParams,
         persona_tutor_schemas::CrearPersonaTutorSchema,
@@ -54,15 +55,7 @@ pub async fn crear_nueva_persona_tutor_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -89,15 +82,7 @@ pub async fn obtener_persona_tutor_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(tutor_encontrado)
 }

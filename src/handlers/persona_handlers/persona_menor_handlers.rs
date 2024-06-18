@@ -10,6 +10,7 @@ use serde_json::json;
 
 use crate::{
     models::persona_models::persona_menor_models::MenorPersonaModelo,
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_menor_schema::CrearPersonaMenorSchema,
         persona_principal_schemas::ObtenerPersonaParams,
@@ -45,15 +46,7 @@ pub async fn crear_nueva_persona_menor_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -78,15 +71,7 @@ pub async fn obtener_persona_menor_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(menor_encontrado)
 }

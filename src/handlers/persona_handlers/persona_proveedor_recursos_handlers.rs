@@ -13,6 +13,7 @@ use crate::{
         persona_proveedor_recursos_models::ProveedorRecursosPersonaModelo,
         persona_types::{ClasificacionPersona, PeriodoPersona, RegimenConyugalPersona},
     },
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_principal_schemas::ObtenerPersonaParams,
         persona_proveedor_recursos_schemas::CrearPersonaProveedorRecursosSchema,
@@ -76,15 +77,7 @@ pub async fn crear_nueva_persona_proveedor_recursos_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -115,15 +108,7 @@ pub async fn obtener_persona_proveedor_recursos_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     println!("{}", proveedor_encontrado.ingresos_mensual);
 

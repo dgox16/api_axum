@@ -3,6 +3,7 @@ use crate::{
         AplicacionPoliza, DetallePolizaModelo, FuentePoliza, IvaDetallePoliza, PolizaEgresoModelo,
         PolizaModelo, TipoPoliza,
     },
+    responses::error_responses::error_base_datos,
     schemas::poliza_schema::{BuscarPolizaQuery, ObtenerPolizaParams},
     AppState,
 };
@@ -30,13 +31,7 @@ pub async fn obtener_poliza_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let detalles_encontrados = sqlx::query_as!(
         DetallePolizaModelo,
@@ -47,13 +42,7 @@ pub async fn obtener_poliza_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let mut respuesta = json!({
         "estado": true,
@@ -71,13 +60,7 @@ pub async fn obtener_poliza_handler(
         )
         .fetch_one(&data.db)
         .await
-        .map_err(|e| {
-            let respuesta_error = serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            });
-            (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-        })?;
+        .map_err(error_base_datos)?;
 
         respuesta["datos"]["poliza_egreso"] = json!(poliza_egreso_encontrada);
     }
@@ -107,13 +90,7 @@ pub async fn buscar_polizas_concepto_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,

@@ -13,6 +13,7 @@ use crate::{
         persona_tercero_autorizado_models::TerceroAutorizadoPersonaModelo,
         persona_types::{ClasificacionPersona, RegimenConyugalPersona},
     },
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_principal_schemas::ObtenerPersonaParams,
         persona_tercero_autorizado_schemas::CrearPersonaTerceroAutorizadoSchema,
@@ -55,15 +56,7 @@ pub async fn crear_nueva_persona_tercero_autorizado_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -90,15 +83,7 @@ pub async fn obtener_persona_tercero_autorizado_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(tercero_autorizado_encontrado)
 }

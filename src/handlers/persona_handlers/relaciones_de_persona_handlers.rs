@@ -10,6 +10,7 @@ use serde_json::json;
 
 use crate::{
     models::persona_models::relaciones_de_persona_models::RelacionDePersonaModelo,
+    responses::error_responses::error_base_datos,
     schemas::persona_schemas::{
         persona_principal_schemas::ObtenerPersonaParams,
         relaciones_de_persona_schemas::CrearRelacionDePersonaSchema,
@@ -39,15 +40,8 @@ pub async fn crear_nueva_relacion_de_persona_handler(
         )
         .fetch_one(&data.db)
         .await
-        .map_err(|e| {
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json(serde_json::json!({
-                    "estado": false,
-                    "mensaje": format!("Error en la base de datos: {}", e),
-                })),
-            )
-        })?;
+        .map_err(error_base_datos)?;
+
         relaciones_creadas.push(nueva_relacion);
     }
 
@@ -73,15 +67,7 @@ pub async fn obtener_relaciones_de_persona_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     Ok(relaciones_encontradas)
 }
