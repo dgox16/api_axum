@@ -98,15 +98,13 @@ pub async fn formatear_contratos_captacion(
 pub async fn obtener_temporales_captacion(
     data: Arc<AppState>,
     persona: i32,
-    captacion: i32,
     es_abono: bool,
 ) -> Result<Vec<DetalleFichaTemporalModelo>, (StatusCode, Json<serde_json::Value>)> {
     let peticion_detalles_temporales = if es_abono {
         sqlx::query_as!(
             DetalleFichaTemporalModelo,
             "SELECT * FROM detalles_ficha_temporal
-            WHERE captacion=$1 AND persona=$2 AND abono > 0 AND cargo = 0",
-            captacion,
+            WHERE persona=$1 AND abono > 0 AND cargo = 0",
             persona
         )
         .fetch_all(&data.db)
@@ -115,8 +113,7 @@ pub async fn obtener_temporales_captacion(
         sqlx::query_as!(
             DetalleFichaTemporalModelo,
             "SELECT * FROM detalles_ficha_temporal
-            WHERE captacion=$1 AND persona=$2 AND cargo > 0 AND abono = 0",
-            captacion,
+            WHERE persona=$1 AND cargo > 0 AND abono = 0",
             persona
         )
         .fetch_all(&data.db)
@@ -137,11 +134,9 @@ pub async fn obtener_temporales_captacion(
 pub async fn calcular_totales_captacion(
     data: Arc<AppState>,
     persona: i32,
-    captacion: i32,
     es_abono: bool,
 ) -> Result<f32, (StatusCode, Json<serde_json::Value>)> {
-    let detalles_temporales =
-        obtener_temporales_captacion(data, persona, captacion, es_abono).await?;
+    let detalles_temporales = obtener_temporales_captacion(data, persona, es_abono).await?;
     let total: f32 = detalles_temporales
         .iter()
         .map(|detalle| {

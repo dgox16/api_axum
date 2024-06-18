@@ -32,6 +32,12 @@ Content-Type: application/json
 GET http://localhost:8000/api/contrato_captacion/listar/?persona=2
 Authorization: Bearer {{token}}
 
+GET http://localhost:8000/api/contrato_captacion/saldo_negativo/?persona=2
+Authorization: Bearer {{token}}
+
+GET http://localhost:8000/api/contrato_captacion/saldo_positivo/?persona=2
+Authorization: Bearer {{token}}
+
 POST http://localhost:8000/api/contrato_captacion/abono/
 Authorization: Bearer {{token}}
 Content-Type: application/json
