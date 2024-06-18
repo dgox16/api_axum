@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use axum::{http::StatusCode, Json};
 
-use crate::{schemas::persona_schemas::persona_tutor_schemas::CrearPersonaTutorSchema, AppState};
+use crate::{
+    responses::error_responses::error_base_datos,
+    schemas::persona_schemas::persona_tutor_schemas::CrearPersonaTutorSchema, AppState,
+};
 
 pub async fn validar_nueva_persona_tutor(
     data: &Arc<AppState>,
@@ -15,13 +18,7 @@ pub async fn validar_nueva_persona_tutor(
     )
     .fetch_optional(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     if let Some(tipo) = persona_existente {
         if tipo != 11 {

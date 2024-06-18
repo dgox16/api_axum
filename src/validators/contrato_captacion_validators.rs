@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use axum::{http::StatusCode, Json};
 
-use crate::{schemas::contratos_captacion_schemas::CrearContratoCaptacionSchema, AppState};
+use crate::{
+    responses::error_responses::error_base_datos,
+    schemas::contratos_captacion_schemas::CrearContratoCaptacionSchema, AppState,
+};
 
 pub async fn validar_nueva_contrato_captacion(
     data: &Arc<AppState>,
@@ -14,13 +17,7 @@ pub async fn validar_nueva_contrato_captacion(
     )
     .fetch_optional(&data.db)
     .await
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     if let Some(tipo) = persona_existente {
         if tipo != 2 {
