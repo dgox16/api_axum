@@ -14,6 +14,7 @@ use crate::{
         fichas_models::detalle_ficha_models::DetalleFichaTemporalModelo,
         user_models::UsuarioModelo,
     },
+    responses::error_responses::error_base_datos,
     schemas::contratos_captacion_schemas::{
         AbonoCargoContratoCaptacionSchema, CargoAbonoEnum, CrearContratoCaptacionSchema,
         ListarContratosCaptacionQuery, ObtenerSaldoContratosCaptacionQuery,
@@ -78,15 +79,7 @@ pub async fn crear_contrato_captacion_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,
@@ -115,15 +108,7 @@ pub async fn listar_contratos_captacion_handler(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let contratos_formateados = formatear_contratos_captacion(contratos_encontrados, data).await?;
 
@@ -180,15 +165,7 @@ pub async fn abono_cargo_contrato_captacion_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let respuesta = json!({
         "estado": true,

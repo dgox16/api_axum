@@ -42,7 +42,7 @@ Content-Type: application/json
 {
     "persona": 2,
     "captacion": 6,
-    "abono": 20.11,
+    "abono": 340.11,
     "cargo": 300.31,
     "abono_cargo": "Abono"
 }

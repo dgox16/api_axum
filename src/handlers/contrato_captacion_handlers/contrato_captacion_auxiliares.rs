@@ -1,14 +1,16 @@
 use std::sync::Arc;
 
 use axum::{http::StatusCode, Json};
-use serde_json::json;
 
 use crate::{
     models::{
         contrato_captacion_models::ContratoCaptacionModelo,
         fichas_models::detalle_ficha_models::DetalleFichaTemporalModelo,
     },
-    responses::contrato_captacion_responses::ListarContratoCaptacionRespuesta,
+    responses::{
+        contrato_captacion_responses::ListarContratoCaptacionRespuesta,
+        error_responses::error_base_datos,
+    },
     schemas::contratos_captacion_schemas::TipoSaldoContratoCaptacion,
     AppState,
 };
@@ -23,15 +25,7 @@ async fn calcular_saldo_contrato_captacion(
     )
     .fetch_all(&data.db)
     .await
-    .map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })?;
+    .map_err(error_base_datos)?;
 
     let saldo: f32 = detalles_fichas
         .iter()
@@ -134,15 +128,7 @@ pub async fn obtener_temporales_captacion(
         }
     };
 
-    peticion_detalles_temporales.map_err(|e| {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Error en la base de datos: {}", e),
-            })),
-        )
-    })
+    peticion_detalles_temporales.map_err(error_base_datos)
 }
 
 pub async fn calcular_totales_captacion(
