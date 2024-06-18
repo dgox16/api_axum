@@ -38,8 +38,8 @@ Content-Type: application/json
 
 {
     "persona": 2,
-    "captacion": 5,
-    "abono": 200.21,
+    "captacion": 6,
+    "abono": 300.11,
     "cargo": 300.31
 }
 
