@@ -17,7 +17,7 @@ use crate::{
     responses::contrato_captacion_responses::ListarContratoCaptacionRespuesta,
     schemas::contratos_captacion_schemas::{
         AbonoCargoContratoCaptacionSchema, CrearContratoCaptacionSchema,
-        ListarContratosCaptacionQuery,
+        DepositoRetiroContratoCaptacionSchema, ListarContratosCaptacionQuery,
     },
     validators::contrato_captacion_validators::validar_nueva_contrato_captacion,
     AppState,
@@ -94,12 +94,12 @@ pub async fn crear_contrato_captacion_handler(
 }
 
 async fn calcular_saldo(
-    contrato: &ContratoCaptacionModelo,
+    contrato: i32,
     data: &Arc<AppState>,
 ) -> Result<f32, (StatusCode, Json<serde_json::Value>)> {
     let detalles_fichas = sqlx::query!(
         "SELECT cargo, abono FROM detalles_ficha WHERE captacion = $1",
-        contrato.id_contrato_captacion
+        contrato
     )
     .fetch_all(&data.db)
     .await
@@ -132,7 +132,7 @@ async fn formatear_contratos_captacion(
     let mut contratos_formateados = Vec::new();
 
     for contrato in contratos_encontrados {
-        let saldo = match calcular_saldo(&contrato, &data).await {
+        let saldo = match calcular_saldo(contrato.id_contrato_captacion, &data).await {
             Ok(saldo) => saldo,
             Err((status, response)) => {
                 return Err((status, response));
@@ -283,3 +283,92 @@ pub async fn cargo_contrato_captacion_handler(
 
     Ok(Json(respuesta))
 }
+
+pub async fn obtener_temporales_captacion(
+    data: Arc<AppState>,
+    persona: i32,
+    captacion: i32,
+    es_abono: bool,
+) -> Result<Vec<DetalleFichaTemporalModelo>, (StatusCode, Json<serde_json::Value>)> {
+    let peticion_detalles_temporales = if es_abono {
+        sqlx::query_as!(
+            DetalleFichaTemporalModelo,
+            "SELECT * FROM detalles_ficha_temporal
+            WHERE captacion=$1 AND persona=$2 AND abono > 0 AND cargo = 0",
+            captacion,
+            persona
+        )
+        .fetch_all(&data.db)
+        .await
+    } else {
+        sqlx::query_as!(
+            DetalleFichaTemporalModelo,
+            "SELECT * FROM detalles_ficha_temporal
+            WHERE captacion=$1 AND persona=$2 AND cargo > 0 AND abono = 0",
+            captacion,
+            persona
+        )
+        .fetch_all(&data.db)
+        .await
+    };
+
+    peticion_detalles_temporales.map_err(|e| {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Error en la base de datos: {}", e),
+            })),
+        )
+    })
+}
+
+pub async fn calcular_totales_captacion(
+    data: Arc<AppState>,
+    persona: i32,
+    captacion: i32,
+    es_abono: bool,
+) -> Result<f32, (StatusCode, Json<serde_json::Value>)> {
+    let detalles_temporales =
+        obtener_temporales_captacion(data, persona, captacion, es_abono).await?;
+    let total: f32 = detalles_temporales
+        .iter()
+        .map(|detalle| {
+            if es_abono {
+                detalle.abono
+            } else {
+                detalle.cargo
+            }
+        })
+        .sum();
+
+    Ok((total * 1000.0).round() / 1000.0)
+}
+
+// pub async fn deposito_contrato_captacion_handler(
+//     State(data): State<Arc<AppState>>,
+//     Json(body): Json<DepositoRetiroContratoCaptacionSchema>,
+// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+//     let nueva_ficha = sqlx::query_as!(
+//         Ficha,
+//         "INSERT INTO detalles_ficha_temporal
+//         (persona, captacion, abono, cargo) VALUES
+//         ($1, $2, $3, $4)
+//         RETURNING *",
+//         body.persona,
+//         body.captacion,
+//         body.abono,
+//         0.0
+//     )
+//     .fetch_one(&data.db)
+//     .await
+//     .map_err(|e| {
+//         (
+//             StatusCode::INTERNAL_SERVER_ERROR,
+//             Json(serde_json::json!({
+//                 "estado": false,
+//                 "mensaje": format!("Error en la base de datos: {}", e),
+//             })),
+//         )
+//     })?;
+// }

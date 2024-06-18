@@ -7,7 +7,7 @@ use axum::{
 };
 
 use crate::{
-    handlers::contrato_captacion_handlers::{
+    handlers::contrato_captacion_handlers::contrato_captacion_principal_handlers::{
         abono_contrato_captacion_handler, cargo_contrato_captacion_handler,
         crear_contrato_captacion_handler, listar_contratos_captacion_handler,
     },

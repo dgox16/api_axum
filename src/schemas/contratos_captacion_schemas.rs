@@ -17,6 +17,31 @@ pub struct AbonoCargoContratoCaptacionSchema {
 }
 
 #[derive(Deserialize)]
+pub enum TipoPagoFicha {
+    Efectivo,
+    Cheques,
+    Transferencia,
+    Tarjeta,
+}
+
+#[derive(Deserialize)]
+pub struct DepositoRetiroContratoCaptacionSchema {
+    pub folio_ficha: String,
+    pub persona: i32,
+    pub sucursal: i32,
+    pub poliza: i32,
+    pub operacion_fuente: i32,
+    pub tipo_pago: Option<TipoPagoFicha>,
+    pub referencia: Option<String>,
+    pub factura: i32,
+    pub instrumento: Option<String>,
+    pub captacion: i32,
+    pub subficha: i32,
+    pub observacion: Option<String>,
+    pub procesado: i32,
+}
+
+#[derive(Deserialize)]
 pub struct CrearContratoCaptacionSchema {
     pub id_persona: i32,
     pub cuenta: String,
