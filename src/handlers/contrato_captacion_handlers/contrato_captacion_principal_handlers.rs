@@ -24,7 +24,7 @@ use crate::{
 };
 
 use super::contrato_captacion_auxiliares::{
-    calcular_totales_captacion, formatear_contratos_captacion,
+    calcular_totales_captacion, formatear_contratos_captacion, obtener_temporales_captacion,
 };
 
 pub async fn crear_contrato_captacion_handler(
@@ -184,6 +184,20 @@ pub async fn obtener_saldo_contrato_captacion_handler(
     let respuesta = json!({
         "estado": true,
         "datos": saldo
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn obtener_temporales_contrato_captacion_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<ObtenerSaldoContratosCaptacionQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let temporales = obtener_temporales_captacion(data, query.persona, &query.tipo).await?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": temporales
     });
 
     Ok(Json(respuesta))

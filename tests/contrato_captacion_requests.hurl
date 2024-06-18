@@ -35,6 +35,9 @@ Authorization: Bearer {{token}}
 GET http://localhost:8000/api/contrato_captacion/obtener_saldo/?persona=2&tipo=Cargos
 Authorization: Bearer {{token}}
 
+GET http://localhost:8000/api/contrato_captacion/obtener_temporales/?persona=2&tipo=Abonos
+Authorization: Bearer {{token}}
+
 POST http://localhost:8000/api/contrato_captacion/abono_cargo/
 Authorization: Bearer {{token}}
 Content-Type: application/json
