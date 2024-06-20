@@ -66,3 +66,19 @@ Content-Type: application/json
     "procesado":1
 }
 
+POST http://localhost:8000/api/contrato_captacion/retirar/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "folio_ficha": "321321312",
+    "persona": 2,
+    "sucursal": 2,
+    "poliza": 1,
+    "operacion_fuente": 1,
+    "tipo_pago": "Transferencia",
+    "factura": 1,
+    "subficha": 1,
+    "procesado":1
+}
+
