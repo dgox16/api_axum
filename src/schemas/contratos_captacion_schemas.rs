@@ -55,7 +55,6 @@ pub struct DepositoRetiroContratoCaptacionSchema {
     pub referencia: Option<String>,
     pub factura: i32,
     pub instrumento: Option<String>,
-    pub captacion: i32,
     pub subficha: i32,
     pub observacion: Option<String>,
     pub procesado: i32,

@@ -100,7 +100,11 @@ pub async fn obtener_temporales_captacion(
             sqlx::query_as!(
                 DetalleFichaTemporalModelo,
                 "SELECT * FROM detalles_ficha_temporal
-                WHERE persona=$1 AND abono > 0 AND cargo = 0",
+                WHERE 
+                    captacion IS NOT NULL AND
+                    persona=$1 AND
+                    abono > 0 AND
+                    cargo = 0",
                 persona
             )
             .fetch_all(&data.db)
@@ -110,7 +114,11 @@ pub async fn obtener_temporales_captacion(
             sqlx::query_as!(
                 DetalleFichaTemporalModelo,
                 "SELECT * FROM detalles_ficha_temporal
-                WHERE persona=$1 AND cargo > 0 AND abono = 0",
+                WHERE 
+                    captacion IS NOT NULL AND
+                    persona=$1 AND 
+                    cargo > 0 AND 
+                    abono = 0",
                 persona
             )
             .fetch_all(&data.db)
@@ -120,7 +128,9 @@ pub async fn obtener_temporales_captacion(
             sqlx::query_as!(
                 DetalleFichaTemporalModelo,
                 "SELECT * FROM detalles_ficha_temporal
-                WHERE persona=$1",
+                WHERE 
+                    captacion IS NOT NULL AND
+                    persona=$1",
                 persona
             )
             .fetch_all(&data.db)
@@ -129,6 +139,56 @@ pub async fn obtener_temporales_captacion(
     };
 
     peticion_detalles_temporales.map_err(error_base_datos)
+}
+
+pub async fn eliminar_temporales_captacion(
+    data: Arc<AppState>,
+    persona: i32,
+    tipo: &TipoSaldoContratoCaptacion,
+) -> Result<bool, (StatusCode, Json<serde_json::Value>)> {
+    let peticion_detalles_temporales = match tipo {
+        TipoSaldoContratoCaptacion::Abonos => {
+            sqlx::query!(
+                "DELETE FROM detalles_ficha_temporal
+                WHERE 
+                    captacion IS NOT NULL AND
+                    persona=$1 AND
+                    abono > 0 AND
+                    cargo = 0",
+                persona
+            )
+            .fetch_all(&data.db)
+            .await
+        }
+        TipoSaldoContratoCaptacion::Cargos => {
+            sqlx::query!(
+                "DELETE FROM detalles_ficha_temporal
+                WHERE 
+                    captacion IS NOT NULL AND
+                    persona=$1 AND 
+                    cargo > 0 AND 
+                    abono = 0",
+                persona
+            )
+            .fetch_all(&data.db)
+            .await
+        }
+        TipoSaldoContratoCaptacion::Todos => {
+            sqlx::query!(
+                "DELETE FROM detalles_ficha_temporal
+                WHERE 
+                    captacion IS NOT NULL AND
+                    persona=$1",
+                persona
+            )
+            .fetch_all(&data.db)
+            .await
+        }
+    };
+
+    peticion_detalles_temporales.map_err(error_base_datos)?;
+
+    Ok(true)
 }
 
 pub async fn calcular_totales_captacion(

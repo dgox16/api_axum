@@ -11,8 +11,8 @@ POST http://localhost:8000/api/sucursal/nueva
 content-type: application/json
 
 {
-  "nombre": "Sucursal 3",
-  "encargado": 2,
+  "nombre": "Sucursal 1",
+  "encargado": 1,
   "domicilio": 1  
 }
 

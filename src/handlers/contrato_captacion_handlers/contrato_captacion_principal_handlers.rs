@@ -11,20 +11,25 @@ use serde_json::json;
 use crate::{
     models::{
         contrato_captacion_models::{ContratoCaptacionModelo, TipoContratoCaptacion},
-        fichas_models::detalle_ficha_models::DetalleFichaTemporalModelo,
+        fichas_models::{
+            detalle_ficha_models::{DetalleFichaModelo, DetalleFichaTemporalModelo},
+            ficha_principal_models::FichaModelo,
+        },
         user_models::UsuarioModelo,
     },
     responses::error_responses::error_base_datos,
     schemas::contratos_captacion_schemas::{
         AbonoCargoContratoCaptacionSchema, CargoAbonoEnum, CrearContratoCaptacionSchema,
-        ListarContratosCaptacionQuery, ObtenerSaldoContratosCaptacionQuery,
+        DepositoRetiroContratoCaptacionSchema, ListarContratosCaptacionQuery,
+        ObtenerSaldoContratosCaptacionQuery, TipoPagoFicha, TipoSaldoContratoCaptacion,
     },
     validators::contrato_captacion_validators::validar_nueva_contrato_captacion,
     AppState,
 };
 
 use super::contrato_captacion_auxiliares::{
-    calcular_totales_captacion, formatear_contratos_captacion, obtener_temporales_captacion,
+    calcular_totales_captacion, eliminar_temporales_captacion, formatear_contratos_captacion,
+    obtener_temporales_captacion,
 };
 
 pub async fn crear_contrato_captacion_handler(
@@ -203,30 +208,121 @@ pub async fn obtener_temporales_contrato_captacion_handler(
     Ok(Json(respuesta))
 }
 
-// pub async fn deposito_contrato_captacion_handler(
-//     State(data): State<Arc<AppState>>,
-//     Json(body): Json<DepositoRetiroContratoCaptacionSchema>,
-// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-//     let nueva_ficha = sqlx::query_as!(
-//         Ficha,
-//         "INSERT INTO detalles_ficha_temporal
-//         (persona, captacion, abono, cargo) VALUES
-//         ($1, $2, $3, $4)
-//         RETURNING *",
-//         body.persona,
-//         body.captacion,
-//         body.abono,
-//         0.0
-//     )
-//     .fetch_one(&data.db)
-//     .await
-//     .map_err(|e| {
-//         (
-//             StatusCode::INTERNAL_SERVER_ERROR,
-//             Json(serde_json::json!({
-//                 "estado": false,
-//                 "mensaje": format!("Error en la base de datos: {}", e),
-//             })),
-//         )
-//     })?;
-// }
+pub async fn deposito_contrato_captacion_handler(
+    State(data): State<Arc<AppState>>,
+    Extension(usuario): Extension<UsuarioModelo>,
+    Json(body): Json<DepositoRetiroContratoCaptacionSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let abonos_temporales = obtener_temporales_captacion(
+        data.clone(),
+        body.persona,
+        &TipoSaldoContratoCaptacion::Abonos,
+    )
+    .await?;
+
+    if abonos_temporales.is_empty() {
+        let respuesta_error = serde_json::json!({
+            "estado": false,
+            "mensaje": "No hay abonos temporales",
+        });
+        return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+    }
+
+    let mut efectivo = 0.0;
+    let mut cheques = 0.0;
+    let mut transferencia = 0.0;
+    let mut tarjeta = 0.0;
+
+    let total_abonos = calcular_totales_captacion(
+        data.clone(),
+        body.persona,
+        TipoSaldoContratoCaptacion::Abonos,
+    )
+    .await?;
+
+    match body.tipo_pago {
+        Some(TipoPagoFicha::Efectivo) => efectivo = total_abonos,
+        Some(TipoPagoFicha::Cheques) => cheques = total_abonos,
+        Some(TipoPagoFicha::Transferencia) => transferencia = total_abonos,
+        Some(TipoPagoFicha::Tarjeta) => tarjeta = total_abonos,
+        None => efectivo = total_abonos,
+    }
+
+    let referencia = body
+        .referencia
+        .unwrap_or("Referencia por defecto".to_owned());
+
+    let instrumento = body.instrumento.unwrap_or("--".to_owned());
+
+    let nueva_ficha = sqlx::query_as!(
+        FichaModelo,
+        "INSERT INTO fichas
+        (folio, persona, usuario, sucursal, poliza, operacion_fuente, efectivo,
+        cheques, transferencia, tarjeta, cancelada, referencia, factura,
+        pagada, instrumento) VALUES
+        ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+        RETURNING *",
+        body.folio_ficha,
+        body.persona,
+        usuario.id,
+        body.sucursal,
+        body.poliza,
+        body.operacion_fuente,
+        efectivo,
+        cheques,
+        transferencia,
+        tarjeta,
+        false,
+        referencia,
+        body.factura,
+        false,
+        instrumento
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let mut detalles_creados = Vec::new();
+
+    let observacion = body.observacion.unwrap_or("No hay observacion".to_owned());
+
+    for abono_temporal in abonos_temporales {
+        let nuevo_detalle_ficha = sqlx::query_as!(
+            DetalleFichaModelo,
+            "INSERT INTO detalles_ficha 
+            (ficha, captacion, cargo, abono, operacion_fuente, 
+            subficha, observacion, procesado) VALUES 
+            ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *",
+            nueva_ficha.id_ficha,
+            abono_temporal.captacion,
+            abono_temporal.cargo,
+            abono_temporal.abono,
+            body.operacion_fuente,
+            body.subficha,
+            observacion,
+            body.procesado
+        )
+        .fetch_one(&data.db)
+        .await
+        .map_err(error_base_datos)?;
+
+        detalles_creados.push(nuevo_detalle_ficha)
+    }
+
+    let temporales_eliminados = eliminar_temporales_captacion(
+        data.clone(),
+        body.persona,
+        &TipoSaldoContratoCaptacion::Abonos,
+    )
+    .await?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": {
+            "ficha": nueva_ficha,
+            "detalles_ficha": detalles_creados,
+            "temporales_eliminados": temporales_eliminados
+        }
+    });
+    Ok(Json(respuesta))
+}

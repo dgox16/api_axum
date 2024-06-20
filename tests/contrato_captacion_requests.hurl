@@ -35,7 +35,7 @@ Authorization: Bearer {{token}}
 GET http://localhost:8000/api/contrato_captacion/obtener_saldo/?persona=2&tipo=Cargos
 Authorization: Bearer {{token}}
 
-GET http://localhost:8000/api/contrato_captacion/obtener_temporales/?persona=2&tipo=Abonos
+GET http://localhost:8000/api/contrato_captacion/obtener_temporales/?persona=2&tipo=Todos
 Authorization: Bearer {{token}}
 
 POST http://localhost:8000/api/contrato_captacion/abono_cargo/
@@ -48,5 +48,21 @@ Content-Type: application/json
     "abono": 340.11,
     "cargo": 300.31,
     "abono_cargo": "Abono"
+}
+
+POST http://localhost:8000/api/contrato_captacion/depositar/
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "folio_ficha": "321321312",
+    "persona": 2,
+    "sucursal": 2,
+    "poliza": 1,
+    "operacion_fuente": 1,
+    "tipo_pago": "Efectivo",
+    "factura": 1,
+    "subficha": 1,
+    "procesado":1
 }
 
