@@ -5,6 +5,7 @@ pub mod fichas_models;
 pub mod persona_models;
 pub mod pld_models;
 pub mod poliza_models;
+pub mod prestamo_models;
 pub mod servicios_models;
 pub mod token_models;
 pub mod trabajo_models;
