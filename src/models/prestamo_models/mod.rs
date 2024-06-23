@@ -14,6 +14,7 @@ pub mod prestamo_lavado_models;
 pub mod prestamo_legal_models;
 pub mod prestamo_linea_credito_models;
 pub mod prestamo_migrado_models;
+pub mod prestamo_principal_models;
 pub mod prestamo_proyecto_models;
 pub mod prestamo_seguro_models;
 pub mod prestamo_ultimo_calculo_models;
