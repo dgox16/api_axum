@@ -7,7 +7,7 @@ use crate::{
         user_models::UsuarioModelo,
     },
     responses::error_responses::error_base_datos,
-    schemas::poliza_schema::{CrearDetallePolizaSchema, CrearPolizaSchema},
+    schemas::poliza_schemas::{CrearDetallePolizaSchema, CrearPolizaSchema},
     validators::poliza_validators::{
         validar_nueva_poliza, validar_nueva_poliza_egreso, validar_nuevo_detalle_poliza,
     },

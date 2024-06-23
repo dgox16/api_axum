@@ -4,7 +4,7 @@ use axum::{http::StatusCode, Json};
 
 use crate::{
     responses::error_responses::error_base_datos,
-    schemas::poliza_schema::{
+    schemas::poliza_schemas::{
         CrearDetallePolizaSchema, CrearPolizaEgresoSchema, CrearPolizaSchema,
     },
     AppState,

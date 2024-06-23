@@ -4,7 +4,7 @@ use crate::{
         PolizaModelo, TipoPoliza,
     },
     responses::error_responses::error_base_datos,
-    schemas::poliza_schema::{BuscarPolizaQuery, ObtenerPolizaParams},
+    schemas::poliza_schemas::{BuscarPolizaQuery, ObtenerPolizaParams},
     AppState,
 };
 use axum::{
