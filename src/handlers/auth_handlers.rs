@@ -14,7 +14,7 @@ use serde_json::json;
 
 use crate::{
     models::{token_models::TokenClaims, user_models::UsuarioModelo},
-    responses::user_responses::UsuarioFormateado,
+    responses::{error_responses::error_base_datos, user_responses::UsuarioFormateado},
     schemas::auth_schemas::{InicioSesionUsuarioSchema, RegistroUsuarioSchema},
     AppState,
 };
@@ -46,21 +46,14 @@ pub async fn registrar_usuario_handler(
                                        // Devolvemos un resultado con el codigo de estado y un json
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Vemos si el usuario existe buscandolo en la base de datos
-    let usuario_existe: Option<bool> = sqlx::query_scalar(
+    let usuario_existe = sqlx::query_scalar!(
         "SELECT EXISTS(SELECT 1 FROM usuarios WHERE email = $1 OR usuario = $2)",
+        body.email.to_ascii_lowercase(),
+        body.usuario.to_owned()
     )
-    .bind(body.email.to_owned().to_ascii_lowercase())
-    .bind(body.usuario.to_owned())
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        // En caso de fallar la conexion devolvemos un json de fallo
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     // En caso de no exisir devolvemos un json de fallo
     if let Some(existe) = usuario_existe {
@@ -97,14 +90,7 @@ pub async fn registrar_usuario_handler(
     )
     .fetch_one(&data.db)
     .await
-    .map_err(|e| {
-        // Manejamos el posible fallo con la base de datos
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?;
+    .map_err(error_base_datos)?;
 
     let usuario_formateado = formatear_usuario(&nuevo_usuario, axum::extract::State(data)).await;
     match usuario_formateado {
