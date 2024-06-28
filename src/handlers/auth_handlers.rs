@@ -13,7 +13,10 @@ use rand_core::OsRng;
 use serde_json::json;
 
 use crate::{
-    models::{token_models::TokenClaims, user_models::UsuarioModelo},
+    models::{
+        token_models::TokenClaims,
+        user_models::{PropositoJWT, UsuarioModelo},
+    },
     responses::{error_responses::error_base_datos, user_responses::UsuarioFormateado},
     schemas::auth_schemas::{InicioSesionUsuarioSchema, RegistroUsuarioSchema},
     AppState,
@@ -165,38 +168,56 @@ pub async fn inicio_sesion_handler(
     // Usamos la fecha actual para el token
     let fecha_actual = chrono::Utc::now();
     let iat = fecha_actual.timestamp() as usize;
+
     // El token sera valido por 60 min
-    let exp =
+    let access_exp =
         (fecha_actual + chrono::Duration::minutes(data.env.jwt_expira_en)).timestamp() as usize;
-    let claims: TokenClaims = TokenClaims {
-        sub: usuario_encontrado.id.to_string(), // Guardamos el usuario tambien en el token
-        exp,
+
+    let refresh_exp = (fecha_actual + chrono::Duration::days(50)).timestamp() as usize;
+
+    println!("{}", access_exp);
+    println!("{}", refresh_exp);
+
+    let sub = usuario_encontrado.id;
+
+    let access_claims: TokenClaims = TokenClaims {
+        sub,
+        exp: access_exp,
         iat,
+        proposito: PropositoJWT::AccessToken,
+    };
+
+    let refresh_claims: TokenClaims = TokenClaims {
+        sub,
+        exp: refresh_exp,
+        iat,
+        proposito: PropositoJWT::RefreshToken,
     };
 
     // Creamos el token con los datos anteriores y la secret
-    let token = encode(
+    let access_token = encode(
         &Header::default(),
-        &claims,
+        &access_claims,
         &EncodingKey::from_secret(data.env.jwt_secreto.as_ref()),
     )
     .unwrap();
 
-    // Crearemos una cookie con el token que durara una hora
-    let cookie = Cookie::build(("token", token.to_owned()))
-        .path("/")
-        .max_age(time::Duration::minutes(data.env.jwt_expira_en))
-        .same_site(SameSite::None)
-        .secure(true)
-        .http_only(true);
+    let refresh_token = encode(
+        &Header::default(),
+        &refresh_claims,
+        &EncodingKey::from_secret(data.env.jwt_secreto.as_ref()),
+    )
+    .unwrap();
 
-    // Devolvemos exito si no fallo y devolvemos el token
-    let mut respuesta = Response::new(json!({"estado": true, "datos": token}).to_string());
-    respuesta
-        .headers_mut()
-        // Insertamos la cookie en el cliente
-        .insert(header::SET_COOKIE, cookie.to_string().parse().unwrap());
-    Ok(respuesta)
+    let respuesta = json!({
+        "estado": true,
+        "datos": {
+            "access_token": access_token,
+            "refresh_token": refresh_token
+    }
+    });
+
+    Ok(Json(respuesta))
 }
 
 // Crearemos una funcion para el logout que no tiene parametros y devolvera un resultado con el codigo y json

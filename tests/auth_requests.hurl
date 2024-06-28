@@ -15,8 +15,8 @@ POST http://localhost:8000/api/auth/inicio_sesion
 content-type: application/json
 
 {
-  "usuario": "dgox24",
-  "contraseña": "123"
+  "usuario": "dagm",
+  "contraseña": "sheldon"
 }
 
 # Se cierra sesion

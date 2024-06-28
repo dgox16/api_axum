@@ -71,20 +71,11 @@ pub async fn auth_required(
     })?
     .claims;
 
-    // Checaremos que este bien formateado el id del usuario
-    let usuario_id: i32 = claims.sub.parse().map_err(|_| {
-        let json_error = ErrorRespuesta {
-            estado: "error",
-            mensaje: "Token invalido".to_string(),
-        };
-        (StatusCode::UNAUTHORIZED, Json(json_error))
-    })?;
-
     // Buscamos el usuario en la base de datos
     let usuario = sqlx::query_as!(
         UsuarioModelo,
         "SELECT * FROM usuarios WHERE id = $1",
-        usuario_id
+        claims.sub
     )
     .fetch_optional(&data.db)
     .await

@@ -20,3 +20,9 @@ pub struct UsuarioModelo {
     #[serde(rename = "updated_at")]
     pub updated_at: Option<DateTime<Utc>>,
 }
+
+#[derive(Debug, Deserialize, Serialize)]
+pub enum PropositoJWT {
+    AccessToken,
+    RefreshToken,
+}
