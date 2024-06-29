@@ -29,7 +29,7 @@ pub async fn auth_required(
 ) -> Result<impl IntoResponse, (StatusCode, Json<ErrorRespuesta>)> {
     // Busca el token en las cookies con el nombre de cookies, en caso de encontrarlo lo convierte en String
     let token = cookie_jar
-        .get("token")
+        .get("accessToken")
         .map(|cookie| cookie.value().to_string())
         // Si no lo encuentra lo busca en la cabecera y lo formatea
         .or_else(|| {

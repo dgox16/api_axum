@@ -25,4 +25,4 @@ Authorization: Bearer {{token}}
 
 # Se devuelve un usuario
 GET http://localhost:8000/api/usuarios/actual
-Authorization: Bearer {{token}}
+Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOjMsImlhdCI6MTcxOTYzMjY1NywiZXhwIjoxNzE5NjM5ODU3LCJwcm9wb3NpdG8iOiJBY2Nlc3NUb2tlbiJ9.hgNXGuoAS80Lw8YMvtAjfRWVmf8EaExmG-PU_QAJf7M
