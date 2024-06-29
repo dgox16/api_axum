@@ -12,3 +12,8 @@ pub struct InicioSesionUsuarioSchema {
     pub usuario: String,
     pub contraseña: String,
 }
+
+#[derive(Debug, Deserialize)]
+pub struct RefrescarTokenSchema {
+    pub refresh_token: String,
+}

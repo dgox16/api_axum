@@ -9,17 +9,20 @@ use axum::{
 };
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use chrono::TimeDelta;
-use jsonwebtoken::{encode, EncodingKey, Header};
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use rand_core::OsRng;
 use serde_json::json;
 
 use crate::{
+    middlewares::jwt_middlewares::ErrorRespuesta,
     models::{
         token_models::TokenClaims,
         user_models::{PropositoJWT, UsuarioModelo},
     },
     responses::{error_responses::error_base_datos, user_responses::UsuarioFormateado},
-    schemas::auth_schemas::{InicioSesionUsuarioSchema, RegistroUsuarioSchema},
+    schemas::auth_schemas::{
+        InicioSesionUsuarioSchema, RefrescarTokenSchema, RegistroUsuarioSchema,
+    },
     AppState,
 };
 
@@ -158,13 +161,7 @@ pub async fn inicio_sesion_handler(
     .fetch_optional(&data.db)
     .await
     // Manejamos el posible error en la base de datos
-    .map_err(|e| {
-        let respuesta_error = serde_json::json!({
-            "estado": false,
-            "mensaje": format!("Error en la base de datos: {}", e),
-        });
-        (StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error))
-    })?
+    .map_err(error_base_datos)?
     // Manejamos el posible fallo al no encontrar un usuario con ese email
     .ok_or_else(|| {
         let respuesta_error = serde_json::json!({
@@ -206,6 +203,51 @@ pub async fn inicio_sesion_handler(
     let refresh_token = crear_token_jwt(
         refresh_exp,
         usuario_encontrado.id,
+        PropositoJWT::RefreshToken,
+        &secreto,
+    );
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": {
+            "access_token": access_token,
+            "refresh_token": refresh_token
+    }
+    });
+
+    Ok(Json(respuesta))
+}
+
+pub async fn refrescar_token_handler(
+    State(data): State<Arc<AppState>>,
+    Json(body): Json<RefrescarTokenSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let claims = decode::<TokenClaims>(
+        &body.refresh_token,
+        &DecodingKey::from_secret(data.env.jwt_secreto.as_ref()),
+        &Validation::default(),
+    )
+    .map_err(|_| {
+        (
+            StatusCode::UNAUTHORIZED,
+            Json(serde_json::json!({
+                "estado": false,
+                "mensaje": format!("Token Invalido"),
+            })),
+        )
+    })?
+    .claims;
+
+    let access_exp = chrono::Duration::minutes(data.env.jwt_expira_en);
+    let refresh_exp = chrono::Duration::days(7);
+
+    let secreto = data.env.jwt_secreto.clone();
+
+    let access_token = crear_token_jwt(access_exp, claims.sub, PropositoJWT::AccessToken, &secreto);
+
+    let refresh_token = crear_token_jwt(
+        refresh_exp,
+        claims.sub,
         PropositoJWT::RefreshToken,
         &secreto,
     );
