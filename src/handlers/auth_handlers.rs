@@ -8,6 +8,7 @@ use axum::{
     Extension, Json,
 };
 use axum_extra::extract::cookie::{Cookie, SameSite};
+use chrono::TimeDelta;
 use jsonwebtoken::{encode, EncodingKey, Header};
 use rand_core::OsRng;
 use serde_json::json;
@@ -118,6 +119,31 @@ pub async fn registrar_usuario_handler(
     }
 }
 
+pub fn crear_token_jwt(
+    tiempo_vida: TimeDelta,
+    sub: i32,
+    proposito: PropositoJWT,
+    secret: &String,
+) -> String {
+    let fecha_actual = chrono::Utc::now();
+    let iat = fecha_actual.timestamp() as usize;
+    let exp = (fecha_actual + tiempo_vida).timestamp() as usize;
+
+    let claims: TokenClaims = TokenClaims {
+        sub,
+        exp,
+        iat,
+        proposito,
+    };
+
+    encode(
+        &Header::default(),
+        &claims,
+        &EncodingKey::from_secret(secret.as_ref()),
+    )
+    .unwrap()
+}
+
 // Funcion para el login de usuarios
 pub async fn inicio_sesion_handler(
     State(data): State<Arc<AppState>>, // Necesitamos el estado global
@@ -165,49 +191,24 @@ pub async fn inicio_sesion_handler(
         return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
     }
 
-    // Usamos la fecha actual para el token
-    let fecha_actual = chrono::Utc::now();
-    let iat = fecha_actual.timestamp() as usize;
+    let access_exp = chrono::Duration::minutes(data.env.jwt_expira_en);
+    let refresh_exp = chrono::Duration::days(7);
 
-    // El token sera valido por 60 min
-    let access_exp =
-        (fecha_actual + chrono::Duration::minutes(data.env.jwt_expira_en)).timestamp() as usize;
+    let secreto = data.env.jwt_secreto.clone();
 
-    let refresh_exp = (fecha_actual + chrono::Duration::days(50)).timestamp() as usize;
+    let access_token = crear_token_jwt(
+        access_exp,
+        usuario_encontrado.id,
+        PropositoJWT::AccessToken,
+        &secreto,
+    );
 
-    println!("{}", access_exp);
-    println!("{}", refresh_exp);
-
-    let sub = usuario_encontrado.id;
-
-    let access_claims: TokenClaims = TokenClaims {
-        sub,
-        exp: access_exp,
-        iat,
-        proposito: PropositoJWT::AccessToken,
-    };
-
-    let refresh_claims: TokenClaims = TokenClaims {
-        sub,
-        exp: refresh_exp,
-        iat,
-        proposito: PropositoJWT::RefreshToken,
-    };
-
-    // Creamos el token con los datos anteriores y la secret
-    let access_token = encode(
-        &Header::default(),
-        &access_claims,
-        &EncodingKey::from_secret(data.env.jwt_secreto.as_ref()),
-    )
-    .unwrap();
-
-    let refresh_token = encode(
-        &Header::default(),
-        &refresh_claims,
-        &EncodingKey::from_secret(data.env.jwt_secreto.as_ref()),
-    )
-    .unwrap();
+    let refresh_token = crear_token_jwt(
+        refresh_exp,
+        usuario_encontrado.id,
+        PropositoJWT::RefreshToken,
+        &secreto,
+    );
 
     let respuesta = json!({
         "estado": true,
