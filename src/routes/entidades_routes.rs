@@ -17,7 +17,7 @@ use crate::{
 pub fn entidades_router(app_state: Arc<AppState>) -> Router {
     Router::new()
         .route("/api/sucursal/nueva", post(crear_nueva_sucursal_handler))
-        .route("/api/sucursal/buscar/", get(buscar_sucursales_handler))
+        .route("/api/sucursal/buscar", get(buscar_sucursales_handler))
         .route("/api/banco/nuevo", post(crear_nuevo_banco_handler))
         .route("/api/cuenta/nueva", post(crear_nueva_cuenta_handler))
         .route("/api/proveedor/nuevo", post(crear_nuevo_proveedor_handler))

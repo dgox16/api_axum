@@ -72,7 +72,7 @@ pub async fn obtener_poliza_handler(
     Ok(Json(respuesta))
 }
 
-pub async fn buscar_polizas_concepto_handler(
+pub async fn buscar_polizas_handler(
     State(data): State<Arc<AppState>>,
     Query(query): Query<BuscarPolizaQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {

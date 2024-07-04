@@ -99,7 +99,7 @@ Content-Type: application/json
 }
 
 # Buscar polizas por concepto y con la posibilidad de escoger el limite 
-GET http://localhost:8000/api/poliza/buscar/concepto?limite=2&concepto=11
+GET http://localhost:8000/api/poliza/buscar
 
 # Obtienes la poliza, su poliza de egreso en caso de existir y sus detalles de polizas
 GET http://localhost:8000/api/poliza/obtener/30

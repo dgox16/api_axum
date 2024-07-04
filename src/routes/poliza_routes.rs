@@ -9,7 +9,7 @@ use axum::{
 use crate::{
     handlers::poliza_handlers::{
         poliza_insert_handlers::crear_nueva_poliza_handler,
-        poliza_select_handlers::{buscar_polizas_concepto_handler, obtener_poliza_handler},
+        poliza_select_handlers::{buscar_polizas_handler, obtener_poliza_handler},
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -24,10 +24,7 @@ pub fn poliza_router(app_state: Arc<AppState>) -> Router {
                 auth_required,
             )),
         )
-        .route(
-            "/api/poliza/buscar/concepto",
-            get(buscar_polizas_concepto_handler),
-        )
+        .route("/api/poliza/buscar", get(buscar_polizas_handler))
         .route(
             "/api/poliza/obtener/:id_poliza",
             get(obtener_poliza_handler),
