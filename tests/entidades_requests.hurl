@@ -11,10 +11,12 @@ POST http://localhost:8000/api/sucursal/nueva
 content-type: application/json
 
 {
-  "nombre": "Sucursal 1",
-  "encargado": 1,
+  "nombre": "Sucursal 2",
+  "encargado": 2,
   "domicilio": 1  
 }
+
+GET http://localhost:8000/api/sucursal/buscar/
 
 # Crear Proveedor
 POST http://localhost:8000/api/proveedor/nuevo

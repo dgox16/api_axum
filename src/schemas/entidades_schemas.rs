@@ -13,6 +13,13 @@ pub struct CrearSucursalSchema {
 }
 
 #[derive(Deserialize)]
+pub struct BuscarSucursalQuery {
+    pub palabra: Option<String>,
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}
+
+#[derive(Deserialize)]
 pub struct CrearBancoSchema {
     pub nombre: String,
 }

@@ -1,6 +1,11 @@
 use std::sync::Arc;
 
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Json};
+use axum::{
+    extract::{Query, State},
+    http::StatusCode,
+    response::IntoResponse,
+    Json,
+};
 use serde_json::json;
 
 use crate::{
@@ -11,8 +16,8 @@ use crate::{
     },
     responses::error_responses::error_base_datos,
     schemas::entidades_schemas::{
-        CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema, CrearFrecuenciaEmpresaSchema,
-        CrearProveedorSchema, CrearSucursalSchema,
+        BuscarSucursalQuery, CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema,
+        CrearFrecuenciaEmpresaSchema, CrearProveedorSchema, CrearSucursalSchema,
     },
     validators::entidades_validators::{
         validar_nueva_cuenta, validar_nueva_empresa, validar_nueva_frecuencia_empresa,
@@ -41,6 +46,33 @@ pub async fn crear_nueva_sucursal_handler(
     let respuesta = json!({
         "estado": true,
         "datos": nueva_sucursal
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_sucursales_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarSucursalQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let limite = query.limite.unwrap_or(40);
+    let palabra = query.palabra.unwrap_or(String::from("%"));
+    let offset = query.offset.unwrap_or(0);
+
+    let sucursales_encontradas = sqlx::query_as!(
+        SucursalModelo,
+        r#"SELECT * FROM sucursales
+        WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2 OFFSET $3"#,
+        palabra,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": sucursales_encontradas
     });
     Ok(Json(respuesta))
 }
