@@ -16,8 +16,9 @@ use crate::{
     },
     responses::error_responses::error_base_datos,
     schemas::entidades_schemas::{
-        BuscarSucursalQuery, CrearBancoSchema, CrearCuentaSchema, CrearEmpresaSchema,
-        CrearFrecuenciaEmpresaSchema, CrearProveedorSchema, CrearSucursalSchema,
+        BuscarBancoQuery, BuscarSucursalQuery, CrearBancoSchema, CrearCuentaSchema,
+        CrearEmpresaSchema, CrearFrecuenciaEmpresaSchema, CrearProveedorSchema,
+        CrearSucursalSchema,
     },
     validators::entidades_validators::{
         validar_nueva_cuenta, validar_nueva_empresa, validar_nueva_frecuencia_empresa,
@@ -140,6 +141,33 @@ pub async fn crear_nuevo_banco_handler(
     let respuesta = json!({
         "estado": true,
         "datos": nuevo_banco
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_bancos_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarBancoQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let limite = query.limite.unwrap_or(40);
+    let nombre = query.nombre.unwrap_or(String::from("%"));
+    let offset = query.offset.unwrap_or(0);
+
+    let bancos_encontrados = sqlx::query_as!(
+        BancoModelo,
+        r#"SELECT * FROM bancos
+        WHERE nombre ILIKE '%' || $1 || '%' LIMIT $2 OFFSET $3"#,
+        nombre,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": bancos_encontrados
     });
     Ok(Json(respuesta))
 }

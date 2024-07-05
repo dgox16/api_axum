@@ -3,7 +3,7 @@ POST http://localhost:8000/api/banco/nuevo
 content-type: application/json
 
 {
-  "nombre": "BBVA"
+  "nombre": "NU"
 }
 
 # Crear sucursal

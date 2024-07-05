@@ -25,6 +25,13 @@ pub struct CrearBancoSchema {
 }
 
 #[derive(Deserialize)]
+pub struct BuscarBancoQuery {
+    pub nombre: Option<String>,
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}
+
+#[derive(Deserialize)]
 pub struct CrearProveedorSchema {
     pub nombre: String,
     pub domicilio: i32,
