@@ -10,7 +10,7 @@ mod validators;
 
 use axum::http::{
     header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
-    HeaderValue, Method,
+    Method,
 };
 use config::Config;
 use dotenv::dotenv;

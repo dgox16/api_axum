@@ -12,7 +12,6 @@ pub struct CrearPolizaEgresoSchema {
 #[derive(Deserialize)]
 pub struct CrearDetallePolizaSchema {
     pub cuenta: i32,
-    pub sucursal: i32,
     pub cargo: f32,
     pub abono: f32,
     pub proveedor: i32,

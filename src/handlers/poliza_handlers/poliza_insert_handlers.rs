@@ -37,7 +37,15 @@ pub async fn crear_nueva_poliza_handler(
     };
 
     let detalles_creados = if let Some(detalles_poliza) = body.detalles_poliza {
-        Some(crear_detalles_poliza(&data, nueva_poliza.id_poliza, detalles_poliza).await?)
+        Some(
+            crear_detalles_poliza(
+                &data,
+                nueva_poliza.id_poliza,
+                body.sucursal,
+                detalles_poliza,
+            )
+            .await?,
+        )
     } else {
         None
     };
@@ -63,6 +71,7 @@ pub async fn crear_nueva_poliza_handler(
 async fn crear_detalles_poliza(
     data: &Arc<AppState>,
     nueva_poliza_id: i32,
+    sucursal: i32,
     detalles_poliza: Vec<CrearDetallePolizaSchema>,
 ) -> Result<Vec<DetallePolizaModelo>, (StatusCode, Json<serde_json::Value>)> {
     let mut detalles_creados = Vec::new();
@@ -77,7 +86,7 @@ async fn crear_detalles_poliza(
             abono,proveedor,concepto,iva AS "iva: IvaDetallePoliza""#,
             nueva_poliza_id,
             detalle.cuenta,
-            detalle.sucursal,
+            sucursal,
             detalle.cargo,
             detalle.abono,
             detalle.proveedor,

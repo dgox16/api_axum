@@ -23,7 +23,7 @@ POST http://localhost:8000/api/proveedor/nuevo
 content-type: application/json
 
 {
-  "nombre": "Proveedor 1",
+  "nombre": "Proveedor 3",
   "domicilio": 1,
   "rfc":"GOMD991216123",
   "curp": "GOMD991216HGT12331",
@@ -41,7 +41,7 @@ Content-Type: application/json
 {
   "cuenta": "123213412",
   "cuenta_siti": "c_siti1",
-  "nombre": "cuenta 2 ",
+  "nombre": "Cuenta 2",
   "clasificacion": "Capitulo",
   "padre": "padre 1",
   "nivel": 1,

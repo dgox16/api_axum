@@ -14,7 +14,6 @@ use rand_core::OsRng;
 use serde_json::json;
 
 use crate::{
-    middlewares::jwt_middlewares::ErrorRespuesta,
     models::{
         token_models::TokenClaims,
         user_models::{PropositoJWT, UsuarioModelo},
