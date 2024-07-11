@@ -99,6 +99,14 @@ pub async fn eliminar_poliza_handler(
         .map_err(error_base_datos)?;
     }
 
+    sqlx::query!(
+        r#"DELETE FROM detalles_poliza WHERE poliza = $1"#,
+        params.id_poliza,
+    )
+    .execute(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
     let resultado_poliza = sqlx::query!(
         r#"DELETE FROM polizas WHERE id_poliza = $1"#,
         params.id_poliza,
