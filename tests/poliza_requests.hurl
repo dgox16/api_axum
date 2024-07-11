@@ -103,3 +103,5 @@ GET http://localhost:8000/api/poliza/buscar
 
 # Obtienes la poliza, su poliza de egreso en caso de existir y sus detalles de polizas
 GET http://localhost:8000/api/poliza/obtener/30
+
+DELETE http://localhost:8000/api/poliza/eliminar/10

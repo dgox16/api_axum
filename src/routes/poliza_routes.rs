@@ -2,14 +2,16 @@ use std::sync::Arc;
 
 use axum::{
     middleware,
-    routing::{get, post},
+    routing::{delete, get, post},
     Router,
 };
 
 use crate::{
     handlers::poliza_handlers::{
         poliza_insert_handlers::crear_nueva_poliza_handler,
-        poliza_select_handlers::{buscar_polizas_handler, obtener_poliza_handler},
+        poliza_select_handlers::{
+            buscar_polizas_handler, eliminar_poliza_handler, obtener_poliza_handler,
+        },
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -25,6 +27,10 @@ pub fn poliza_router(app_state: Arc<AppState>) -> Router {
             )),
         )
         .route("/api/poliza/buscar", get(buscar_polizas_handler))
+        .route(
+            "/api/poliza/eliminar/:id_poliza",
+            delete(eliminar_poliza_handler),
+        )
         .route(
             "/api/poliza/obtener/:id_poliza",
             get(obtener_poliza_handler),
