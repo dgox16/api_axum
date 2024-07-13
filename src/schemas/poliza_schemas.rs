@@ -41,3 +41,14 @@ pub struct CrearPolizaSchema {
     pub poliza_egreso: Option<CrearPolizaEgresoSchema>,
     pub detalles_poliza: Option<Vec<CrearDetallePolizaSchema>>,
 }
+
+#[derive(Deserialize)]
+pub struct EditarPolizaSchema {
+    pub tipo: TipoPoliza,
+    pub numero: i32,
+    pub sucursal: i32,
+    pub concepto: String,
+    pub aplicacion: AplicacionPoliza,
+    pub fuente: FuentePoliza,
+    pub poliza_egreso: Option<CrearPolizaEgresoSchema>,
+}

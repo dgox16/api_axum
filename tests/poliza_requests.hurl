@@ -102,6 +102,11 @@ Content-Type: application/json
 GET http://localhost:8000/api/poliza/buscar
 
 # Obtienes la poliza, su poliza de egreso en caso de existir y sus detalles de polizas
-GET http://localhost:8000/api/poliza/obtener/30
+GET http://localhost:8000/api/poliza/obtener/14
 
-DELETE http://localhost:8000/api/poliza/eliminar/10
+DELETE http://localhost:8000/api/poliza/eliminar/13
+
+PUT http://localhost:8000/api/poliza/editar/14
+Authorization: Bearer {{token}}
+Content-Type: application/json
+{"tipo":"Diario","numero":1,"sucursal":2,"concepto":"Concepto 3","aplicacion":"Normal","fuente":"Operacion"}
