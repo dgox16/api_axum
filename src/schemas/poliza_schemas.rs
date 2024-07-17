@@ -31,6 +31,11 @@ pub struct ObtenerPolizaParams {
 }
 
 #[derive(Deserialize)]
+pub struct ObtenerDetallePolizaParams {
+    pub id_detalle_poliza: i32,
+}
+
+#[derive(Deserialize)]
 pub struct CrearPolizaSchema {
     pub tipo: TipoPoliza,
     pub numero: Option<i32>,

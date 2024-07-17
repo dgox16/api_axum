@@ -1,7 +1,7 @@
 use crate::{
     models::poliza_models::{AplicacionPoliza, FuentePoliza, PolizaModelo, TipoPoliza},
     responses::error_responses::error_base_datos,
-    schemas::poliza_schemas::ObtenerPolizaParams,
+    schemas::poliza_schemas::{ObtenerDetallePolizaParams, ObtenerPolizaParams},
     AppState,
 };
 use axum::{
@@ -65,6 +65,33 @@ pub async fn eliminar_poliza_handler(
         json!({
             "estado": false,
             "mensaje": "No se encontró una póliza con ese id"
+        })
+    };
+
+    Ok(Json(respuesta))
+}
+
+pub async fn eliminar_detalle_poliza_handler(
+    State(data): State<Arc<AppState>>,
+    Path(params): Path<ObtenerDetallePolizaParams>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let resultado = sqlx::query!(
+        r#"DELETE FROM detalles_poliza WHERE id_detalle_poliza = $1"#,
+        params.id_detalle_poliza,
+    )
+    .execute(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let respuesta = if resultado.rows_affected() > 0 {
+        json!({
+            "estado": true,
+            "mensaje": "Detalle correctamente eliminado"
+        })
+    } else {
+        json!({
+            "estado": false,
+            "mensaje": "No se encontró un detalle con ese id"
         })
     };
 

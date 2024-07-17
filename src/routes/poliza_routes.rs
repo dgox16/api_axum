@@ -8,7 +8,7 @@ use axum::{
 
 use crate::{
     handlers::poliza_handlers::{
-        poliza_delete_handlers::eliminar_poliza_handler,
+        poliza_delete_handlers::{eliminar_detalle_poliza_handler, eliminar_poliza_handler},
         poliza_insert_handlers::crear_nueva_poliza_handler,
         poliza_put_handlers::editar_poliza_handler,
         poliza_select_handlers::{buscar_polizas_handler, obtener_poliza_handler},
@@ -41,6 +41,10 @@ pub fn poliza_router(app_state: Arc<AppState>) -> Router {
                 app_state.clone(),
                 auth_required,
             )),
+        )
+        .route(
+            "/api/poliza/detalles/eliminar/:id_detalle_poliza",
+            delete(eliminar_detalle_poliza_handler),
         )
         .with_state(app_state)
 }
