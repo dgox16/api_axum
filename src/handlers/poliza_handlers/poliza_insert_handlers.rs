@@ -7,15 +7,68 @@ use crate::{
         user_models::UsuarioModelo,
     },
     responses::error_responses::error_base_datos,
-    schemas::poliza_schemas::{CrearDetallePolizaSchema, CrearPolizaSchema},
+    schemas::poliza_schemas::{CrearDetallePolizaSchema, CrearPolizaSchema, ObtenerPolizaParams},
     validators::poliza_validators::{
         validar_nueva_poliza, validar_nueva_poliza_egreso, validar_nuevo_detalle_poliza,
     },
     AppState,
 };
-use axum::{extract::State, http::StatusCode, response::IntoResponse, Extension, Json};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    response::IntoResponse,
+    Extension, Json,
+};
 use serde_json::json;
 use std::sync::Arc;
+
+pub async fn crear_detalle_poliza_handler(
+    State(data): State<Arc<AppState>>,
+    Path(params): Path<ObtenerPolizaParams>,
+    Json(body): Json<CrearDetallePolizaSchema>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    println!("{}", params.id_poliza);
+    let poliza_encontrada = sqlx::query_as!(
+        PolizaModelo,
+        r#"SELECT id_poliza,tipo AS "tipo: TipoPoliza",numero,
+        sucursal,fecha_poliza,fecha_registro_poliza,concepto,
+        usuario_autoriza,usuario_elabora,aplicacion AS "aplicacion: AplicacionPoliza",
+        fuente AS "fuente: FuentePoliza",automatico
+        FROM polizas WHERE id_poliza = $1"#,
+        params.id_poliza
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let iva = body.iva.unwrap_or(IvaDetallePoliza::NoAplica);
+    let nuevo_detalle = sqlx::query_as!(
+        DetallePolizaModelo,
+        r#"INSERT INTO detalles_poliza
+            (poliza,cuenta,sucursal,cargo,abono,proveedor,concepto,iva) 
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+            RETURNING id_detalle_poliza, poliza,cuenta,sucursal,cargo,
+            abono,proveedor,concepto,iva AS "iva: IvaDetallePoliza""#,
+        poliza_encontrada.id_poliza,
+        body.cuenta,
+        poliza_encontrada.sucursal,
+        body.cargo,
+        body.abono,
+        body.proveedor,
+        body.concepto,
+        iva as IvaDetallePoliza
+    )
+    .fetch_one(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": nuevo_detalle
+    });
+
+    Ok(Json(respuesta))
+}
 
 pub async fn crear_nueva_poliza_handler(
     State(data): State<Arc<AppState>>,

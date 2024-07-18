@@ -110,3 +110,8 @@ PUT http://localhost:8000/api/poliza/editar/14
 Authorization: Bearer {{token}}
 Content-Type: application/json
 {"tipo":"Diario","numero":1,"sucursal":2,"concepto":"Concepto 3","aplicacion":"Normal","fuente":"Operacion"}
+
+
+POST http://localhost:8000/api/poliza/detalles/nuevo/16
+Content-Type: application/json
+{"cuenta":2,"cargo":32,"abono":32,"proveedor":2,"concepto":"Ejemplo 2","iva":"Iva8"}
