@@ -8,8 +8,8 @@ use axum::{
 
 use crate::{
     handlers::auth_handlers::{
-        cerrar_sesion_handler, inicio_sesion_handler, obtener_usuario_actual_handler,
-        refrescar_token_handler, registrar_usuario_handler,
+        buscar_usuarios_handler, cerrar_sesion_handler, inicio_sesion_handler,
+        obtener_usuario_actual_handler, refrescar_token_handler, registrar_usuario_handler,
     },
     middlewares::jwt_middlewares::auth_required,
     AppState,
@@ -34,5 +34,6 @@ pub fn auth_router(app_state: Arc<AppState>) -> Router {
                 auth_required,
             )),
         )
+        .route("/api/usuarios/buscar", get(buscar_usuarios_handler))
         .with_state(app_state)
 }

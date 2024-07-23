@@ -17,3 +17,10 @@ pub struct InicioSesionUsuarioSchema {
 pub struct RefrescarTokenSchema {
     pub refresh_token: String,
 }
+
+#[derive(Deserialize)]
+pub struct BuscarUsuarioQuery {
+    pub palabra: Option<String>,
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}

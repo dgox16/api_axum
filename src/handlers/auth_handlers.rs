@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use argon2::{password_hash::SaltString, Argon2, PasswordHash, PasswordHasher, PasswordVerifier};
 use axum::{
-    extract::State,
+    extract::{Query, State},
     http::{header, Response, StatusCode},
     response::IntoResponse,
     Extension, Json,
@@ -20,7 +20,7 @@ use crate::{
     },
     responses::{error_responses::error_base_datos, user_responses::UsuarioFormateado},
     schemas::auth_schemas::{
-        InicioSesionUsuarioSchema, RefrescarTokenSchema, RegistroUsuarioSchema,
+        BuscarUsuarioQuery, InicioSesionUsuarioSchema, RefrescarTokenSchema, RegistroUsuarioSchema,
     },
     AppState,
 };
@@ -29,11 +29,12 @@ use crate::{
 pub async fn formatear_usuario(
     user: &UsuarioModelo,
     State(data): State<Arc<AppState>>,
-) -> Result<UsuarioFormateado, sqlx::Error> {
+) -> Result<UsuarioFormateado, (StatusCode, Json<serde_json::Value>)> {
     // Consulta SQL para obtener el nombre del rol
     let rol = sqlx::query!("SELECT nombre FROM roles WHERE id = $1", user.id_rol)
         .fetch_one(&data.db)
-        .await?;
+        .await
+        .map_err(error_base_datos)?;
 
     Ok(UsuarioFormateado {
         id: user.id.to_string(),
@@ -98,27 +99,14 @@ pub async fn registrar_usuario_handler(
     .await
     .map_err(error_base_datos)?;
 
-    let usuario_formateado = formatear_usuario(&nuevo_usuario, axum::extract::State(data)).await;
-    match usuario_formateado {
-        Ok(usuario) => {
-            let respuesta = json!({
-                "estado": true,
-                "datos": usuario
-            });
+    let usuario_formateado = formatear_usuario(&nuevo_usuario, axum::extract::State(data)).await?;
 
-            // Devolvemos la respuesta HTTP con el JSON
-            Ok(Json(respuesta))
-        }
-        Err(e) => {
-            // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
-            let respuesta_error = serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Fallo con el nuevo usuario: {}", e),
-            });
+    let respuesta = json!({
+        "estado": true,
+        "datos": usuario_formateado
+    });
 
-            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error)))
-        }
-    }
+    Ok(Json(respuesta))
 }
 
 pub fn crear_token_jwt(
@@ -288,25 +276,47 @@ pub async fn obtener_usuario_actual_handler(
     Extension(usuario): Extension<UsuarioModelo>, // En la extension se encuentra el usuario gracias al middleware de autentificacion
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
     // Simplemente devolvemos al usuario con los datos filtrados
-    let usuario_formateado = formatear_usuario(&usuario, axum::extract::State(data)).await;
-    match usuario_formateado {
-        Ok(usuario) => {
-            let respuesta = json!({
-                "estado": true,
-                "datos": usuario
-            });
+    let usuario_formateado = formatear_usuario(&usuario, axum::extract::State(data)).await?;
+    let respuesta = json!({
+        "estado": true,
+        "datos": usuario_formateado
+    });
 
-            // Devolvemos la respuesta HTTP con el JSON
-            Ok(Json(respuesta))
-        }
-        Err(e) => {
-            // Si ocurrió un error al obtener la información del usuario, devolvemos un error 500
-            let respuesta_error = serde_json::json!({
-                "estado": false,
-                "mensaje": format!("Fallo con el usuario: {}", e),
-            });
+    // Devolvemos la respuesta HTTP con el JSON
+    Ok(Json(respuesta))
+}
 
-            Err((StatusCode::INTERNAL_SERVER_ERROR, Json(respuesta_error)))
-        }
+pub async fn buscar_usuarios_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarUsuarioQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let limite = query.limite.unwrap_or(20);
+    let palabra = query.palabra.unwrap_or(String::from("%"));
+    let offset = query.offset.unwrap_or(0);
+
+    let usuarios_encontrados = sqlx::query_as!(
+        UsuarioModelo,
+        r#"SELECT * FROM usuarios
+        WHERE usuario ILIKE '%' || $1 || '%' LIMIT $2 OFFSET $3"#,
+        palabra,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let mut usuarios_formateados: Vec<UsuarioFormateado> = vec![];
+
+    for usuario_encontrado in usuarios_encontrados {
+        let usuario_formateado =
+            formatear_usuario(&usuario_encontrado, axum::extract::State(data.clone())).await?;
+        usuarios_formateados.push(usuario_formateado);
     }
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": usuarios_formateados
+    });
+    Ok(Json(respuesta))
 }
