@@ -1,15 +1,12 @@
 use crate::{
     models::{
         poliza_models::{
-            AplicacionPoliza, DetallePolizaModelo, FuentePoliza, IvaDetallePoliza,
-            PolizaEgresoModelo, PolizaModelo, TipoPoliza,
+            AplicacionPoliza, FuentePoliza, PolizaEgresoModelo, PolizaModelo, TipoPoliza,
         },
         user_models::UsuarioModelo,
     },
     responses::error_responses::error_base_datos,
-    schemas::poliza_schemas::{
-        CrearDetallePolizaSchema, CrearPolizaSchema, EditarPolizaSchema, ObtenerPolizaParams,
-    },
+    schemas::poliza_schemas::{EditarPolizaSchema, ObtenerPolizaParams},
     AppState,
 };
 use axum::{

@@ -27,7 +27,6 @@ pub async fn crear_detalle_poliza_handler(
     Path(params): Path<ObtenerPolizaParams>,
     Json(body): Json<CrearDetallePolizaSchema>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    println!("{}", params.id_poliza);
     let poliza_encontrada = sqlx::query_as!(
         PolizaModelo,
         r#"SELECT id_poliza,tipo AS "tipo: TipoPoliza",numero,
