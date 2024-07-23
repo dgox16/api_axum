@@ -16,9 +16,9 @@ use crate::{
     },
     responses::error_responses::error_base_datos,
     schemas::ubicacion_schemas::{
-        BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarEstadoQuery,
-        BuscarMunicipioQuery, BuscarPaisQuery, CrearBarrioSchema, CrearCalleSchema,
-        CrearCiudadSchema, CrearDomicilioSchema, CrearMunicipioSchema,
+        BuscarBarrioQuery, BuscarCalleQuery, BuscarCiudadQuery, BuscarDomicilioQuery,
+        BuscarEstadoQuery, BuscarMunicipioQuery, BuscarPaisQuery, CrearBarrioSchema,
+        CrearCalleSchema, CrearCiudadSchema, CrearDomicilioSchema, CrearMunicipioSchema,
     },
     validators::ubicacion_validators::{
         validar_nueva_calle, validar_nueva_ciudad, validar_nueva_domicilio, validar_nuevo_barrio,
@@ -50,6 +50,31 @@ pub async fn buscar_calles_handler(
     let respuesta = json!({
         "estado": true,
         "datos": calles_encontradas
+    });
+    Ok(Json(respuesta))
+}
+
+pub async fn buscar_domicilios_handler(
+    State(data): State<Arc<AppState>>,
+    Query(query): Query<BuscarDomicilioQuery>,
+) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+    let limite = query.limite.unwrap_or(20);
+    let offset = query.offset.unwrap_or(0);
+
+    let domicilios_encontrados = sqlx::query_as!(
+        DomicilioModelo,
+        r#"SELECT * FROM domicilios
+        LIMIT $1 OFFSET $2"#,
+        limite,
+        offset
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    let respuesta = json!({
+        "estado": true,
+        "datos": domicilios_encontrados
     });
     Ok(Json(respuesta))
 }

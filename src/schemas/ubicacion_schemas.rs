@@ -18,6 +18,12 @@ pub struct BuscarCalleQuery {
 }
 
 #[derive(Deserialize)]
+pub struct BuscarDomicilioQuery {
+    pub limite: Option<i64>,
+    pub offset: Option<i64>,
+}
+
+#[derive(Deserialize)]
 pub struct BuscarPaisQuery {
     pub nombre: Option<String>,
 }
