@@ -135,11 +135,69 @@ async fn buscar_detalles_polizas_rango_fechas(
     Ok(detalles_encontrados)
 }
 
+async fn buscar_detalles_polizas_dia_especifico(
+    data: &Arc<AppState>,
+    fecha: NaiveDate,
+) -> Result<Vec<DetallePolizaModelo>, (StatusCode, Json<serde_json::Value>)> {
+    let fecha_inicial = match fecha.and_hms_opt(0, 1, 1) {
+        Some(f) => f,
+        None => {
+            let respuesta_error = serde_json::json!({
+                "estado": false,
+                "mensaje": "La fecha tiene un formato incorrecto",
+            });
+            return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+        }
+    };
+    let fecha_utc_inicial = Utc.from_utc_datetime(&fecha_inicial);
+
+    let fecha_final = match fecha.and_hms_opt(23, 59, 59) {
+        Some(f) => f,
+        None => {
+            let respuesta_error = serde_json::json!({
+                "estado": false,
+                "mensaje": "La fecha tiene un formato incorrecto",
+            });
+            return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+        }
+    };
+    let fecha_utc_final = Utc.from_utc_datetime(&fecha_final);
+    println!("Fecha inicial: {}", fecha_utc_inicial);
+    println!("Fecha final: {}", fecha_utc_final);
+
+    let detalles_encontrados = sqlx::query_as!(
+        DetallePolizaModelo,
+        r#"
+        SELECT dp.id_detalle_poliza, dp.poliza, dp.cuenta, dp.sucursal,
+               dp.cargo, dp.abono, dp.proveedor, dp.concepto, dp.iva AS "iva: IvaDetallePoliza"
+        FROM detalles_poliza dp
+        INNER JOIN polizas p ON dp.poliza = p.id_poliza
+        WHERE (p.fecha_poliza >= $1 AND p.fecha_poliza < $2)
+        "#,
+        fecha_utc_inicial,
+        fecha_utc_final
+    )
+    .fetch_all(&data.db)
+    .await
+    .map_err(error_base_datos)?;
+
+    Ok(detalles_encontrados)
+}
+
 pub async fn obtener_balanza_comprobacion_handler(
     State(data): State<Arc<AppState>>,
     Query(query): Query<ObtenerBalanzaComprobacionQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let detalles = buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?;
+    let detalles = match query.dia_especifico {
+        Some(dia_especifico) => {
+            if dia_especifico {
+                buscar_detalles_polizas_dia_especifico(&data, query.fecha).await?
+            } else {
+                buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?
+            }
+        }
+        None => buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?,
+    };
     let total: f32 = detalles
         .iter()
         .map(|detalle| detalle.abono - detalle.cargo)
