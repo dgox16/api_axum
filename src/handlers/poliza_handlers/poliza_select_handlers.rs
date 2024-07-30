@@ -124,7 +124,7 @@ async fn buscar_detalles_polizas_rango_fechas(
                dp.cargo, dp.abono, dp.proveedor, dp.concepto, dp.iva AS "iva: IvaDetallePoliza"
         FROM detalles_poliza dp
         INNER JOIN polizas p ON dp.poliza = p.id_poliza
-        WHERE p.fecha_poliza <= $1
+        WHERE p.fecha_poliza AT TIME ZONE 'America/Mexico_City' AT TIME ZONE 'UTC' <= $1
         "#,
         fecha_utc
     )
@@ -172,7 +172,8 @@ async fn buscar_detalles_polizas_dia_especifico(
                dp.cargo, dp.abono, dp.proveedor, dp.concepto, dp.iva AS "iva: IvaDetallePoliza"
         FROM detalles_poliza dp
         INNER JOIN polizas p ON dp.poliza = p.id_poliza
-        WHERE (p.fecha_poliza >= $1 AND p.fecha_poliza < $2)
+        WHERE (p.fecha_poliza AT TIME ZONE 'America/Mexico_City' AT TIME ZONE 'UTC' >= $1
+               AND p.fecha_poliza AT TIME ZONE 'America/Mexico_City' AT TIME ZONE 'UTC' < $2)
         "#,
         fecha_utc_inicial,
         fecha_utc_final
