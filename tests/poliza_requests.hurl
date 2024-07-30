@@ -12,7 +12,7 @@ Content-Type: application/json
 
 # Crear poliza junto a detalles  (Necesario tener una cuenta iniciada)
 POST http://localhost:8000/api/poliza/nueva
-Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzE1MTM2NzYzLCJleHAiOjE3MTUxNTQ3NjN9.Oa0EvQjxZXT_x1T4oSQoLVlWXWAc5j1MUDBjEhgea8Y
+Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
@@ -23,20 +23,20 @@ Content-Type: application/json
   "detalles_poliza":[
     {
       "poliza":1,
-      "cuenta":3,
+      "cuenta":1,
       "sucursal": 1,
-      "cargo": 1.00,
-      "abono": 2.00,
+      "cargo": 2000.00,
+      "abono": 10000,
       "proveedor":1,
       "concepto": "concepto 1",
       "iva": "Iva11"
     },
     {
       "poliza":1,
-      "cuenta":3,
+      "cuenta":1,
       "sucursal": 1,
-      "cargo": 1.00,
-      "abono": 2.00,
+      "cargo": 23.00,
+      "abono": 5312.00,
       "proveedor":1,
       "concepto": "concepto 2"
     }
@@ -112,6 +112,8 @@ Content-Type: application/json
 {"tipo":"Diario","numero":1,"sucursal":2,"concepto":"Concepto 3","aplicacion":"Normal","fuente":"Operacion"}
 
 
-POST http://localhost:8000/api/poliza/detalles/nuevo/16
+POST http://localhost:8000/api/poliza/detalles/nuevo/6
 Content-Type: application/json
-{"cuenta":2,"cargo":32,"abono":32,"proveedor":2,"concepto":"Ejemplo 2","iva":"Iva8"}
+{"cuenta":1,"cargo":32,"abono":32,"proveedor":1,"concepto":"Ejemplo 2","iva":"Iva8"}
+
+GET http://localhost:8000/api/poliza/balanza_comprobacion?fecha=2024-7-20

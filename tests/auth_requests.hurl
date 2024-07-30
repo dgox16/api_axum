@@ -5,9 +5,9 @@ POST http://localhost:8000/api/auth/registro
 content-type: application/json
 
 {
-  "usuario": "dgox24",
+  "usuario": "dgox16",
   "email": "dgox24@gmail.com",
-  "contraseña": "123"
+  "contraseña": "sheldon"
 }
  
 # Se inicia sesion
@@ -15,7 +15,7 @@ POST http://localhost:8000/api/auth/inicio_sesion
 content-type: application/json
 
 {
-  "usuario": "dagm",
+  "usuario": "dgox16",
   "contraseña": "sheldon"
 }
 
