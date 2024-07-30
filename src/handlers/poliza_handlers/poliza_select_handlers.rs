@@ -15,7 +15,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
-use chrono::{DateTime, NaiveDate, TimeZone, Utc};
+use chrono::{NaiveDate, TimeZone, Utc};
 use serde_json::json;
 use std::sync::Arc;
 
@@ -102,10 +102,21 @@ pub async fn buscar_polizas_handler(
     Ok(Json(respuesta))
 }
 
-async fn buscar_detalles_polizas(
+async fn buscar_detalles_polizas_rango_fechas(
     data: &Arc<AppState>,
-    fecha: DateTime<Utc>,
+    fecha: NaiveDate,
 ) -> Result<Vec<DetallePolizaModelo>, (StatusCode, Json<serde_json::Value>)> {
+    let fecha_formateada = match fecha.and_hms_opt(23, 59, 59) {
+        Some(f) => f,
+        None => {
+            let respuesta_error = serde_json::json!({
+                "estado": false,
+                "mensaje": "La fecha tiene un formato incorrecto",
+            });
+            return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
+        }
+    };
+    let fecha_utc = Utc.from_utc_datetime(&fecha_formateada);
     let detalles_encontrados = sqlx::query_as!(
         DetallePolizaModelo,
         r#"
@@ -115,7 +126,7 @@ async fn buscar_detalles_polizas(
         INNER JOIN polizas p ON dp.poliza = p.id_poliza
         WHERE p.fecha_poliza <= $1
         "#,
-        fecha
+        fecha_utc
     )
     .fetch_all(&data.db)
     .await
@@ -128,31 +139,18 @@ pub async fn obtener_balanza_comprobacion_handler(
     State(data): State<Arc<AppState>>,
     Query(query): Query<ObtenerBalanzaComprobacionQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let fecha_formateada = query.fecha.and_hms_opt(23, 59, 59);
-    match fecha_formateada {
-        Some(f) => {
-            let f_utc = Utc.from_utc_datetime(&f);
-            let detalles = buscar_detalles_polizas(&data, f_utc).await?;
-            let total: f32 = detalles
-                .iter()
-                .map(|detalle| detalle.abono - detalle.cargo)
-                .sum();
+    let detalles = buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?;
+    let total: f32 = detalles
+        .iter()
+        .map(|detalle| detalle.abono - detalle.cargo)
+        .sum();
 
-            let respuesta = json!({
-                "estado" : true,
-                "datos": {
-                    "detalles": detalles,
-                    "total": total
-                }
-            });
-            Ok(Json(respuesta))
+    let respuesta = json!({
+        "estado" : true,
+        "datos": {
+            "detalles": detalles,
+            "total": total
         }
-        None => {
-            let respuesta_error = serde_json::json!({
-                "estado": false,
-                "mensaje": "Fecha mal formateada",
-            });
-            Err((StatusCode::BAD_REQUEST, Json(respuesta_error)))
-        }
-    }
+    });
+    Ok(Json(respuesta))
 }

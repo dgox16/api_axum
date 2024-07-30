@@ -1,4 +1,4 @@
-use chrono::{DateTime, NaiveDate, Utc};
+use chrono::NaiveDate;
 use serde::Deserialize;
 
 use crate::models::poliza_models::{AplicacionPoliza, FuentePoliza, IvaDetallePoliza, TipoPoliza};
@@ -62,4 +62,5 @@ pub struct EditarPolizaSchema {
 #[derive(Deserialize)]
 pub struct ObtenerBalanzaComprobacionQuery {
     pub fecha: NaiveDate,
+    pub dia_especifico: Option<bool>,
 }
