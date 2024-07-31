@@ -39,7 +39,7 @@ POST http://localhost:8000/api/cuenta/nueva
 Content-Type: application/json
 
 {
-  "cuenta": "123213412",
+  "cuenta": "1633221",
   "cuenta_siti": "c_siti1",
   "nombre": "Cuenta 2",
   "clasificacion": "Capitulo",

@@ -185,7 +185,7 @@ async fn buscar_detalles_polizas_dia_especifico(
     Ok(detalles_encontrados)
 }
 
-pub async fn obtener_balanza_comprobacion_handler(
+pub async fn buscar_detalles_handler(
     State(data): State<Arc<AppState>>,
     Query(query): Query<ObtenerBalanzaComprobacionQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
