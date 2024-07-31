@@ -199,17 +199,10 @@ pub async fn buscar_detalles_handler(
         }
         None => buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?,
     };
-    let total: f32 = detalles
-        .iter()
-        .map(|detalle| detalle.abono - detalle.cargo)
-        .sum();
 
     let respuesta = json!({
         "estado" : true,
-        "datos": {
-            "detalles": detalles,
-            "total": total
-        }
+        "datos": detalles,
     });
     Ok(Json(respuesta))
 }
