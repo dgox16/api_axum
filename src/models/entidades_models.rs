@@ -113,6 +113,13 @@ pub struct CuentaModelo {
 }
 
 #[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct BalanzaComprobacion {
+    pub cuenta: String,
+    pub total_cargo: f32,
+    pub total_abono: f32,
+    pub total: f32,
+}
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
 pub struct FrecuenciaEmpresaModelo {
     pub id_frecuencias_empresa: i32,
     pub nombre: String,

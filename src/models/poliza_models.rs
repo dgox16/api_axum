@@ -81,3 +81,16 @@ pub struct DetallePolizaModelo {
     pub concepto: String,
     pub iva: IvaDetallePoliza,
 }
+
+#[derive(Debug, sqlx::FromRow, Deserialize, Serialize)]
+pub struct DetallePolizaFormateadoModelo {
+    pub id_detalle_poliza: i32,
+    pub poliza: i32,
+    pub cuenta: String,
+    pub sucursal: i32,
+    pub cargo: f32,
+    pub abono: f32,
+    pub proveedor: i32,
+    pub concepto: String,
+    pub iva: IvaDetallePoliza,
+}
