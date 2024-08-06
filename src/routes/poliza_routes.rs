@@ -12,8 +12,7 @@ use crate::{
         poliza_insert_handlers::{crear_detalle_poliza_handler, crear_nueva_poliza_handler},
         poliza_put_handlers::editar_poliza_handler,
         poliza_select_handlers::{
-            buscar_detalles_handler, buscar_polizas_handler, obtener_balanza_comprobacion_handler,
-            obtener_poliza_handler,
+            buscar_detalles_poliza_fecha_handler, buscar_polizas_handler, obtener_poliza_handler,
         },
     },
     middlewares::jwt_middlewares::auth_required,
@@ -30,10 +29,9 @@ pub fn poliza_router(app_state: Arc<AppState>) -> Router {
             )),
         )
         .route("/api/poliza/buscar", get(buscar_polizas_handler))
-        .route("/api/poliza/buscar_detalles", get(buscar_detalles_handler))
         .route(
-            "/api/poliza/balanza_comprobacion",
-            get(obtener_balanza_comprobacion_handler),
+            "/api/poliza/buscar_detalles",
+            get(buscar_detalles_poliza_fecha_handler),
         )
         .route(
             "/api/poliza/eliminar/:id_poliza",

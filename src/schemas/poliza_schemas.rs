@@ -60,6 +60,12 @@ pub struct EditarPolizaSchema {
 }
 
 #[derive(Deserialize)]
+pub struct ObtenerDetallesPolizaFechaQuery {
+    pub fecha_inicial: Option<NaiveDate>,
+    pub fecha_final: NaiveDate,
+}
+
+#[derive(Deserialize)]
 pub struct ObtenerBalanzaComprobacionQuery {
     pub fecha: NaiveDate,
     pub dia_especifico: Option<bool>,

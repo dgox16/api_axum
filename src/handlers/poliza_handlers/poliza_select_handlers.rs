@@ -11,7 +11,8 @@ use crate::{
     },
     responses::error_responses::error_base_datos,
     schemas::poliza_schemas::{
-        BuscarPolizaQuery, ObtenerBalanzaComprobacionQuery, ObtenerPolizaParams,
+        BuscarPolizaQuery, ObtenerBalanzaComprobacionQuery, ObtenerDetallesPolizaFechaQuery,
+        ObtenerPolizaParams,
     },
     AppState,
 };
@@ -110,44 +111,10 @@ pub async fn buscar_polizas_handler(
 
 async fn buscar_detalles_polizas_rango_fechas(
     data: &Arc<AppState>,
-    fecha: NaiveDate,
+    fecha_inicial: NaiveDate,
+    fecha_final: NaiveDate,
 ) -> Result<Vec<DetallePolizaFormateadoModelo>, (StatusCode, Json<serde_json::Value>)> {
-    let fecha_formateada = match fecha.and_hms_opt(23, 59, 59) {
-        Some(f) => f,
-        None => {
-            let respuesta_error = serde_json::json!({
-                "estado": false,
-                "mensaje": "La fecha tiene un formato incorrecto",
-            });
-            return Err((StatusCode::BAD_REQUEST, Json(respuesta_error)));
-        }
-    };
-    let fecha_utc = Utc.from_utc_datetime(&fecha_formateada);
-    let detalles_encontrados = sqlx::query_as!(
-        DetallePolizaFormateadoModelo,
-        r#"
-        SELECT dp.id_detalle_poliza, dp.poliza, c.cuenta AS cuenta, dp.sucursal,
-               dp.cargo, dp.abono, dp.proveedor, dp.concepto, dp.iva AS "iva: IvaDetallePoliza"
-        FROM detalles_poliza dp 
-        INNER JOIN polizas p ON dp.poliza = p.id_poliza
-        INNER JOIN cuentas c ON dp.cuenta = c.id_cuenta
-        WHERE p.fecha_poliza AT TIME ZONE 'America/Mexico_City' AT TIME ZONE 'UTC' <= $1
-        ORDER BY c.cuenta
-        "#,
-        fecha_utc
-    )
-    .fetch_all(&data.db)
-    .await
-    .map_err(error_base_datos)?;
-
-    Ok(detalles_encontrados)
-}
-
-async fn buscar_detalles_polizas_dia_especifico(
-    data: &Arc<AppState>,
-    fecha: NaiveDate,
-) -> Result<Vec<DetallePolizaFormateadoModelo>, (StatusCode, Json<serde_json::Value>)> {
-    let fecha_inicial = match fecha.and_hms_opt(0, 1, 1) {
+    let fecha_inicial = match fecha_inicial.and_hms_opt(0, 1, 1) {
         Some(f) => f,
         None => {
             let respuesta_error = serde_json::json!({
@@ -159,7 +126,7 @@ async fn buscar_detalles_polizas_dia_especifico(
     };
     let fecha_utc_inicial = Utc.from_utc_datetime(&fecha_inicial);
 
-    let fecha_final = match fecha.and_hms_opt(23, 59, 59) {
+    let fecha_final = match fecha_final.and_hms_opt(23, 59, 59) {
         Some(f) => f,
         None => {
             let respuesta_error = serde_json::json!({
@@ -193,19 +160,18 @@ async fn buscar_detalles_polizas_dia_especifico(
     Ok(detalles_encontrados)
 }
 
-pub async fn buscar_detalles_handler(
+pub async fn buscar_detalles_poliza_fecha_handler(
     State(data): State<Arc<AppState>>,
-    Query(query): Query<ObtenerBalanzaComprobacionQuery>,
+    Query(query): Query<ObtenerDetallesPolizaFechaQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let detalles = match query.dia_especifico {
-        Some(dia_especifico) => {
-            if dia_especifico {
-                buscar_detalles_polizas_dia_especifico(&data, query.fecha).await?
-            } else {
-                buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?
-            }
+    let detalles = match query.fecha_inicial {
+        Some(fecha_inicial) => {
+            buscar_detalles_polizas_rango_fechas(&data, fecha_inicial, query.fecha_final).await?
         }
-        None => buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?,
+        None => {
+            let fecha_inicial = NaiveDate::from_ymd_opt(1, 1, 1).unwrap();
+            buscar_detalles_polizas_rango_fechas(&data, fecha_inicial, query.fecha_final).await?
+        }
     };
 
     let respuesta = json!({
@@ -215,64 +181,64 @@ pub async fn buscar_detalles_handler(
     Ok(Json(respuesta))
 }
 
-pub async fn obtener_balanza_comprobacion_handler(
-    State(data): State<Arc<AppState>>,
-    Query(query): Query<ObtenerBalanzaComprobacionQuery>,
-) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let detalles = match query.dia_especifico {
-        Some(dia_especifico) => {
-            if dia_especifico {
-                buscar_detalles_polizas_dia_especifico(&data, query.fecha).await?
-            } else {
-                buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?
-            }
-        }
-        None => buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?,
-    };
-    let cuentas_encontradas = sqlx::query_as!(
-        CuentaModelo,
-        r#"SELECT id_cuenta, cuenta,cuenta_siti,nombre,
-        clasificacion AS "clasificacion: ClasificacionCuenta",
-        grupo AS "grupo: GrupoCuenta",finalidad AS "finalidad: FinalidadCuenta",
-        naturaleza AS "naturaleza: NaturalezaCuenta",afectable,padre,nivel,en_balance,
-        en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,
-        orden_siti,subcuenta_siti,prorrateo FROM cuentas"#,
-    )
-    .fetch_all(&data.db)
-    .await
-    .map_err(error_base_datos)?;
-
-    let total: f32 = detalles
-        .iter()
-        .map(|detalle| detalle.abono - detalle.cargo)
-        .sum();
-
-    let balanza: Vec<BalanzaComprobacion> = cuentas_encontradas
-        .into_iter()
-        .map(|cuenta| {
-            let (total_cargo, total_abono) = detalles
-                .iter()
-                .filter(|detalle| detalle.cuenta == cuenta.cuenta)
-                .fold((0.0, 0.0), |(acum_cargo, acum_abono), detalle| {
-                    (acum_cargo + detalle.cargo, acum_abono + detalle.abono)
-                });
-
-            BalanzaComprobacion {
-                cuenta: cuenta.cuenta,
-                nombre: cuenta.nombre,
-                total_cargo,
-                total_abono,
-                total: total_abono - total_cargo,
-            }
-        })
-        .collect();
-
-    let respuesta = json!({
-        "estado" : true,
-        "datos":{
-            "balanza": balanza,
-            "total": total,
-        }
-    });
-    Ok(Json(respuesta))
-}
+// pub async fn obtener_balanza_comprobacion_handler(
+//     State(data): State<Arc<AppState>>,
+//     Query(query): Query<ObtenerBalanzaComprobacionQuery>,
+// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
+//     let detalles = match query.dia_especifico {
+//         Some(dia_especifico) => {
+//             if dia_especifico {
+//                 buscar_detalles_polizas_dia_especifico(&data, query.fecha).await?
+//             } else {
+//                 buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?
+//             }
+//         }
+//         None => buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?,
+//     };
+//     let cuentas_encontradas = sqlx::query_as!(
+//         CuentaModelo,
+//         r#"SELECT id_cuenta, cuenta,cuenta_siti,nombre,
+//         clasificacion AS "clasificacion: ClasificacionCuenta",
+//         grupo AS "grupo: GrupoCuenta",finalidad AS "finalidad: FinalidadCuenta",
+//         naturaleza AS "naturaleza: NaturalezaCuenta",afectable,padre,nivel,en_balance,
+//         en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,
+//         orden_siti,subcuenta_siti,prorrateo FROM cuentas"#,
+//     )
+//     .fetch_all(&data.db)
+//     .await
+//     .map_err(error_base_datos)?;
+//
+//     let total: f32 = detalles
+//         .iter()
+//         .map(|detalle| detalle.abono - detalle.cargo)
+//         .sum();
+//
+//     let balanza: Vec<BalanzaComprobacion> = cuentas_encontradas
+//         .into_iter()
+//         .map(|cuenta| {
+//             let (total_cargo, total_abono) = detalles
+//                 .iter()
+//                 .filter(|detalle| detalle.cuenta == cuenta.cuenta)
+//                 .fold((0.0, 0.0), |(acum_cargo, acum_abono), detalle| {
+//                     (acum_cargo + detalle.cargo, acum_abono + detalle.abono)
+//                 });
+//
+//             BalanzaComprobacion {
+//                 cuenta: cuenta.cuenta,
+//                 nombre: cuenta.nombre,
+//                 total_cargo,
+//                 total_abono,
+//                 total: total_abono - total_cargo,
+//             }
+//         })
+//         .collect();
+//
+//     let respuesta = json!({
+//         "estado" : true,
+//         "datos":{
+//             "balanza": balanza,
+//             "total": total,
+//         }
+//     });
+//     Ok(Json(respuesta))
+// }
