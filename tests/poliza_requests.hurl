@@ -118,4 +118,4 @@ Content-Type: application/json
 
 GET http://localhost:8000/api/poliza/buscar_detalles?fecha=2024-7-31
 
-GET http://localhost:8000/api/poliza/balanza_comprobacion?fecha=2024-7-31
+GET http://localhost:8000/api/poliza/balanza_comprobacion?fecha=2024-7-2

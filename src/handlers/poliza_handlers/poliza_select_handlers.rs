@@ -259,6 +259,7 @@ pub async fn obtener_balanza_comprobacion_handler(
 
             BalanzaComprobacion {
                 cuenta: cuenta.cuenta,
+                nombre: cuenta.nombre,
                 total_cargo,
                 total_abono,
                 total: total_abono - total_cargo,
