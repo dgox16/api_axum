@@ -6,6 +6,7 @@ use axum::{
     response::IntoResponse,
     Json,
 };
+use chrono::NaiveDate;
 use serde_json::json;
 
 use crate::{
@@ -13,6 +14,7 @@ use crate::{
         entidades_models::{
             ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta, NaturalezaCuenta,
         },
+        poliza_models::DetallePolizaFormateadoModelo,
         reportes_models::BalanzaComprobacionModelo,
     },
     responses::error_responses::error_base_datos,
@@ -26,8 +28,11 @@ pub async fn obtener_balanza_comprobacion_handler(
     State(data): State<Arc<AppState>>,
     Query(query): Query<ObtenerBalanzaComprobacionQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-    let detalles =
+    let detalles_rango =
         buscar_detalles_polizas_rango_fechas(&data, query.fecha_inicial, query.fecha_final).await?;
+    let fecha_cero = NaiveDate::from_ymd_opt(1, 1, 1).unwrap();
+    let detalles_anteriores =
+        buscar_detalles_polizas_rango_fechas(&data, fecha_cero, query.fecha_inicial).await?;
 
     let cuentas_encontradas = sqlx::query_as!(
         CuentaModelo,
@@ -42,7 +47,7 @@ pub async fn obtener_balanza_comprobacion_handler(
     .await
     .map_err(error_base_datos)?;
 
-    let total: f32 = detalles
+    let total: f32 = detalles_rango
         .iter()
         .map(|detalle| detalle.abono - detalle.cargo)
         .sum();
@@ -50,19 +55,66 @@ pub async fn obtener_balanza_comprobacion_handler(
     let balanza: Vec<BalanzaComprobacionModelo> = cuentas_encontradas
         .into_iter()
         .map(|cuenta| {
-            let (total_cargo, total_abono) = detalles
+            let detalles_anteriores_cuenta: Vec<&DetallePolizaFormateadoModelo> =
+                detalles_anteriores
+                    .iter()
+                    .filter(|detalle| detalle.cuenta == cuenta.cuenta)
+                    .collect();
+
+            let detalles_rango_cuenta: Vec<&DetallePolizaFormateadoModelo> = detalles_rango
                 .iter()
                 .filter(|detalle| detalle.cuenta == cuenta.cuenta)
-                .fold((0.0, 0.0), |(acum_cargo, acum_abono), detalle| {
-                    (acum_cargo + detalle.cargo, acum_abono + detalle.abono)
-                });
+                .collect();
+
+            let (deudora_anterior, acreedora_anterior) =
+                if ["1", "5"].contains(&&cuenta.cuenta[..1]) {
+                    let saldo_anterior: f32 = detalles_anteriores_cuenta
+                        .iter()
+                        .map(|detalle| detalle.cargo - detalle.abono)
+                        .sum();
+                    (saldo_anterior, 0.0)
+                } else {
+                    let saldo_anterior: f32 = detalles_anteriores_cuenta
+                        .iter()
+                        .map(|detalle| detalle.abono - detalle.cargo)
+                        .sum();
+                    (0.0, saldo_anterior)
+                };
+
+            // Calcular cargo y abono
+            let cargo: f32 = detalles_rango_cuenta
+                .iter()
+                .map(|detalle| detalle.cargo)
+                .sum();
+            let abono: f32 = detalles_rango_cuenta
+                .iter()
+                .map(|detalle| detalle.abono)
+                .sum();
+
+            // Calcular saldo deudor y saldo acreedor
+            let (saldo_deudor, saldo_acreedor) = if ["1", "5"].contains(&&cuenta.cuenta[..1]) {
+                let saldo_final: f32 = detalles_rango_cuenta
+                    .iter()
+                    .map(|detalle| detalle.cargo - detalle.abono)
+                    .sum();
+                (saldo_final, 0.0)
+            } else {
+                let saldo_final: f32 = detalles_rango_cuenta
+                    .iter()
+                    .map(|detalle| detalle.abono - detalle.cargo)
+                    .sum();
+                (0.0, saldo_final)
+            };
 
             BalanzaComprobacionModelo {
                 cuenta: cuenta.cuenta,
                 nombre: cuenta.nombre,
-                total_cargo,
-                total_abono,
-                total: total_abono - total_cargo,
+                deudora_anterior,
+                acreedora_anterior,
+                cargo,
+                abono,
+                saldo_deudor,
+                saldo_acreedor,
             }
         })
         .collect();

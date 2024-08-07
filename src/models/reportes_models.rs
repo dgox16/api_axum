@@ -4,7 +4,10 @@ use serde::{Deserialize, Serialize};
 pub struct BalanzaComprobacionModelo {
     pub cuenta: String,
     pub nombre: String,
-    pub total_cargo: f32,
-    pub total_abono: f32,
-    pub total: f32,
+    pub deudora_anterior: f32,
+    pub acreedora_anterior: f32,
+    pub cargo: f32,
+    pub abono: f32,
+    pub saldo_deudor: f32,
+    pub saldo_acreedor: f32,
 }

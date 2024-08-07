@@ -116,6 +116,5 @@ POST http://localhost:8000/api/poliza/detalles/nuevo/6
 Content-Type: application/json
 {"cuenta":1,"cargo":32,"abono":32,"proveedor":1,"concepto":"Ejemplo 2","iva":"Iva8"}
 
-GET http://localhost:8000/api/poliza/buscar_detalles?fecha_final=2024-7-31&fecha_inicial=2024-7-30
+GET http://localhost:8000/api/poliza/detalles/buscar?fecha_final=2024-7-31&fecha_inicial=2024-7-30
 
-GET http://localhost:8000/api/poliza/balanza_comprobacion?fecha=2024-7-2

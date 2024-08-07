@@ -30,7 +30,7 @@ pub fn poliza_router(app_state: Arc<AppState>) -> Router {
         )
         .route("/api/poliza/buscar", get(buscar_polizas_handler))
         .route(
-            "/api/poliza/buscar_detalles",
+            "/api/poliza/detalles/buscar",
             get(buscar_detalles_poliza_fecha_handler),
         )
         .route(
