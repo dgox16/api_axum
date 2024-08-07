@@ -4,6 +4,7 @@ pub mod entidades_handlers;
 pub mod fichas_handlers;
 pub mod persona_handlers;
 pub mod poliza_handlers;
+pub mod reportes_handlers;
 pub mod test_handlers;
 pub mod trabajo_handlers;
 pub mod ubicacion_handlers;

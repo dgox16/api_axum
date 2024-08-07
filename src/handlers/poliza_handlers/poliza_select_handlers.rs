@@ -1,18 +1,11 @@
 use crate::{
-    models::{
-        entidades_models::{
-            BalanzaComprobacion, ClasificacionCuenta, CuentaModelo, FinalidadCuenta, GrupoCuenta,
-            NaturalezaCuenta,
-        },
-        poliza_models::{
-            AplicacionPoliza, DetallePolizaFormateadoModelo, DetallePolizaModelo, FuentePoliza,
-            IvaDetallePoliza, PolizaEgresoModelo, PolizaModelo, TipoPoliza,
-        },
+    models::poliza_models::{
+        AplicacionPoliza, DetallePolizaFormateadoModelo, DetallePolizaModelo, FuentePoliza,
+        IvaDetallePoliza, PolizaEgresoModelo, PolizaModelo, TipoPoliza,
     },
     responses::error_responses::error_base_datos,
     schemas::poliza_schemas::{
-        BuscarPolizaQuery, ObtenerBalanzaComprobacionQuery, ObtenerDetallesPolizaFechaQuery,
-        ObtenerPolizaParams,
+        BuscarPolizaQuery, ObtenerDetallesPolizaFechaQuery, ObtenerPolizaParams,
     },
     AppState,
 };
@@ -109,7 +102,7 @@ pub async fn buscar_polizas_handler(
     Ok(Json(respuesta))
 }
 
-async fn buscar_detalles_polizas_rango_fechas(
+pub async fn buscar_detalles_polizas_rango_fechas(
     data: &Arc<AppState>,
     fecha_inicial: NaiveDate,
     fecha_final: NaiveDate,
@@ -180,65 +173,3 @@ pub async fn buscar_detalles_poliza_fecha_handler(
     });
     Ok(Json(respuesta))
 }
-
-// pub async fn obtener_balanza_comprobacion_handler(
-//     State(data): State<Arc<AppState>>,
-//     Query(query): Query<ObtenerBalanzaComprobacionQuery>,
-// ) -> Result<impl IntoResponse, (StatusCode, Json<serde_json::Value>)> {
-//     let detalles = match query.dia_especifico {
-//         Some(dia_especifico) => {
-//             if dia_especifico {
-//                 buscar_detalles_polizas_dia_especifico(&data, query.fecha).await?
-//             } else {
-//                 buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?
-//             }
-//         }
-//         None => buscar_detalles_polizas_rango_fechas(&data, query.fecha).await?,
-//     };
-//     let cuentas_encontradas = sqlx::query_as!(
-//         CuentaModelo,
-//         r#"SELECT id_cuenta, cuenta,cuenta_siti,nombre,
-//         clasificacion AS "clasificacion: ClasificacionCuenta",
-//         grupo AS "grupo: GrupoCuenta",finalidad AS "finalidad: FinalidadCuenta",
-//         naturaleza AS "naturaleza: NaturalezaCuenta",afectable,padre,nivel,en_balance,
-//         en_catalogo_minimo,nombre_balance,nombre_siti,cuenta_padre_siti,cuenta_agrupar,
-//         orden_siti,subcuenta_siti,prorrateo FROM cuentas"#,
-//     )
-//     .fetch_all(&data.db)
-//     .await
-//     .map_err(error_base_datos)?;
-//
-//     let total: f32 = detalles
-//         .iter()
-//         .map(|detalle| detalle.abono - detalle.cargo)
-//         .sum();
-//
-//     let balanza: Vec<BalanzaComprobacion> = cuentas_encontradas
-//         .into_iter()
-//         .map(|cuenta| {
-//             let (total_cargo, total_abono) = detalles
-//                 .iter()
-//                 .filter(|detalle| detalle.cuenta == cuenta.cuenta)
-//                 .fold((0.0, 0.0), |(acum_cargo, acum_abono), detalle| {
-//                     (acum_cargo + detalle.cargo, acum_abono + detalle.abono)
-//                 });
-//
-//             BalanzaComprobacion {
-//                 cuenta: cuenta.cuenta,
-//                 nombre: cuenta.nombre,
-//                 total_cargo,
-//                 total_abono,
-//                 total: total_abono - total_cargo,
-//             }
-//         })
-//         .collect();
-//
-//     let respuesta = json!({
-//         "estado" : true,
-//         "datos":{
-//             "balanza": balanza,
-//             "total": total,
-//         }
-//     });
-//     Ok(Json(respuesta))
-// }
